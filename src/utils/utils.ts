@@ -4,7 +4,7 @@
  * Created Date: 2026-01-23 22:00:18
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:33:00
+ * Last Modified: 2026-04-01 19:08:31
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -62,7 +62,7 @@ export async function getWeatherFromServer() {
     // Get settings
     const storedServerSettings: Ref<ServerSettings> = getServerSettingsFromServer();
 
-    const response: { error: string | null, errorMsg: any, weather: WeatherData | null } = {
+    const response: { error: string | null, errorMsg: unknown, weather: WeatherData | null } = {
         error: null,
         errorMsg: null,
         weather: null
@@ -178,7 +178,7 @@ export function initYearlessDate(timestamp?: number): Date {
 /**
  * Is current timestamp between (<= & >=) from & to while ignoring year?
  * @param from From: If greater than to, the previous year will be used internally
- * @param to ...
+ * @param to To: Upper timestamp
  * @returns Boolean indicating whether now is between from & to
  */
 export function isNowBetweenDatesIgnoringYear(from: number, to: number): boolean {

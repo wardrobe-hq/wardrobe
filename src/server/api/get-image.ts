@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 18:05:20
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:42:22
+ * Last Modified: 2026-04-01 19:04:51
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -59,7 +59,7 @@ export default defineEventHandler(async (event): Promise<ApiResponse<CachedImage
             id: params.filePath,
             imgBlob: item.toString("base64"),
             imgWidth: params.width
-        }
+        };
 
         return res;
     });

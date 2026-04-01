@@ -21,7 +21,7 @@ console.debug("Loading Wardrobe...");
 
 
 // Rmove no JS warning
-document.documentElement.classList.add('js');
+document.documentElement.classList.add("js");
 
 
 // TODO: Duplicates utils/storage.ts (except auto detection) but cannot import that here

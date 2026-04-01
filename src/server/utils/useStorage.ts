@@ -4,7 +4,7 @@
  * Created Date: 2026-03-22 12:21:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:41:51
+ * Last Modified: 2026-04-01 19:05:18
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -17,15 +17,19 @@
 
 import path from "path";
 import { readdir, stat } from "fs/promises";
-import util from 'node:util';
-import child_process from 'node:child_process';
+import util from "node:util";
+import childProcess from "node:child_process";
 import { type StorageSubscriptionEvent, SubscriptionEventType } from "~/model/api";
 import { SubscriptionUpdateObserver } from "../updateObserver";
 
-const exec = util.promisify(child_process.exec);
+const exec = util.promisify(childProcess.exec);
 
 
-// Thanks: https://stackoverflow.com/a/69418940
+/**
+ * Gets size of all files in directory - Thanks: https://stackoverflow.com/a/69418940
+ * @param dir Directory path
+ * @returns Size in Bytes
+ */
 async function getDirSize(dir: string): Promise<number> {
     let files;
 
@@ -66,7 +70,7 @@ export async function getImageStorageSize(): Promise<number> {
  * @returns Mount point of storage pool
  */
 export async function getStorageMount(): Promise<string> {
-    const { stdout, stderr } = await exec("stat -c %m -- 'data/'");
+    const { stdout /* , stderr */ } = await exec("stat -c %m -- 'data/'");
     return stdout.trim(); // TODO: Error handling
 }
 

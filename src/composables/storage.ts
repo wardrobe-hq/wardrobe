@@ -4,7 +4,7 @@
  * Created Date: 2026-03-23 21:34:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:29:43
+ * Last Modified: 2026-04-01 19:04:40
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -104,10 +104,10 @@ export async function initGlobalCache()  {
     // TODO: Error handling
 
     cachedImages     = new Cache([]);
-    storedLabels     = new Cache(labels.data.value?.document as Label[]);
-    storedCategories = new Cache(categories.data.value?.document!);
+    storedLabels     = new Cache(labels.data.value!.document as Label[]);
+    storedCategories = new Cache(categories.data.value!.document!);
 
-    storedServerSettings.value = settings.data.value?.document!;
+    storedServerSettings.value = settings.data.value!.document!;
 }
 // TODO: SSR?
 
@@ -116,10 +116,10 @@ export async function initGlobalCache()  {
  * Sends raw API request to server and returns raw response
  * @param route Route to query
  * @param headers Optional: Headers to set
- * @param data Optional: Request body to pass
+ * @param body Optional: Request body to pass
  * @returns Promise resolving with response
  */
-async function sendApiRequestRaw(route: string, headers?: HeadersInit, body?: any) {
+async function sendApiRequestRaw(route: string, headers?: HeadersInit, body?: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
     return await fetch("/api/" + route, {
         method: "POST",
         headers: headers,
@@ -132,8 +132,8 @@ async function sendApiRequestRaw(route: string, headers?: HeadersInit, body?: an
  * @param route Route to query
  * @param data Optional: JSON data to pass
  * @returns Promise resolving with parsed JSON response
- */
-async function sendApiRequest(route: string, data?: object): Promise<any> { // TODO: Can I infer the return type from route like useFetch does?
+ */                                                          // TODO: Can I infer the return type from route like useFetch does?
+async function sendApiRequest(route: string, data?: object): Promise<any> { // eslint-disable-line @typescript-eslint/no-explicit-any
     const res = await sendApiRequestRaw(
         route,
         {
@@ -151,7 +151,7 @@ async function sendApiRequest(route: string, data?: object): Promise<any> { // T
  * @param event
  */
 export function handleCacheSubscriptionEvent(event: StorageSubscriptionEvent) {
-    let dest: Cache<any>;
+    let dest: Cache<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     // StorageKinds without an ID prop must already be handled here!
     switch (event.storage) {
@@ -161,10 +161,8 @@ export function handleCacheSubscriptionEvent(event: StorageSubscriptionEvent) {
             break;
         case StorageKind.CLOTHES:
             throw("Clothes Update not implemented");
-            break;
         case StorageKind.OUTFITS:
             throw("Outfits Update not implemented");
-            break;
         case StorageKind.LABELS:
             dest = storedLabels;
             break;
@@ -195,6 +193,7 @@ export function handleCacheSubscriptionEvent(event: StorageSubscriptionEvent) {
 }
 
 
+/* eslint-disable jsdoc/require-jsdoc */
 /*
     -------------------- CLOTHES --------------------
 */
@@ -206,7 +205,7 @@ export async function getAllClothesFromServer(): Promise<ApiResponse<Clothing[]>
     }
 
     return cachedClothes.data; */
-    return (await useFetch("/api/get-all-clothes")).data.value! // SSR
+    return (await useFetch("/api/get-all-clothes")).data.value!; // SSR
 }
 
 export async function getClothingFromServer(id: string): Promise<ApiResponse<Clothing>> {
@@ -342,7 +341,7 @@ export async function sendImageToServer(file: File): Promise<ApiResponse<{ fileP
     // Construct form to post
     const formData = new FormData();
     formData.append("file", file);
-    //formData.append("imgType", "clothing"); // TODO: Image type is hardcoded
+    // formData.append("imgType", "clothing"); // TODO: Image type is hardcoded
 
     // Attempt to post file to API
     const res = await sendApiRequestRaw("set-clothing-image", undefined, formData);
@@ -362,3 +361,6 @@ export async function sendImageToServer(file: File): Promise<ApiResponse<{ fileP
     return resBody;
 
 }
+
+
+/* eslint-enable jsdoc/require-jsdoc */

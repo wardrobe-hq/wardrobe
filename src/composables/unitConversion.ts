@@ -4,7 +4,7 @@
  * Created Date: 2026-03-04 10:39:01
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-28 22:42:54
+ * Last Modified: 2026-04-01 19:04:42
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -62,7 +62,10 @@ export function confTempToStr(value: TemperatureKelvin, rounded?: boolean): stri
 */
 
 
-// Stupid wrapper for formatTime to return localized string
+/**
+ * Stupid wrapper for formatTime to return localized string
+ * @param time Timestamp to format
+ */
 export function formatTimeLocalized(time: number) {
     return formatTime(time)
         .replace("seconds", useI18n().t("seconds"))

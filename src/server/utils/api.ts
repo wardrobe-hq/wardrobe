@@ -4,7 +4,7 @@
  * Created Date: 2026-03-27 16:50:16
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:38:16
+ * Last Modified: 2026-04-01 19:05:13
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -15,6 +15,7 @@
  */
 
 
+import { H3Event } from "h3";
 import { IncomingMessage } from "http";
 import type { ApiResponse } from "~/model/api";
 
@@ -22,7 +23,7 @@ import type { ApiResponse } from "~/model/api";
 /**
  * Gets IP of client who sent the request
  * @param req Incoming request
- * @returns IP
+ * @returns Client's IP address
  */
 export function getIpFromRequest(req: IncomingMessage) {
     return String(req.headers["x-forwarded-for"] || req.socket.remoteAddress).replace("::ffff:", "");
@@ -34,7 +35,7 @@ export function getIpFromRequest(req: IncomingMessage) {
  * @param event Incoming request event
  * @returns String to be used as log message prefix
  */
-export function getApiLogPrefix(event: any) {
+export function getApiLogPrefix(event: H3Event<globalThis.EventHandlerRequest>) {
     return `[API] ${event.node.req.method} '${event.node.req.url}' from ${getIpFromRequest(event.node.req)}:`;
 }
 
@@ -50,14 +51,12 @@ export async function getApiResponse<T>(cb: () => Promise<T | null>): Promise<Ap
         success: false,
         message: null,
         document: null
-    }
+    };
 
     try {
         res.document = await cb();
         res.success  = true;
     } catch (err) {
-        console.error(`[API] getApiResponse Error:`, err);
-        //console.trace();
         res.message = String(err);          // TODO: Abstract error message to avoid potential security risk by client getting some kind of server environment information?
         res.success = false;
 

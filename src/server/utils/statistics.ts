@@ -4,7 +4,7 @@
  * Created Date: 2026-03-21 23:56:43
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-23 17:49:56
+ * Last Modified: 2026-04-01 19:05:11
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -17,14 +17,14 @@
 
 import si from "systeminformation";
 import os from "os";
-import util from 'node:util';
-import child_process from 'node:child_process';
+import util from "node:util";
+import childProcess from "node:child_process";
 
 import type { ServerStatistics } from "~/model/statistics";
 import { tempToKelvin, Unit } from "~/model/unit";
 import { getDBStorageSize, getImageStorageSize, getStorageMount } from "./useStorage";
 
-const exec = util.promisify(child_process.exec);
+const exec = util.promisify(childProcess.exec);
 
 
 // SystemInformation docs: https://github.com/sebhildebrandt/systeminformation?tab=readme-ov-file#reference
@@ -35,7 +35,7 @@ const exec = util.promisify(child_process.exec);
  * @returns Result of 'uname -s -r'
  */
 async function getOS(): Promise<string> {
-    const { stdout, stderr } = await exec("uname -s -r");
+    const { stdout /* , stderr */ } = await exec("uname -s -r");
     return stdout.trim(); // TODO: Error handling
 }
 
@@ -79,7 +79,7 @@ export async function getServerStatistics(): Promise<ServerStatistics> {
             serverTime: si.time().current,
             uptime: Date.now() - (si.time().uptime * 1000)
         },
-    }
+    };
 
     return stats;
 

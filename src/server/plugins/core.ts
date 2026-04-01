@@ -4,7 +4,7 @@
  * Created Date: 2026-03-22 10:43:46
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-22 11:07:02
+ * Last Modified: 2026-04-01 19:05:05
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -15,7 +15,7 @@
  */
 
 
-import packageJson from "~/../package.json"
+import packageJson from "~/../package.json";
 
 
 /*

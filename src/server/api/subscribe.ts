@@ -4,7 +4,7 @@
  * Created Date: 2026-03-26 18:49:20
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:30:45
+ * Last Modified: 2026-04-01 19:05:03
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -28,7 +28,7 @@ import { SubscriptionUpdateObserver } from "../updateObserver";
 // This function is executed when this API route is called
 export default defineEventHandler(async (event) => {
 
-    console.debug(getApiLogPrefix(event), `Received request...`);
+    console.debug(getApiLogPrefix(event), "Received request...");
 
     // Make this a stream
     const res = event.node.res;

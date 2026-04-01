@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 15:45:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-27 18:59:27
+ * Last Modified: 2026-04-01 19:04:46
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,7 +15,7 @@
  */
 
 
-import type { Implements } from "./Implements"
+import type { Implements } from "./Implements";
 
 
 // Base type for Clothing & Outfit, used by generic components & composables.
