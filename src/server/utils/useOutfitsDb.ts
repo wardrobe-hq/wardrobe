@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-31 22:18:31
+ * Last Modified: 2026-04-01 18:32:51
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -38,10 +38,11 @@ const outfitsDb = new nedb({ filename: "data/database/outfits.db", autoload: tru
 
 /**
  * Inserts a new outfit or updates an existing one
+ * @throws Throws Exception on failure
  * @param outfit Outfit data to set. Leave id field empty to insert new outfit
  * @returns
  */
-export async function upsertOutfit(outfit: Outfit) {
+export async function upsertOutfit(outfit: Outfit): Promise<Outfit | null> {
 
     // Generate identifier for new outfit
     if (!outfit.id) {
@@ -62,59 +63,37 @@ export async function upsertOutfit(outfit: Outfit) {
 
     outfit.modifiedTimestamp = Date.now();
 
-    return outfitsDb.updateAsync({ id: outfit.id }, { $set: outfit }, { upsert: true, returnUpdatedDocs: true })
-        .then((res) => {
-            sendStorageSubscriptionEvent({              // Notify registered clients
-                action: SubscriptionEventAction.UPSERT,
-                storage: StorageKind.OUTFITS,
-                newData: outfit // TODO: != res.affectedDocuments, hmm
-            });
+    const res      = await outfitsDb.updateAsync({ id: outfit.id }, { $set: outfit }, { upsert: true, returnUpdatedDocs: true });
+    const affected = res.affectedDocuments ? res.affectedDocuments as unknown as Outfit : null;
 
-            return {
-                success: true,
-                message: "",
-                document: res.affectedDocuments
-            };
-        })
-        .catch((err) => {
-            return {
-                success: false,
-                message: err,
-                document: null
-            };  // TODO: Does this return work?
+    if (affected) {
+        sendStorageSubscriptionEvent({              // Notify registered clients
+            action: SubscriptionEventAction.UPSERT,
+            storage: StorageKind.OUTFITS,
+            newData: affected
         });
+    }
+
+    return affected;
 
 }
 
 /**
  * Deletes an outfit
+ * @throws Throws Exception on failure
  * @param outfitID ID of the outfit to remove
  * @returns
  */
-export async function deleteOutfit(outfitID: string) {
-
+export async function deleteOutfit(outfitID: string): Promise<void> {
     // Unused image will be deleted by periodic database cleanup job
 
-    return outfitsDb.removeAsync({ id: outfitID }, { })
-        .then(() => {
-            sendStorageSubscriptionEvent({              // Notify registered clients
-                action: SubscriptionEventAction.DELETE,
-                storage: StorageKind.OUTFITS,
-                newData: { id: outfitID }
-            });
+    await outfitsDb.removeAsync({ id: outfitID }, {});
 
-            return {
-                success: true,
-                message: ""
-            };
-        })
-        .catch((err) => {
-            return {
-                success: false,
-                message: err
-            };  // TODO: Does this return work?
-        });
-
+    sendStorageSubscriptionEvent({              // Notify registered clients
+        action: SubscriptionEventAction.DELETE,
+        storage: StorageKind.OUTFITS,
+        newData: { id: outfitID }
+    });
 }
 
 /**

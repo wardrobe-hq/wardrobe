@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-31 22:23:53
+ * Last Modified: 2026-04-01 18:32:45
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -38,10 +38,11 @@ const clothesDb = new nedb({ filename: "data/database/clothes.db", autoload: tru
 
 /**
  * Inserts a new piece of clothing or updates an existing one
+ * @throws Throws Exception on failure
  * @param clothing Clothing data to set. Leave id field empty to insert new clothing
- * @returns
+ * @returns Affected documents
  */
-export async function upsertClothing(clothing: Clothing) {
+export async function upsertClothing(clothing: Clothing): Promise<Clothing | null> {
 
     // Generate identifier for new piece of clothing
     if (!clothing.id) {
@@ -55,66 +56,41 @@ export async function upsertClothing(clothing: Clothing) {
 
     clothing.modifiedTimestamp = Date.now();
 
-    return clothesDb.updateAsync({ id: clothing.id }, { $set: clothing }, { upsert: true, returnUpdatedDocs: true })
-        .then((res) => {
-            // Unused image will be deleted by periodic database cleanup job
+    // Unused image will be deleted by periodic database cleanup job
 
-            sendStorageSubscriptionEvent({              // Notify registered clients
-                action: SubscriptionEventAction.UPSERT,
-                storage: StorageKind.CLOTHES,
-                newData: clothing // TODO: != res.affectedDocuments, hmm
-            });
+    const res      = await clothesDb.updateAsync({ id: clothing.id }, { $set: clothing }, { upsert: true, returnUpdatedDocs: true });
+    const affected = res.affectedDocuments ? res.affectedDocuments as unknown as Clothing : null;
 
-            // Tell outfit image handler to figure out re-generating images of outfits containing this clothing // TODO: ...only when image has changed (requires a DB query beforehand to get old value...)
-            if (res.affectedDocuments) {
-                updateImagesOfAffectedOutfits(res.affectedDocuments.id);
-            }
+    // Tell outfit image handler to figure out re-generating images of outfits containing this clothing // TODO: ...only when image has changed (requires a DB query beforehand to get old value...)
+    if (affected) {
+        updateImagesOfAffectedOutfits(affected.id);
 
-            return {
-                success: true,
-                message: "",
-                document: res.affectedDocuments
-            };
-        })
-        .catch((err) => {
-            return {
-                success: false,
-                message: err,
-                document: null
-            };  // TODO: Does this return work?
+        sendStorageSubscriptionEvent({              // Notify registered clients
+            action: SubscriptionEventAction.UPSERT,
+            storage: StorageKind.CLOTHES,
+            newData: affected
         });
+    }
+
+    return affected;
 
 }
 
 /**
  * Deletes a piece of clothing
+ * @throws Throws Exception on failure
  * @param clothingID ID of the clothing to remove
- * @returns
  */
-export async function deleteClothing(clothingID: string) {
-
+export async function deleteClothing(clothingID: string): Promise<void> {
     // Unused image will be deleted by periodic database cleanup job
 
-    return clothesDb.removeAsync({ id: clothingID }, { })
-        .then(() => {
-            sendStorageSubscriptionEvent({              // Notify registered clients
-                action: SubscriptionEventAction.DELETE,
-                storage: StorageKind.CLOTHES,
-                newData: { id: clothingID }
-            });
+    await clothesDb.removeAsync({ id: clothingID }, {});
 
-            return {
-                success: true,
-                message: ""
-            };
-        })
-        .catch((err) => {
-            return {
-                success: false,
-                message: err
-            };  // TODO: Does this return work?
-        });
-
+    sendStorageSubscriptionEvent({              // Notify registered clients
+        action: SubscriptionEventAction.DELETE,
+        storage: StorageKind.CLOTHES,
+        newData: { id: clothingID }
+    });
 }
 
 /**

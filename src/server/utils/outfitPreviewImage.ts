@@ -4,7 +4,7 @@
  * Created Date: 2025-12-28 21:38:23
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-27 19:02:37
+ * Last Modified: 2026-04-01 18:32:42
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -75,6 +75,7 @@ async function generateImageCollage(images: Buffer<ArrayBufferLike>[], collageWi
 
 /**
  * Generates a preview image for an outfit
+ * @throws Throws Exception on failure
  * @param outfit Outfit to generate new preview image for
  * @returns Path of image in storage
  */

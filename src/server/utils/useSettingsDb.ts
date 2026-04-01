@@ -4,7 +4,7 @@
  * Created Date: 2026-02-14 19:44:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-31 22:14:41
+ * Last Modified: 2026-04-01 18:32:53
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -35,26 +35,20 @@ export async function getServerSettings(): Promise<ServerSettings> {
 
 /**
  * Updates server settings in database
+ * @throws Throws Exception on failure
  * @param settings Settings to set
  */
-export async function setServerSettings(settings: ServerSettings) {
-    return serverSettingsDb.updateAsync({}, { $set: settings }, { upsert: true, returnUpdatedDocs: true })
-        .then(() => {
-            sendStorageSubscriptionEvent({              // Notify registered clients
-                action: SubscriptionEventAction.UPSERT,
-                storage: StorageKind.SERVER_SETTINGS,
-                newData: settings
-            });
+export async function setServerSettings(settings: ServerSettings): Promise<ServerSettings | null> {
+    const res      = await serverSettingsDb.updateAsync({}, { $set: settings }, { upsert: true, returnUpdatedDocs: true });
+    const affected = res.affectedDocuments ? res.affectedDocuments as unknown as ServerSettings : null;
 
-            return {
-                success: true,
-                message: ""
-            };
-        })
-        .catch((err) => {
-            return {
-                success: false,
-                message: err
-            };  // TODO: Does this return work?
+    if (affected) {
+        sendStorageSubscriptionEvent({              // Notify registered clients
+            action: SubscriptionEventAction.UPSERT,
+            storage: StorageKind.SERVER_SETTINGS,
+            newData: affected
         });
+    }
+
+    return affected;
 }

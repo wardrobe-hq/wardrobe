@@ -4,7 +4,7 @@
  * Created Date: 2026-02-12 17:29:11
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 19:16:00
+ * Last Modified: 2026-04-01 18:30:24
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -15,18 +15,20 @@
  */
 
 
+import { WeatherData } from "~/model/weather";
 import { getWeather } from "../utils/weather";
+import { ApiResponse } from "~/model/api";
 
 
 /**
  * This API route gets cached or current weather data
  * Params: { lat: number, lon: number }
- * Returns: WeatherData | null
+ * Returns: WeatherData
  */
 
 
 // This function is executed when this API route is called
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<ApiResponse<WeatherData>> => {
 
     // Read body of the request we received
     const params = await readBody(event);
@@ -38,11 +40,9 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    console.debug(apiLogPrefix(event), `Received request for '${params.lat}, ${params.lon}'`);
+    console.debug(getApiLogPrefix(event), `Received request for '${params.lat}, ${params.lon}'`);
 
     // Get cached or fresh weather
-    const res = await getWeather(params.lat, params.lon);
-
-    return res;
+    return await getApiResponse<WeatherData>(() => getWeather(params.lat, params.lon));
 
 });

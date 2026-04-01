@@ -5,7 +5,7 @@
  * Created Date: 2025-09-10 17:37:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 18:50:04
+ * Last Modified: 2026-04-01 18:29:57
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -254,7 +254,7 @@
     const thisOutfit:     Ref<Outfit>     = ref({ id: "", title: "", clothes: [], labelIDs: [], previewImgPath: "", addedTimestamp: 0, modifiedTimestamp: 0 });
     const bodyPartLabels: Ref<Label[]>    = ref([]);
     const storedClothes:  Ref<Clothing[]> = ref([]);
-    storedClothes.value = await getAllClothesFromServer();
+    storedClothes.value = (await getAllClothesFromServer()).document!;
 
 
     // Check if edit mode is enabled based on if name of this route is outfits-view or outfits-edit
@@ -278,7 +278,7 @@
     onMounted(async () => {
         // Get outfit data if not new
         if (outfitId != "new") {
-            thisOutfit.value = await getOutfitFromServer(outfitId);
+            thisOutfit.value = (await getOutfitFromServer(outfitId)).document!;
         }
     });
 
@@ -365,14 +365,14 @@
     async function saveChanges() {
 
         // Send data to API
-        const resBody = await setOutfitToServer(thisOutfit.value);
+        const resBody = (await setOutfitToServer(thisOutfit.value));
 
         // Update local refs depending on success/failure and indicate result
         if (resBody.success) {
             responseIndicatorSuccess();
 
             emitChangesMadeEvent(false);
-            thisOutfit.value = resBody.document;
+            thisOutfit.value = resBody.document!;
         } else {
             responseIndicatorFailure();
         }

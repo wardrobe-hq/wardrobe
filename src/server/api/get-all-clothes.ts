@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 16:16:50
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 19:21:18
+ * Last Modified: 2026-04-01 18:30:04
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,24 +15,24 @@
  */
 
 
+import { ApiResponse } from "~/model/api";
+import { Clothing } from "~/model/item";
 import { getClothes } from "~/server/utils/useClothesDb";
 
 
 /**
  * This API route gets all stored clothes and returns them
- * Params: {}
- * Returns: { }
+ * Params:
+ * Returns: ApiResponse<Clothing[]>
  */
 
 
 // This function is executed when this API route is called
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<ApiResponse<Clothing[]>> => {
 
-    console.debug(apiLogPrefix(event), "Received request");
+    console.debug(getApiLogPrefix(event), "Received request");
 
     // Ask db helper to retrieve item
-    const clothes = await getClothes();
-
-    return clothes;
+    return await getApiResponse<Clothing[]>(getClothes);
 
 });

@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:51:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 18:23:44
+ * Last Modified: 2026-04-01 18:29:59
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -304,6 +304,7 @@
     import type { ServerStatistics } from "~/model/statistics";
     import packageJson from "~/../package.json";
     import { getServerSettingsFromServer, setServerSettingsToServer } from "~/composables/storage";
+    import type { ApiResponse } from "~/model/api";
 
     const i18n = useI18n();
 
@@ -319,8 +320,8 @@
 
 
     // Load data
-    const jobRes = await useFetch("/api/get-registered-jobs-info");
-    jobs.value = jobRes.data.value!;
+    const jobRes = await useFetch("/api/get-registered-jobs-info"); // TODO: Probably won't update when job gets registered later
+    jobs.value = jobRes.data.value?.document!;
 
     // Client side only
     onBeforeMount(() => {
@@ -328,14 +329,16 @@
     });
 
     onMounted(async () => {
-        const serverStatsRes = await fetch("/api/get-server-stats", {
+        const res = await fetch("/api/get-server-stats", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
             }
         });
 
-        serverStatistics.value = await serverStatsRes.json(); // TODO: Error handling
+        const resBody: ApiResponse<ServerStatistics> = await res.json();
+
+        serverStatistics.value = resBody.document!; // TODO: Error handling
     });
 
 

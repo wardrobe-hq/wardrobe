@@ -4,7 +4,7 @@
  * Created Date: 2026-03-21 23:35:30
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 19:21:36
+ * Last Modified: 2026-04-01 18:30:20
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -15,23 +15,23 @@
  */
 
 
+import { ServerStatistics } from "~/model/statistics";
 import { getServerStatistics } from "../utils/statistics";
+import { ApiResponse } from "~/model/api";
 
 
 /**
  * This API route gets server statistics
- * Params: { }
+ * Params:
  * Returns: ServerStatistics
  */
 
 
 // This function is executed when this API route is called
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<ApiResponse<ServerStatistics>> => {
 
-    console.debug(apiLogPrefix(event), "Received request...");
+    console.debug(getApiLogPrefix(event), "Received request...");
 
-    const stats = await getServerStatistics();
-
-    return stats;
+    return await getApiResponse<ServerStatistics>(getServerStatistics);
 
 });

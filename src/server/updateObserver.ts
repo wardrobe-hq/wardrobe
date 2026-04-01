@@ -4,7 +4,7 @@
  * Created Date: 2026-03-26 18:53:29
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-27 18:39:31
+ * Last Modified: 2026-04-01 18:32:57
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -87,7 +87,7 @@ function UpdateObserver<UpdateData>() {
          * Updates every subscriber
          */
         callSubscribers(data: UpdateData) {
-            this.subscribers.forEach((e) => e.func(data));
+            this.subscribers.forEach((e) => e.func(data)); // TODO: Catch error and log
         }
     }
 

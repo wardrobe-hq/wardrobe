@@ -5,7 +5,7 @@
  * Created Date: 2026-03-01 15:17:09
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 15:51:34
+ * Last Modified: 2026-04-01 18:29:41
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -94,8 +94,7 @@
 
 
     // Get all outfits and their details on load
-    let res = await useFetch("/api/get-all-outfits");
-    storedOutfits.value = res.data.value!; // TODO: Error handling
+    storedOutfits.value = (await getAllOutfitsFromServer()).document!;
 
     // Generate recommendations
     onMounted(async () => {

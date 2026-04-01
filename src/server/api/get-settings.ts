@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 15:44:09
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 19:15:57
+ * Last Modified: 2026-04-01 18:30:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,24 +15,24 @@
  */
 
 
+import { ApiResponse } from "~/model/api";
 import { getServerSettings } from "../utils/useSettingsDb";
+import { ServerSettings } from "~/model/storage";
 
 
 /**
  * This API route gets all stored settings and returns them
- * Params: {}
+ * Params:
  * Returns: ServerSettings
  */
 
 
 // This function is executed when this API route is called
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<ApiResponse<ServerSettings>> => {
 
-    console.debug(apiLogPrefix(event), "Received request");
+    console.debug(getApiLogPrefix(event), "Received request");
 
     // Ask db helper for data
-    const settings = await getServerSettings();
-
-    return settings;
+    return await getApiResponse<ServerSettings>(getServerSettings);
 
 });

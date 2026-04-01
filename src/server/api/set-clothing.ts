@@ -4,7 +4,7 @@
  * Created Date: 2025-12-07 18:39:22
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 19:16:38
+ * Last Modified: 2026-04-01 18:30:36
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,18 +15,20 @@
  */
 
 
+import { ApiResponse } from "~/model/api";
+import { Clothing } from "~/model/item";
 import { upsertClothing } from "~/server/utils/useClothesDb";
 
 
 /**
  * This API route inserts/updates a piece of clothing
  * Params: { clothing: Clothing }
- * Returns:
+ * Returns: Clothing | null
  */
 
 
 // This function is executed when this API route is called
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<ApiResponse<Clothing>> => {
 
     // Read body of the request we received
     const params = await readBody(event);
@@ -38,11 +40,9 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    console.debug(apiLogPrefix(event), "Received request for: ", params.clothing);
+    console.debug(getApiLogPrefix(event), "Received request for: ", params.clothing);
 
     // Ask db helper to upsert entry
-    const res = await upsertClothing(params.clothing);
-
-    return res;
+    return await getApiResponse<Clothing>(() => upsertClothing(params.clothing));
 
 });

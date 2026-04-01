@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:40:46
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 18:45:58
+ * Last Modified: 2026-04-01 18:29:55
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -107,7 +107,7 @@
     // Get labels and outfits from cache
     const storedLabels:  Ref<Label[]>  = getAllLabelsFromServer();
     const storedOutfits: Ref<Outfit[]> = ref([]);
-    storedOutfits.value = await getAllOutfitsFromServer();
+    storedOutfits.value = (await getAllOutfitsFromServer()).document!;
 
     // Get refs to props exported by defineExpose() in TitleBarFull
     const titleBarFull: Ref<{ selectedSort: sortModes, selectedFilters: string[], selectedScaling: number, toggleFilter: (thisFilter: string) => void }> = ref({ selectedSort: defaultSortMode, selectedFilters: [], selectedScaling: 0, toggleFilter: () => {} }); // TODO: Can this be an exported type somewhere?

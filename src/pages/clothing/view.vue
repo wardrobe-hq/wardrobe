@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-30 18:09:40
+ * Last Modified: 2026-04-01 18:29:51
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -184,7 +184,7 @@
     // Get clothing
     onMounted(async () => {
         if (clothingId != "new") {
-            thisClothing.value = await getClothingFromServer(clothingId);
+            thisClothing.value = (await getClothingFromServer(clothingId)).document!;
 
             thisClothingImgBlob.value = (await getImageFromServer(thisClothing.value.imgPath, 512))?.imgBlob || "";
         }
@@ -285,8 +285,8 @@
             responseIndicatorSuccess();
 
             emitChangesMadeEvent(false);
-            thisClothing.value = resBody.document;
-            thisClothingImgBlob.value = (await getImageFromServer(resBody.document.imgPath, 512))?.imgBlob || "";
+            thisClothing.value = resBody.document!;
+            thisClothingImgBlob.value = (await getImageFromServer(resBody.document!.imgPath, 512))?.imgBlob || "";
         } else {
             responseIndicatorFailure();
         }

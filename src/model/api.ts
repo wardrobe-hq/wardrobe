@@ -4,7 +4,7 @@
  * Created Date: 2026-03-26 18:57:42
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-31 22:22:14
+ * Last Modified: 2026-04-01 18:29:45
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -18,10 +18,12 @@
 import type { StorageKind, StorageKindDataMap } from "./storage";
 
 
-// Data Format returned by api routes
-export type ApiResponse = {
+// Data Format returned by API Routes
+export interface ApiResponse<T> {
+    success: boolean,
+    message: string | null,
+    document: T | null      // This allowing null for all T's requires ! nearly everywhere where success was already checked
 }
-// TODO
 
 
 // Event types broadcasted by the 'subscribe' API Route

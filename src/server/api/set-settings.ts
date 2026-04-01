@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 17:06:47
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 19:16:57
+ * Last Modified: 2026-04-01 18:30:48
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,18 +15,20 @@
  */
 
 
+import { ApiResponse } from "~/model/api";
 import { setServerSettings } from "../utils/useSettingsDb";
+import { ServerSettings } from "~/model/storage";
 
 
 /**
  * This API route saves all transmitted settings
  * Params: ServerSettings
- * Returns:
+ * Returns: ServerSettings
  */
 
 
 // This function is executed when this API route is called
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<ApiResponse<ServerSettings>> => {
 
     // Read body of the request we received
     const params = await readBody(event);
@@ -38,11 +40,9 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    console.debug(apiLogPrefix(event), "Received request for:", params);
+    console.debug(getApiLogPrefix(event), "Received request for:", params);
 
     // Ask db helper to figure stuff out
-    const res = setServerSettings(params);
-
-    return res;
+    return await getApiResponse<ServerSettings>(() => setServerSettings(params));
 
 });

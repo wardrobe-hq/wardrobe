@@ -4,7 +4,7 @@
  * Created Date: 2025-12-31 13:03:12
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 19:15:51
+ * Last Modified: 2026-04-01 18:30:16
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,25 +15,24 @@
  */
 
 
+import { ApiResponse } from "~/model/api";
 import { getRegisteredJobs } from "../plugins/jobs";
 import { JobInfo } from "~/model/job";
 
 
 /**
  * This API route gets metadata of all registered jobs
- * Params: { }
+ * Params:
  * Returns: JobInfo[]
  */
 
 
 // This function is executed when this API route is called
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<ApiResponse<JobInfo[]>> => {
 
-    console.debug(apiLogPrefix(event), "Received request...");
+    console.debug(getApiLogPrefix(event), "Received request...");
 
     // Ask job manager what's going on and remove functions from result as they can't be passed anyway
-    const registeredJobs: JobInfo[] = getRegisteredJobs().map((e) => e.info);
-
-    return registeredJobs;
+    return await getApiResponse<JobInfo[]>(async () => getRegisteredJobs().map((e) => e.info));
 
 });

@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-31 22:21:29
+ * Last Modified: 2026-04-01 18:32:48
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -38,117 +38,74 @@ const labelCategoriesDb = new nedb({ filename: "data/database/label-categories.d
 
 /**
  * Inserts new or updates existing label
+ * @throws Throws Exception on failure
  * @param label Label to upsert. Leave id field empty to insert new label
  * @returns
  */
-function upsertLabel(label: Label) {
+async function upsertLabel(label: Label): Promise<Label | null> {
 
     // Generate identifier for new label
     if (!label.id) {
         label.id = crypto.randomUUID();
     }
 
-    return labelsDb.updateAsync({ id: label.id }, { $set: label }, { upsert: true, returnUpdatedDocs: true })
-        .then((res) => {
-            sendStorageSubscriptionEvent({              // Notify registered clients
-                action: SubscriptionEventAction.UPSERT,
-                storage: StorageKind.LABELS,
-                newData: label // TODO: != res.affectedDocuments, hmm
-            });
+    const res      = await labelsDb.updateAsync({ id: label.id }, { $set: label }, { upsert: true, returnUpdatedDocs: true });
+    const affected = res.affectedDocuments ? res.affectedDocuments as unknown as Label : null;
 
-            return {
-                success: true,
-                message: "",
-                document: res.affectedDocuments
-            };
-        })
-        .catch((err) => {
-            return {
-                success: false,
-                message: err,
-                document: null
-            };  // TODO: Does this return work?
+    if (affected) {
+        sendStorageSubscriptionEvent({              // Notify registered clients
+            action: SubscriptionEventAction.UPSERT,
+            storage: StorageKind.LABELS,
+            newData: affected
         });
+    }
+
+    return affected;
 
 }
 
 /**
  * Inserts new or updates existing labels
+ * @throws Throws Exception on failure
  * @param labels Labels to upsert. Leave id field of new labels empty
  * @returns
  */
-export async function upsertLabels(labels: Label[]) {
+export async function upsertLabels(labels: Label[]): Promise<void> {
 
     // Call upsertLabel for every label and await all resulting promises
-    return Promise.all(labels.map((e) => upsertLabel(e)))
-        .then((res) => {
-            return {
-                success: true,
-                message: "",
-                document: res.map((e) => e.document)
-            };
-        })
-        .catch((err) => {
-            return {
-                success: false,
-                message: err,
-                document: null
-            };  // TODO: Does this return work?
-        });
+    Promise.all(labels.map((e) => upsertLabel(e)));
 
 }
 
 
 /**
  * Removes label
+ * @throws Throws Exception on failure
  * @param labelID Label ID to remove
  * @returns
  */
-function removeLabel(labelID: string) {
+async function removeLabel(labelID: string): Promise<void> {
 
-    return labelsDb.removeAsync({ id: labelID }, {})
-        .then((res) => {
-            sendStorageSubscriptionEvent({              // Notify registered clients
-                action: SubscriptionEventAction.DELETE,
-                storage: StorageKind.LABELS,
-                newData: { id: labelID }
-            });
+    await labelsDb.removeAsync({ id: labelID }, {});
 
-            return {
-                success: true,
-                message: ""
-            };
-        })
-        .catch((err) => {
-            return {
-                success: false,
-                message: err
-            };  // TODO: Does this return work?
-        });
+    sendStorageSubscriptionEvent({              // Notify registered clients
+        action: SubscriptionEventAction.DELETE,
+        storage: StorageKind.LABELS,
+        newData: { id: labelID }
+    });
 
 }
 
 /**
  * Removes list of labels
+ * @throws Throws Exception on failure
  * @param labelIDs Labels to remove
  * @returns
  */
-export async function removeLabels(labelIDs: string[]) {
+export async function removeLabels(labelIDs: string[]): Promise<void> {
 
     // Call removeLabel for every label and await all resulting promises
-    return Promise.all(labelIDs.map((e) => removeLabel(e)))
-        .then((res) => {
-            return {
-                success: true,
-                message: ""
-            };
-        })
-        .catch((err) => {
-            return {
-                success: false,
-                message: err
-            };  // TODO: Does this return work?
-        });
+    await Promise.all(labelIDs.map((e) => removeLabel(e)));
 
 }
 
@@ -164,118 +121,75 @@ export async function getAllLabels(): Promise<Label[]> {
 
 /**
  * Inserts new or updates existing category
+ * @throws Throws Exception on failure
  * @param category Category to upsert. Leave id field empty to insert new category
  * @returns
  */
-function upsertLabelCategory(category: Category) {
+async function upsertLabelCategory(category: Category): Promise<Category | null> {
 
     // Generate identifier for new category
     if (!category.id) {
         category.id = crypto.randomUUID();
     }
 
-    return labelCategoriesDb.updateAsync({ id: category.id }, { $set: category }, { upsert: true, returnUpdatedDocs: true })
-        .then((res) => {
-            sendStorageSubscriptionEvent({              // Notify registered clients
-                action: SubscriptionEventAction.UPSERT,
-                storage: StorageKind.LABEL_CATEGORIES,
-                newData: category // TODO: != res.affectedDocuments, hmm
-            });
+    const res      = await labelCategoriesDb.updateAsync({ id: category.id }, { $set: category }, { upsert: true, returnUpdatedDocs: true });
+    const affected = res.affectedDocuments ? res.affectedDocuments as unknown as Category : null;
 
-            return {
-                success: true,
-                message: "",
-                document: res.affectedDocuments
-            };
-        })
-        .catch((err) => {
-            return {
-                success: false,
-                message: err,
-                document: null
-            };  // TODO: Does this return work?
+    if (affected) {
+        sendStorageSubscriptionEvent({              // Notify registered clients
+            action: SubscriptionEventAction.UPSERT,
+            storage: StorageKind.LABEL_CATEGORIES,
+            newData: affected
         });
+    }
+
+    return affected;
 
 }
 
 /**
  * Inserts new or updates existing categories
+ * @throws Throws Exception on failure
  * @param categories Categories to upsert. Leave id field of new categories empty
  * @returns
  */
-export async function upsertLabelCategories(categories: Category[]) {
+export async function upsertLabelCategories(categories: Category[]): Promise<void> {
 
     // Call upsertLabelCategory for every category and await all resulting promises
-    await Promise.all(categories.map((e) => upsertLabelCategory(e)))
-        .then((res) => {
-            return {
-                success: true,
-                message: "",
-                //document: res.affectedDocuments
-            };
-        })
-        .catch((err) => {
-            return {
-                success: false,
-                message: err,
-                document: null
-            };  // TODO: Does this return work?
-        });
+    await Promise.all(categories.map((e) => upsertLabelCategory(e)));
 
 }
 
 /**
  * Removes category
+ * @throws Throws Exception on failure
  * @param categoryID Category ID to remove
  * @returns
  */
-function removeLabelCategory(categoryID: string) {
+async function removeLabelCategory(categoryID: string): Promise<void> {
 
-    return labelCategoriesDb.removeAsync({ id: categoryID }, {})
-        .then((res) => {
-            sendStorageSubscriptionEvent({              // Notify registered clients
-                action: SubscriptionEventAction.DELETE,
-                storage: StorageKind.LABEL_CATEGORIES,
-                newData: { id: categoryID }
-            });
+    await labelCategoriesDb.removeAsync({ id: categoryID }, {});
 
-            return {
-                success: true,
-                message: ""
-            };
-        })
-        .catch((err) => {
-            return {
-                success: false,
-                message: err
-            };  // TODO: Does this return work?
-        });
+    sendStorageSubscriptionEvent({              // Notify registered clients
+        action: SubscriptionEventAction.DELETE,
+        storage: StorageKind.LABEL_CATEGORIES,
+        newData: { id: categoryID }
+    });
 
-    // TODO: Delete labels referencing this category
+    // TODO: Delete labels referencing this category, currently only done by dataCleanup, right?
 
 }
 
 /**
  * Removes list of categories
+ * @throws Throws Exception on failure
  * @param categoryIDs Labels to remove
  * @returns
  */
-export async function removeLabelCategories(categoryIDs: string[]) {
+export async function removeLabelCategories(categoryIDs: string[]): Promise<void> {
 
     // Call removeLabelCategory for every category and await all resulting promises
-    return Promise.all(categoryIDs.map((e) => removeLabelCategory(e)))
-        .then((res) => {
-            return {
-                success: true,
-                message: ""
-            };
-        })
-        .catch((err) => {
-            return {
-                success: false,
-                message: err
-            };  // TODO: Does this return work?
-        });
+    await Promise.all(categoryIDs.map((e) => removeLabelCategory(e)));
 
 }
 

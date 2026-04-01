@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:23:26
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 19:16:22
+ * Last Modified: 2026-04-01 18:30:34
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,13 +15,14 @@
  */
 
 
+import { ApiResponse } from "~/model/api";
 import { saveImage, imgCategory } from "~/server/utils/useImagesStorage";
 
 
 /**
  * This API route accepts an image upload for a piece of clothing and returns a file path
  * Params: { type: string, file: MultiPartData }
- * Returns: string
+ * Returns: filePath
  */
 
 
@@ -29,7 +30,7 @@ import { saveImage, imgCategory } from "~/server/utils/useImagesStorage";
 
 
 // This function is executed when this API route is called
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<ApiResponse<{ filePath: string }>> => {
 
     // Get image from form data
     const formData = await readMultipartFormData(event);
@@ -43,7 +44,14 @@ export default defineEventHandler(async (event) => {
 
     const file = formData[0];
 
-    console.debug(apiLogPrefix(event), "Received request");
+    if (!file) {
+        throw createError({
+            statusCode: 500,
+            statusMessage: "Failed to extract file from form data!",
+        });
+    }
+
+    console.debug(getApiLogPrefix(event), "Received request");
 
     // Validate file size
     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB in bytes
@@ -66,18 +74,12 @@ export default defineEventHandler(async (event) => {
     }
 
     // Save image
-    const filePath = await saveImage(imgCategory.clothing, file.data) // Type clothing is hard coded since this route is (currently) exclusively meant for clothes
-        .catch(() => {
-            throw createError({
-                statusCode: 500,
-                statusMessage: "Failed to upload image!"
-            });
-        });
+    return await getApiResponse<{ filePath: string }>(async () => {
+        const filePath = await saveImage(imgCategory.clothing, file.data); // Type clothing is hard coded since this route is (currently) exclusively meant for clothes
 
-    const res = {
-        filePath: filePath
-    };
-
-    return res;
+        return {
+            filePath: filePath
+        };
+    });
 
 });

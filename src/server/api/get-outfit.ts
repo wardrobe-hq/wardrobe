@@ -4,7 +4,7 @@
  * Created Date: 2025-09-10 18:51:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 19:15:47
+ * Last Modified: 2026-04-01 18:30:18
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,18 +15,20 @@
  */
 
 
+import { ApiResponse } from "~/model/api";
+import { Outfit } from "~/model/item";
 import { getOutfit } from "~/server/utils/useOutfitsDb";
 
 
 /**
  * This API route gets details for a stored clothing and returns them
  * Params: { id: string }
- * Returns: Outfit?
+ * Returns: Outfit | null
  */
 
 
 // This function is executed when this API route is called
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<ApiResponse<Outfit>> => {
 
     // Read body of the request we received
     const params = await readBody(event);
@@ -38,11 +40,13 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    console.debug(apiLogPrefix(event), `Received request for id '${params.id}'...`);
+    console.debug(getApiLogPrefix(event), `Received request for id '${params.id}'...`);
 
     // Ask db helper to retrieve item
-    const outfit = await getOutfit(params.id);
+    return await getApiResponse<Outfit>(async () => {
+        const outfit = await getOutfit(params.id);
 
-    return outfit ? outfit[0] : null;
+        return outfit && outfit[0] ? outfit[0] : null;
+    });
 
 });

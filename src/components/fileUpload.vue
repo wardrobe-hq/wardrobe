@@ -5,7 +5,7 @@
  * Created Date: 2025-12-06 19:23:27
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-24 18:48:35
+ * Last Modified: 2026-04-01 18:29:39
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -54,7 +54,7 @@
             const resBody = await sendImageToServer(file);
 
             // Emit uploadSuccess event for parent to listen for
-            emit("uploadSuccess", resBody.filePath);
+            emit("uploadSuccess", resBody.document?.filePath);
 
         } catch(err) {
             throw("Failed to upload image: " + err);

@@ -4,7 +4,7 @@
  * Created Date: 2026-01-23 22:00:18
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 15:51:49
+ * Last Modified: 2026-04-01 18:33:00
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -15,6 +15,7 @@
  */
 
 
+import type { ApiResponse } from "~/model/api";
 import type { ServerSettings } from "~/model/storage";
 import type { WeatherData } from "~/model/weather";
 
@@ -25,8 +26,8 @@ import type { WeatherData } from "~/model/weather";
  */
 export async function getUUIDFromServer(): Promise<string> {
     const res = await fetch("/api/generate-uuid");
-
-    return (await res.text()); // TODO: Do I want to catch any exception here? If ID couldn't be generated, requesting element should not get created anyway
+    const resBody: ApiResponse<string> = await res?.json();
+    return resBody.document!;
 }
 
 
@@ -102,10 +103,10 @@ export async function getWeatherFromServer() {
             })
         });
 
-        const resBody = await res?.json();
+        const resBody: ApiResponse<WeatherData> = await res?.json();
 
         if (res.ok) {
-            response.weather = resBody as WeatherData;
+            response.weather = resBody.document;
         } else {
             response.error = resBody.message;
         }

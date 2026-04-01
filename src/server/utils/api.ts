@@ -1,5 +1,5 @@
 /*
- * File: utils.ts
+ * File: api.ts
  * Project: wardrobe
  * Created Date: 2026-03-27 16:50:16
  * Author: 3urobeat
@@ -16,6 +16,7 @@
 
 
 import { IncomingMessage } from "http";
+import { ApiResponse } from "~/model/api";
 
 
 /**
@@ -33,6 +34,40 @@ export function getIpFromRequest(req: IncomingMessage) {
  * @param event Incoming request event
  * @returns String to be used as log message prefix
  */
-export function apiLogPrefix(event: any) {
+export function getApiLogPrefix(event: any) {
     return `[API] ${event.node.req.method} '${event.node.req.url}' from ${getIpFromRequest(event.node.req)}:`;
+}
+
+
+/**
+ * Constructs an API response with generic document content of type T on success or error message on failure
+ * @param cb Async function that returns data of type T to send
+ * @returns Formatted ApiResponse
+ */
+export async function getApiResponse<T>(cb: () => Promise<T | null>): Promise<ApiResponse<T>> {
+
+    const res: ApiResponse<T> = {
+        success: false,
+        message: null,
+        document: null
+    }
+
+    try {
+        res.document = await cb();
+        res.success  = true;
+    } catch (err) {
+        console.error(`[API] getApiResponse Error:`, err);
+        //console.trace();
+        res.message = String(err);          // TODO: Abstract error message to avoid potential security risk by client getting some kind of server environment information?
+        res.success = false;
+
+        //  TODO
+        /* throw createError({
+            statusCode: 500,
+            statusMessage: "No matching image found"
+        }); */
+    }
+
+    return res;
+
 }

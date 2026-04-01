@@ -4,7 +4,7 @@
  * Created Date: 2026-03-23 21:34:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-31 22:34:10
+ * Last Modified: 2026-04-01 18:29:43
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -15,11 +15,16 @@
  */
 
 
-import { SubscriptionEventAction, type StorageSubscriptionEvent } from "~/model/api";
+import { SubscriptionEventAction, type ApiResponse, type StorageSubscriptionEvent } from "~/model/api";
 import type { Clothing, Outfit } from "~/model/item";
 import type { Label } from "~/model/label";
 import type { Category } from "~/model/label-category";
-import { defaultServerSettings, StorageKind, type CachedImage, type ServerSettings, type StorageKindDataMap } from "~/model/storage";
+import { StorageKind, type CachedImage, type ServerSettings, type StorageKindDataMap } from "~/model/storage";
+
+
+/**
+ * Implements & Abstracts all storage related interactions through API with server
+ */
 
 
 // The type of storage kinds we want to cache here. They all have an ID prop, which is used for add/update/remove actions
@@ -96,30 +101,46 @@ export async function initGlobalCache()  {
         useFetch("/api/get-all-label-categories"),
         useFetch("/api/get-settings")
     ]);
+    // TODO: Error handling
 
     cachedImages     = new Cache([]);
-    storedLabels     = new Cache(labels.data.value as Label[]);
-    storedCategories = new Cache(categories.data.value!);
+    storedLabels     = new Cache(labels.data.value?.document as Label[]);
+    storedCategories = new Cache(categories.data.value?.document!);
 
-    storedServerSettings.value = settings.data.value!;
+    storedServerSettings.value = settings.data.value?.document!;
 }
 // TODO: SSR?
 
 
 /**
- * Sends API request to server and returns parsed JSON response
+ * Sends raw API request to server and returns raw response
+ * @param route Route to query
+ * @param headers Optional: Headers to set
+ * @param data Optional: Request body to pass
+ * @returns Promise resolving with response
+ */
+async function sendApiRequestRaw(route: string, headers?: HeadersInit, body?: any) {
+    return await fetch("/api/" + route, {
+        method: "POST",
+        headers: headers,
+        body: body
+    });
+}
+
+/**
+ * Sends API request with optional JSON data to server and returns parsed JSON response
  * @param route Route to query
  * @param data Optional: JSON data to pass
  * @returns Promise resolving with parsed JSON response
  */
-async function sendApiRequest(route: string, data?: object): Promise<any> {
-    const res = await fetch("/api/" + route, {
-        method: "POST",
-        headers: {
+async function sendApiRequest(route: string, data?: object): Promise<any> { // TODO: Can I infer the return type from route like useFetch does?
+    const res = await sendApiRequestRaw(
+        route,
+        {
             "Content-Type": "application/json"
         },
-        body: data ? JSON.stringify(data) : undefined
-    })
+        data ? JSON.stringify(data) : undefined
+    );
 
     return await res.json();
 }
@@ -178,7 +199,7 @@ export function handleCacheSubscriptionEvent(event: StorageSubscriptionEvent) {
     -------------------- CLOTHES --------------------
 */
 
-export async function getAllClothesFromServer(): Promise<Clothing[]> {
+export async function getAllClothesFromServer(): Promise<ApiResponse<Clothing[]>> {
     /* if (!cachedClothes) {
         cachedClothes = new Cache([]);          // Asynchronously fill cache - No SSR :(
         sendApiRequest("get-all-clothes").then((res) => cachedClothes.data.value = res);
@@ -188,15 +209,15 @@ export async function getAllClothesFromServer(): Promise<Clothing[]> {
     return (await useFetch("/api/get-all-clothes")).data.value! // SSR
 }
 
-export async function getClothingFromServer(id: string): Promise<Clothing> {
+export async function getClothingFromServer(id: string): Promise<ApiResponse<Clothing>> {
     return await sendApiRequest("get-clothing", { id: id });
 }
 
-export async function setClothingToServer(data: Clothing)/* : Promise<ApiResponse> */ {
+export async function setClothingToServer(data: Clothing): Promise<ApiResponse<Clothing>> {
     return await sendApiRequest("set-clothing", { clothing: data });
 }
 
-export async function rmClothingToServer(id: string)/* : Promise<ApiResponse> */ {
+export async function rmClothingToServer(id: string): Promise<ApiResponse<never>> {
     return await sendApiRequest("rm-clothing", { id: id });
 }
 
@@ -205,7 +226,7 @@ export async function rmClothingToServer(id: string)/* : Promise<ApiResponse> */
     -------------------- OUTFITS --------------------
 */
 
-export async function getAllOutfitsFromServer(): Promise<Outfit[]> {
+export async function getAllOutfitsFromServer(): Promise<ApiResponse<Outfit[]>> {
     /* if (!cachedOutfits) {
         cachedOutfits = new Cache([]);          // Asynchronously fill cache - No SSR :(
         sendApiRequest("/api/get-all-outfits").then((res) => cachedOutfits.data.value = res);
@@ -215,15 +236,15 @@ export async function getAllOutfitsFromServer(): Promise<Outfit[]> {
     return (await useFetch("/api/get-all-outfits")).data.value!; // SSR
 }
 
-export async function getOutfitFromServer(id: string): Promise<Outfit> {
+export async function getOutfitFromServer(id: string): Promise<ApiResponse<Outfit>> {
     return await sendApiRequest("get-outfit", { id: id });
 }
 
-export async function setOutfitToServer(data: Outfit)/* : Promise<ApiResponse> */ {
+export async function setOutfitToServer(data: Outfit): Promise<ApiResponse<Outfit>> {
     return await sendApiRequest("set-outfit", { outfit: data });
 }
 
-export async function rmOutfitToServer(id: string)/* : Promise<ApiResponse> */ {
+export async function rmOutfitToServer(id: string): Promise<ApiResponse<never>> {
     return await sendApiRequest("rm-outfit", { id: id });
 }
 
@@ -240,7 +261,7 @@ export function getAllLabelCategoriesFromServer(): Ref<Category[]> {
     return storedCategories.data;
 }
 
-export async function setCategoriesAndLabelsToServer(categoryData: Category[] | undefined, labelsData: Label[] | undefined)/* : Promise<ApiResponse> */ {
+export async function setCategoriesAndLabelsToServer(categoryData: Category[] | undefined, labelsData: Label[] | undefined): Promise<ApiResponse<never>> {
     const resBody = await sendApiRequest("set-labels", {
         categories: categoryData,
         labels: labelsData
@@ -254,7 +275,7 @@ export async function setCategoriesAndLabelsToServer(categoryData: Category[] | 
     return resBody;
 }
 
-export async function rmLabelsToServer(categoryIDs: string[] | undefined, labelIDs: string[] | undefined)/* : Promise<ApiResponse> */ {
+export async function rmLabelsToServer(categoryIDs: string[] | undefined, labelIDs: string[] | undefined): Promise<ApiResponse<never>> {
     const resBody = await sendApiRequest("rm-labels", {
         categoryIDs: categoryIDs,
         labelIDs: labelIDs
@@ -274,10 +295,10 @@ export async function rmLabelsToServer(categoryIDs: string[] | undefined, labelI
 */
 
 export function getServerSettingsFromServer(): Ref<ServerSettings> {
-    return storedServerSettings; // TODO: Error handling
+    return storedServerSettings;
 }
 
-export async function setServerSettingsToServer(data: ServerSettings)/* : Promise<ApiResponse> */ {
+export async function setServerSettingsToServer(data: ServerSettings): Promise<ApiResponse<never>> {
     const resBody = await sendApiRequest("set-settings", data);
 
     if (resBody.success) {
@@ -304,19 +325,19 @@ export async function getImageFromServer(imgPath: string, scaleToWidth: number |
     }
 
     // Fetch image from server
-    const resBody: CachedImage = await sendApiRequest("get-image", {
+    const resBody: ApiResponse<CachedImage> = await sendApiRequest("get-image", {
         filePath: imgPath,
         width: scaleToWidth
     });
 
     // Add to cache
-    const cacheLength = cachedImages.add(resBody);
+    const cacheLength = cachedImages.add(resBody.document!);
     console.debug(`[DEBUG] getImageFromServer: Fetched image '${imgPath}' from server. Image cache has ${cacheLength} entries now.`);
 
     return cachedImages.data.value[cacheLength - 1]!;
 }
 
-export async function sendImageToServer(file: File)/* : Promise<ApiResponse> */ {
+export async function sendImageToServer(file: File): Promise<ApiResponse<{ filePath: string }>> {
 
     // Construct form to post
     const formData = new FormData();
@@ -324,10 +345,7 @@ export async function sendImageToServer(file: File)/* : Promise<ApiResponse> */ 
     //formData.append("imgType", "clothing"); // TODO: Image type is hardcoded
 
     // Attempt to post file to API
-    const res = await fetch("/api/set-clothing-image", {
-        method: "POST",
-        body: formData
-    });
+    const res = await sendApiRequestRaw("set-clothing-image", undefined, formData);
 
     if (!res.ok) {
         throw("Failed to upload image: " + res.statusText);

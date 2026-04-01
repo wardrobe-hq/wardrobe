@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-31 22:12:05
+ * Last Modified: 2026-04-01 18:32:46
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -20,6 +20,7 @@ import sharp from "sharp";
 import { sendStorageSubscriptionEvent } from "./useStorage";
 import { SubscriptionEventAction } from "~/model/api";
 import { StorageKind } from "~/model/storage";
+
 
 // Use images storage - storage bucket is defined in nuxt.config.ts
 const imagesStorage = useStorage("images");
@@ -78,6 +79,7 @@ export async function scaleImage(img: Buffer<ArrayBufferLike>, width: number, on
 
 /**
  * Saves an image to the image storage
+ * @throws Throws Exception on failure
  * @param category Type of image, used as directory name in storage
  * @param fileBuffer File buffer to save
  * @returns Path of image in storage
@@ -85,30 +87,23 @@ export async function scaleImage(img: Buffer<ArrayBufferLike>, width: number, on
 export async function saveImage(category: imgCategory, fileBuffer: Buffer<ArrayBufferLike>): Promise<string> {
     if (!fileBuffer) throw("File parameter is required");
 
-    try {
+    // Calculate hash from buffer
+    const hash = crypto.createHash("sha256");
+    hash.update(fileBuffer);
 
-        // Calculate hash from buffer
-        const hash = crypto.createHash("sha256");
-        hash.update(fileBuffer);
+    // Save file with hash as name
+    const fileName = hash.digest("hex");
+    const path = `${category}/${fileName}`;
+    await imagesStorage.setItemRaw(path, fileBuffer); // TODO: Image type is hardcoded
 
-        // Save file with hash as name
-        const fileName = hash.digest("hex");
-        const path = `${category}/${fileName}`;
-        await imagesStorage.setItemRaw(path, fileBuffer); // TODO: Image type is hardcoded
+    // Notify registered clients
+    sendStorageSubscriptionEvent({
+        action: SubscriptionEventAction.NEW,
+        storage: StorageKind.IMAGES,
+        newData: { id: path, imgBlob: null, imgWidth: undefined }   // Images are lazy loaded due to their size, won't broadcast it here
+    });
 
-        // Notify registered clients
-        sendStorageSubscriptionEvent({
-            action: SubscriptionEventAction.NEW,
-            storage: StorageKind.IMAGES,
-            newData: { id: path, imgBlob: null, imgWidth: undefined }   // Images are lazy loaded due to their size, won't broadcast it here
-        });
-
-        return path;
-
-    } catch (err) {
-        console.error("Server saveImage: Failed to upload image! " + err);
-        throw("Failed to upload file!");
-    }
+    return path;
 
 }
 
@@ -118,7 +113,7 @@ export async function saveImage(category: imgCategory, fileBuffer: Buffer<ArrayB
  * @param filePath File path of image to delete
  */
 export function deleteImage(filePath: string) {
-    imagesStorage.del(filePath); // TOOD: Handle errors? Ignore them?
+    imagesStorage.del(filePath);
 
     // Notify registered clients
     sendStorageSubscriptionEvent({

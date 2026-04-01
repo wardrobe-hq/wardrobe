@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 18:05:20
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-30 17:30:22
+ * Last Modified: 2026-04-01 18:30:14
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,6 +15,7 @@
  */
 
 
+import { ApiResponse } from "~/model/api";
 import { CachedImage } from "~/model/storage";
 import { getImage, scaleImage } from "~/server/utils/useImagesStorage";
 
@@ -27,7 +28,7 @@ import { getImage, scaleImage } from "~/server/utils/useImagesStorage";
 
 
 // This function is executed when this API route is called
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<ApiResponse<CachedImage>> => {
 
     // Read body of the request we received
     const params = await readBody(event);
@@ -39,29 +40,28 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    console.debug(apiLogPrefix(event), `Received request to retrieve image '${params.filePath}'${params.width ? " scaled to " + params.width + "px wide": ""}...`);
+    console.debug(getApiLogPrefix(event), `Received request to retrieve image '${params.filePath}'${params.width ? " scaled to " + params.width + "px wide": ""}...`);
 
     // Request item // TODO: Image access restricions?
-    let item = await getImage(params.filePath);
+    return await getApiResponse<CachedImage>(async () => {
+        let item = await getImage(params.filePath);
 
-    if (!item) {
-        throw createError({
-            statusCode: 500,
-            statusMessage: "No matching image found"
-        });
-    }
+        if (!item) {
+            throw "No matching image found";
+        }
 
-    // Scale item
-    if (params.width) {
-        item = await scaleImage(item, params.width, true);
-    }
+        // Scale item
+        if (params.width) {
+            item = await scaleImage(item, params.width, true);
+        }
 
-    const res: CachedImage = {
-        id: params.filePath,
-        imgBlob: item.toString("base64"),
-        imgWidth: params.width
-    }
+        const res: CachedImage = {
+            id: params.filePath,
+            imgBlob: item.toString("base64"),
+            imgWidth: params.width
+        }
 
-    return res;
+        return res;
+    });
 
 });

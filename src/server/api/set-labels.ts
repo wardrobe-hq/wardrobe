@@ -4,7 +4,7 @@
  * Created Date: 2025-12-08 17:43:05
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 19:16:45
+ * Last Modified: 2026-04-01 18:30:38
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,6 +15,7 @@
  */
 
 
+import { ApiResponse } from "~/model/api";
 import { upsertLabelCategories, upsertLabels } from "~/server/utils/useLabelsDb";
 
 
@@ -26,7 +27,7 @@ import { upsertLabelCategories, upsertLabels } from "~/server/utils/useLabelsDb"
 
 
 // This function is executed when this API route is called
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<ApiResponse<void>> => {
 
     // Read body of the request we received
     const params = await readBody(event);
@@ -38,21 +39,12 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    console.debug(apiLogPrefix(event), "Received request for: ", params.labels, params.categories);
+    console.debug(getApiLogPrefix(event), "Received request for: ", params.labels, params.categories);
 
     // Ask db helper to process entries
-    let categoriesRes;
-    if (params.categories) {
-        categoriesRes = await upsertLabelCategories(params.categories);
-    }
-
-    let labelsRes;
-    if (params.labels) {
-        labelsRes = await upsertLabels(params.labels);
-    }
-
-    // TODO: Process failure, return success/failure info
-
-    return labelsRes;
+    return await getApiResponse<void>(async () => {
+        await upsertLabelCategories(params.categories);
+        await upsertLabels(params.labels);
+    });
 
 });

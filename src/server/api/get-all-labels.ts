@@ -4,7 +4,7 @@
  * Created Date: 2025-09-09 16:43:11
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 19:15:30
+ * Last Modified: 2026-04-01 18:30:08
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,24 +15,24 @@
  */
 
 
+import { ApiResponse } from "~/model/api";
+import { Label } from "~/model/label";
 import { getAllLabels } from "~/server/utils/useLabelsDb";
 
 
 /**
  * This API route gets all stored labels and returns them
- * Params: {}
+ * Params:
  * Returns: Label[]
  */
 
 
 // This function is executed when this API route is called
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<ApiResponse<Label[]>> => {
 
-    console.debug(apiLogPrefix(event), "Received request");
+    console.debug(getApiLogPrefix(event), "Received request");
 
     // Ask db helper to retrieve items
-    const labels = await getAllLabels();
-
-    return labels;
+    return await getApiResponse<Label[]>(getAllLabels);
 
 });

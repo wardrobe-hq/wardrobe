@@ -4,7 +4,7 @@
  * Created Date: 2025-12-27 11:53:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 19:16:11
+ * Last Modified: 2026-04-01 18:30:30
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,6 +15,7 @@
  */
 
 
+import { ApiResponse } from "~/model/api";
 import { deleteOutfit } from "~/server/utils/useOutfitsDb";
 
 
@@ -26,7 +27,7 @@ import { deleteOutfit } from "~/server/utils/useOutfitsDb";
 
 
 // This function is executed when this API route is called
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<ApiResponse<void>> => {
 
     // Read body of the request we received
     const params = await readBody(event);
@@ -38,11 +39,9 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    console.debug(apiLogPrefix(event), "Received request for: ", params.id);
+    console.debug(getApiLogPrefix(event), "Received request for: ", params.id);
 
-    // Ask db helper to upsert entry
-    const res = await deleteOutfit(params.id);
-
-    return res;
+    // Ask db helper to delete entry
+    return await getApiResponse<void>(() => deleteOutfit(params.id));
 
 });

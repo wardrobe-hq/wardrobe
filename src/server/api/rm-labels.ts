@@ -4,7 +4,7 @@
  * Created Date: 2025-12-27 11:55:39
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 19:16:07
+ * Last Modified: 2026-04-01 18:30:28
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,6 +15,7 @@
  */
 
 
+import { ApiResponse } from "~/model/api";
 import { removeLabelCategories, removeLabels } from "~/server/utils/useLabelsDb";
 
 
@@ -26,7 +27,7 @@ import { removeLabelCategories, removeLabels } from "~/server/utils/useLabelsDb"
 
 
 // This function is executed when this API route is called
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<ApiResponse<void>> => {
 
     // Read body of the request we received
     const params = await readBody(event);
@@ -38,21 +39,13 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    console.debug(apiLogPrefix(event), "Received request for: ", params.labelIDs, params.categoryIDs);
+    console.debug(getApiLogPrefix(event), "Received request for: ", params.labelIDs, params.categoryIDs);
 
     // Ask db helper to process entries
-    let labelRmRes;
-    if (params.labelIDs) {
-        labelRmRes = await removeLabels(params.labelIDs);
-    }
+    return await getApiResponse<void>(async () => {
+        await removeLabels(params.labelIDs);
+        await removeLabelCategories(params.categoryIDs);
+    });
 
-    let categoryRmRes;
-    if (params.categoryIDs) {
-        categoryRmRes = await removeLabelCategories(params.categoryIDs);
-    }
-
-    // TODO: Process failure, return success/failure info
-
-    return labelRmRes;
 
 });
