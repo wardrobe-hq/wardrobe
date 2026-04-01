@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:54:21
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-31 21:54:39
+ * Last Modified: 2026-04-01 18:29:00
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -194,7 +194,7 @@
     });
 
     onUnmounted(() => {
-        serverSubscriptionEventStream.close();
+        if (serverSubscriptionEventStream) serverSubscriptionEventStream.close();
     });
 
 
