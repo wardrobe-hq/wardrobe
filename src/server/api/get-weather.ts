@@ -4,7 +4,7 @@
  * Created Date: 2026-02-12 17:29:11
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:30:24
+ * Last Modified: 2026-04-01 18:41:55
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -15,9 +15,9 @@
  */
 
 
-import { WeatherData } from "~/model/weather";
+import type { WeatherData } from "~/model/weather";
 import { getWeather } from "../utils/weather";
-import { ApiResponse } from "~/model/api";
+import type { ApiResponse } from "~/model/api";
 
 
 /**

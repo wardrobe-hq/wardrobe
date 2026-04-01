@@ -4,7 +4,7 @@
  * Created Date: 2025-12-31 13:03:12
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:30:16
+ * Last Modified: 2026-04-01 18:42:14
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,9 +15,9 @@
  */
 
 
-import { ApiResponse } from "~/model/api";
+import type { ApiResponse } from "~/model/api";
 import { getRegisteredJobs } from "../plugins/jobs";
-import { JobInfo } from "~/model/job";
+import type { JobInfo } from "~/model/job";
 
 
 /**

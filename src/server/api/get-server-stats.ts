@@ -4,7 +4,7 @@
  * Created Date: 2026-03-21 23:35:30
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:30:20
+ * Last Modified: 2026-04-01 18:42:10
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -15,9 +15,9 @@
  */
 
 
-import { ServerStatistics } from "~/model/statistics";
+import type { ServerStatistics } from "~/model/statistics";
 import { getServerStatistics } from "../utils/statistics";
-import { ApiResponse } from "~/model/api";
+import type { ApiResponse } from "~/model/api";
 
 
 /**

@@ -4,7 +4,7 @@
  * Created Date: 2025-09-10 16:55:08
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:30:09
+ * Last Modified: 2026-04-01 18:42:28
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,8 +15,8 @@
  */
 
 
-import { ApiResponse } from "~/model/api";
-import { Outfit } from "~/model/item";
+import type { ApiResponse } from "~/model/api";
+import type { Outfit } from "~/model/item";
 import { getOutfit } from "~/server/utils/useOutfitsDb";
 
 

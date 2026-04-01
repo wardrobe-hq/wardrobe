@@ -4,7 +4,7 @@
  * Created Date: 2025-12-27 11:55:39
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:30:28
+ * Last Modified: 2026-04-01 18:40:32
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,7 +15,7 @@
  */
 
 
-import { ApiResponse } from "~/model/api";
+import type { ApiResponse } from "~/model/api";
 import { removeLabelCategories, removeLabels } from "~/server/utils/useLabelsDb";
 
 

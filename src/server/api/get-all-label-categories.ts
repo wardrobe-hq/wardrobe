@@ -4,7 +4,7 @@
  * Created Date: 2025-09-09 22:04:46
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:30:06
+ * Last Modified: 2026-04-01 18:42:35
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,8 +15,8 @@
  */
 
 
-import { ApiResponse } from "~/model/api";
-import { Category } from "~/model/label-category";
+import type { ApiResponse } from "~/model/api";
+import type { Category } from "~/model/label-category";
 import { getAllLabelCategories } from "~/server/utils/useLabelsDb";
 
 

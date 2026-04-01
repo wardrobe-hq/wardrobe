@@ -4,7 +4,7 @@
  * Created Date: 2026-03-22 12:21:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-27 18:13:45
+ * Last Modified: 2026-04-01 18:41:51
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -19,7 +19,7 @@ import path from "path";
 import { readdir, stat } from "fs/promises";
 import util from 'node:util';
 import child_process from 'node:child_process';
-import { StorageSubscriptionEvent, SubscriptionEventType } from "~/model/api";
+import { type StorageSubscriptionEvent, SubscriptionEventType } from "~/model/api";
 import { SubscriptionUpdateObserver } from "../updateObserver";
 
 const exec = util.promisify(child_process.exec);

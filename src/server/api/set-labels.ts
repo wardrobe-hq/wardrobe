@@ -4,7 +4,7 @@
  * Created Date: 2025-12-08 17:43:05
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:30:38
+ * Last Modified: 2026-04-01 18:39:26
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,7 +15,7 @@
  */
 
 
-import { ApiResponse } from "~/model/api";
+import type { ApiResponse } from "~/model/api";
 import { upsertLabelCategories, upsertLabels } from "~/server/utils/useLabelsDb";
 
 

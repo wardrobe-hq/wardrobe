@@ -4,7 +4,7 @@
  * Created Date: 2026-03-26 18:53:29
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:32:57
+ * Last Modified: 2026-04-01 18:38:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -16,7 +16,7 @@
 
 
 import { IncomingMessage, ServerResponse } from "http";
-import { SubscriptionEvent } from "~/model/api";
+import type { SubscriptionEvent } from "~/model/api";
 
 
 type UpdateFunction<UpdateData> = (arg0: UpdateData) => void;

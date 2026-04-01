@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 18:05:20
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:30:14
+ * Last Modified: 2026-04-01 18:42:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,8 +15,8 @@
  */
 
 
-import { ApiResponse } from "~/model/api";
-import { CachedImage } from "~/model/storage";
+import type { ApiResponse } from "~/model/api";
+import type { CachedImage } from "~/model/storage";
 import { getImage, scaleImage } from "~/server/utils/useImagesStorage";
 
 

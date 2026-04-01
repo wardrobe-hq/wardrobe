@@ -4,7 +4,7 @@
  * Created Date: 2025-09-09 16:43:11
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:30:08
+ * Last Modified: 2026-04-01 18:42:31
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,8 +15,8 @@
  */
 
 
-import { ApiResponse } from "~/model/api";
-import { Label } from "~/model/label";
+import type { ApiResponse } from "~/model/api";
+import type { Label } from "~/model/label";
 import { getAllLabels } from "~/server/utils/useLabelsDb";
 
 

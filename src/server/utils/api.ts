@@ -4,7 +4,7 @@
  * Created Date: 2026-03-27 16:50:16
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 19:23:20
+ * Last Modified: 2026-04-01 18:38:16
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -16,7 +16,7 @@
 
 
 import { IncomingMessage } from "http";
-import { ApiResponse } from "~/model/api";
+import type { ApiResponse } from "~/model/api";
 
 
 /**

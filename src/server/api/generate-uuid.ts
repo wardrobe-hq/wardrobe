@@ -4,7 +4,7 @@
  * Created Date: 2026-01-23 21:48:30
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:30:02
+ * Last Modified: 2026-04-01 18:37:58
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -16,7 +16,7 @@
 
 
 import { randomUUID } from "crypto";
-import { ApiResponse } from "~/model/api";
+import type { ApiResponse } from "~/model/api";
 
 
 /**

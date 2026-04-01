@@ -4,7 +4,7 @@
  * Created Date: 2026-02-14 19:44:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:32:53
+ * Last Modified: 2026-04-01 18:38:01
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -17,7 +17,7 @@
 
 import nedb from "@seald-io/nedb";
 import { SubscriptionEventAction } from "~/model/api";
-import { defaultServerSettings, ServerSettings, StorageKind } from "~/model/storage";
+import { defaultServerSettings, type ServerSettings, StorageKind } from "~/model/storage";
 
 
 // Load database
