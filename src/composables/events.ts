@@ -4,7 +4,7 @@
  * Created Date: 2026-02-11 21:31:19
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-30 16:47:10
+ * Last Modified: 2026-04-03 14:09:38
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -16,13 +16,16 @@
 
 
 import type { HookResult } from "nuxt/schema";
+import type { NotificationData } from "~/model/notification";
 
 
 // Declare our custom hooks
 declare module "#app" {
     interface RuntimeNuxtHooks {
-        "app:user:changesMade": (dirty: boolean | undefined) => HookResult;
+        "app:user:changesMade": (dirty: boolean) => HookResult;
         "app:user:settingsSaved": () => HookResult;
+        "app:notification:show": (data: NotificationData | undefined) => HookResult;
+        "app:notification:action": (actionLabel: string | undefined) => HookResult;
     }
 }
 
@@ -41,4 +44,22 @@ export function emitChangesMadeEvent(val: boolean = true) {
  */
 export function emitSettingsSavedEvent() {
     useNuxtApp().callHook("app:user:settingsSaved");
+}
+
+
+/**
+ * Notifies notification component to show
+ * @param data Notification data to show. Pass 'undefined' to force-hide any currently shown notification
+ */
+export function emitNotificationShowEvent(data: NotificationData | undefined) {
+    useNuxtApp().callHook("app:notification:show", data);
+}
+
+
+/**
+ * Notifies listeners that action button in notification was pressed
+ * @param actionLabel Optional: Text of pressed action button
+ */
+export function emitNotificationActionEvent(actionLabel: string | undefined) {
+    useNuxtApp().callHook("app:notification:action", actionLabel);
 }

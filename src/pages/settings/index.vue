@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:51:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:29:59
+ * Last Modified: 2026-04-03 15:55:09
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -286,6 +286,26 @@
                     </div>
                 </div>
 
+                <!-- Debug -->
+                <DevOnly>
+                    <div class="shrink-0 px-2 m-2 rounded-xl shadow-md bg-bg-field-light dark:bg-bg-field-dark overflow-y-auto">
+                        <div class="flex gap-x-2 mt-2 mb-3 ml-2 h-6">
+                            <div class="custom-label-icon-only"> <!-- This extra div just for the icon to scale correctly is stupid -->
+                                <PhWrench class="text-text-light dark:text-text-dark" />
+                            </div>
+                            <label class="custom-label-primary py-0! px-2!">Debug</label>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-x-2 gap-y-0.5 mx-1">
+
+                            <ClientOnly>
+                                <button class="custom-button-primary" @click="useNuxtApp().callHook('app:notification:show', { type: NotificationType.INFO, title: 'Test!', message: 'Hello!', actionLabel: 'No, thanks' })">Show Notification</button>
+                            </ClientOnly>
+
+                        </div>
+                    </div>
+                </DevOnly>
+
             </div>
         </div>
 
@@ -294,7 +314,7 @@
 
 
 <script setup lang="ts">
-    import { PhArrowClockwise, PhCheck, PhCloud, PhCoatHanger, PhCpu, PhGear, PhHourglassMedium } from "@phosphor-icons/vue";
+    import { PhArrowClockwise, PhCheck, PhCloud, PhCoatHanger, PhCpu, PhGear, PhHourglassMedium, PhWrench } from "@phosphor-icons/vue";
     import TitleBarBasic from "~/components/titleBarBasic.vue";
     import { defaultUXSettings, type ServerSettings, type UXSettings } from "~/model/storage";
     import { responseIndicatorFailure, responseIndicatorSuccess } from "~/composables/responseIndicator";
@@ -305,6 +325,7 @@
     import packageJson from "~/../package.json";
     import { getServerSettingsFromServer, setServerSettingsToServer } from "~/composables/storage";
     import type { ApiResponse } from "~/model/api";
+    import { NotificationType } from "~/model/notification";
 
     const i18n = useI18n();
 

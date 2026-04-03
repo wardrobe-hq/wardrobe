@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:54:21
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:29:00
+ * Last Modified: 2026-04-03 14:28:06
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -124,6 +124,9 @@
             id="color-border"
             class="fixed left-0 lg:left-52 top-15 bottom-0 right-0 border-8 border-transparent rounded-2xl duration-500 overflow-auto"
         >
+            <!-- Global notification component -->
+            <Notification class="fixed top-25 right-10" />
+
             <div id="page-content" class="p-1 md:px-5">
                 <NuxtPage></NuxtPage> <!-- Links to index.vue -->
             </div>
@@ -138,6 +141,7 @@
     import packagejson from "../package.json";
     import type { PageProperties } from "./model/page";
     import TextOverflowAutoScroll from "./components/textOverflowAutoScroll.vue";
+    import Notification from './components/notification.vue';
     import { handleCacheSubscriptionEvent } from "./composables/storage";
     import { SubscriptionEventType, type StorageSubscriptionEvent, type SubscriptionEvent } from "./model/api";
 
@@ -156,7 +160,7 @@
 
     // Handle changesMade event from pages
     useNuxtApp().hook("app:user:changesMade", (val: boolean = true) => {
-        console.debug(`[DEBUG] Received changesMade = '${val}' event!'`)
+        console.debug(`[DEBUG] Received changesMade = '${val}' event!`)
         changesMade = val;
     });
 
