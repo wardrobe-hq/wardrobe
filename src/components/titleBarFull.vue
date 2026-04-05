@@ -5,7 +5,7 @@
  * Created Date: 2025-09-17 17:25:36
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-29 15:51:12
+ * Last Modified: 2026-04-05 18:43:24
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -20,10 +20,10 @@
 <template>
 
     <!-- TODO: Blur only size of components -->
-    <div id="fixed-title" class="fixed flex flex-col right-0 top-20.5 w-full text-nowrap select-none p-1.5 px-3 md:mx-4 rounded-2xl backdrop-blur-lg">
+    <div id="fixed-title" class="fixed flex flex-col right-0 top-20.5 w-full text-nowrap select-none px-3 md:px-6">
 
         <!-- Title Bar which is always displayed -->
-        <div class="flex w-full justify-between md:justify-end gap-x-4">
+        <div class="flex w-full justify-between md:justify-end gap-x-4 p-1.5 rounded-2xl backdrop-blur-lg">
             <!-- Sort dropdown -->
             <div class="flex min-w-18 sm:min-w-32 justify-end rounded-xl shadow-md select-none bg-bg-field-light dark:bg-bg-field-dark">
                 <select class="w-full px-2 m-0.5" v-model="selectedSort">
