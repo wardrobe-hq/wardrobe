@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:51:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-03 15:55:09
+ * Last Modified: 2026-04-05 20:37:48
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -110,7 +110,7 @@
                         <input id="locationLon" type="number" class="custom-input-secondary w-1/2 h-6! px-2!" placeholder="13.405" v-model.trim="localServerSettings.location.lon" :disabled="localServerSettings.location.useGeolocation">
 
                         <label class="custom-label-secondary text-nowrap py-0! px-2! w-fit" for="weatherApiKey">{{ $t('settingsWeatherApiKey') }}</label>
-                        <input id="weatherApiKey" type="password" class="custom-input-secondary w-full h-6! px-2!" placeholder="W8orAGjB6NCnefMVX7bdpesKXJokemVV" v-model.trim="localServerSettings.weatherApiKey">
+                        <input id="weatherApiKey" type="password" class="custom-input-secondary w-full h-6! px-2!" placeholder="W8orAGjB6NCnefMVX7bdpesKXJokemVV" v-model.trim="localServerSettings.weatherApiKey" autocomplete="off" data-1p-ignore data-lpignore="true" data-protonpass-ignore="true" data-bwignore="true"> <!-- Disable auto-completion for various password managers -->
                     </div>
                 </div>
 
