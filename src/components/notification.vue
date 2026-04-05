@@ -5,7 +5,7 @@
  * Created Date: 2026-04-02 22:24:30
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-05 22:06:33
+ * Last Modified: 2026-04-05 22:29:13
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -121,13 +121,17 @@
             throw new Error("Notification properties title & type are not optional");
         }
 
-        console.debug(`[DEBUG] Showing notification for ${props.duration}ms:`, data);
         notificationData.value = data;
         visible.value = true;
 
-        setTimeout(() => {
-            close();
-        }, props.duration);
+        let duration = (data.customDuration == undefined ? props.duration : data.customDuration);
+        console.debug(`[DEBUG] Showing notification ${duration > 0 ? 'for ' + duration + 'ms' : 'indefinitely'}:`, data);
+
+        if (duration > 0) {
+            setTimeout(() => {
+                close();
+            }, props.duration);
+        }
     });
 
 

@@ -4,7 +4,7 @@
  * Created Date: 2026-04-03 13:31:37
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-05 22:05:25
+ * Last Modified: 2026-04-05 22:15:36
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -28,7 +28,8 @@ export type NotificationData = {
     type: NotificationType,
     title: string,
     message: string | undefined,
-    actionLabel: string | undefined
+    actionLabel?: string,
+    customDuration?: number
 }
 
 export const defaultNotificationData = { type: NotificationType.INFO, title: "", message: undefined, actionLabel: undefined } as const;

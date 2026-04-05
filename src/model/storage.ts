@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 15:21:35
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 19:04:47
+ * Last Modified: 2026-04-05 21:01:49
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -91,7 +91,8 @@ export type ServerSettings = {
         lon: number | null
     },
     weatherApiKey: string,
-    temperatureUnit: Unit
+    temperatureUnit: Unit,
+    serverSubscriptionEnabled: boolean
 
 }
 
@@ -102,7 +103,8 @@ export const defaultServerSettings: ServerSettings = {
         lon: null
     },
     weatherApiKey: "",
-    temperatureUnit: 1 // TODO: Cannot access Unit here, always causes issues with Unit being used as both a type and value in this file
+    temperatureUnit: 1, // TODO: Cannot access Unit here, always causes issues with Unit being used as both a type and value in this file
+    serverSubscriptionEnabled: true
 };
 
 
