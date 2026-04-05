@@ -5,7 +5,7 @@
  * Created Date: 2026-04-02 22:24:30
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-03 15:53:53
+ * Last Modified: 2026-04-05 22:06:33
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -165,6 +165,10 @@
             [NotificationType.INFO]: {
                 border: "border-l-4 border-blue-500",
                 text: "text-blue-500 dark:text-blue-400"
+            },
+            [NotificationType.DEBUG]: {
+                border: "border-l-4 border-cyan-500",
+                text: "text-cyan-500 dark:text-cyan-400"
             }
         };
 

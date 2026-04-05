@@ -4,7 +4,7 @@
  * Created Date: 2026-04-03 13:31:37
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-03 14:09:44
+ * Last Modified: 2026-04-05 22:05:25
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -19,7 +19,8 @@ export enum NotificationType {
     SUCCESS,
     INFO,
     WARNING,
-    ERROR
+    ERROR,
+    DEBUG
 }
 
 
