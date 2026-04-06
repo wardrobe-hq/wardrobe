@@ -4,7 +4,7 @@
  * Created Date: 2026-02-11 21:31:19
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-03 14:09:38
+ * Last Modified: 2026-04-06 21:52:58
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -25,7 +25,7 @@ declare module "#app" {
         "app:user:changesMade": (dirty: boolean) => HookResult;
         "app:user:settingsSaved": () => HookResult;
         "app:notification:show": (data: NotificationData | undefined) => HookResult;
-        "app:notification:action": (actionLabel: string | undefined) => HookResult;
+        "app:notification:action": (data: NotificationData) => HookResult;
     }
 }
 
@@ -58,8 +58,8 @@ export function emitNotificationShowEvent(data: NotificationData | undefined) {
 
 /**
  * Notifies listeners that action button in notification was pressed
- * @param actionLabel Optional: Text of pressed action button
+ * @param data Data of notification whose action button was pressed
  */
-export function emitNotificationActionEvent(actionLabel: string | undefined) {
-    useNuxtApp().callHook("app:notification:action", actionLabel);
+export function emitNotificationActionEvent(data: NotificationData) {
+    useNuxtApp().callHook("app:notification:action", data);
 }

@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:51:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-05 20:37:48
+ * Last Modified: 2026-04-06 21:50:38
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -299,7 +299,7 @@
                         <div class="grid grid-cols-2 gap-x-2 gap-y-0.5 mx-1">
 
                             <ClientOnly>
-                                <button class="custom-button-primary" @click="useNuxtApp().callHook('app:notification:show', { type: NotificationType.INFO, title: 'Test!', message: 'Hello!', actionLabel: 'No, thanks' })">Show Notification</button>
+                                <button class="custom-button-primary" @click="useNuxtApp().callHook('app:notification:show', { level: NotificationLevel.INFO, title: 'Test!', message: 'Hello!', actionLabel: 'No, thanks' })">Show Notification</button>
                             </ClientOnly>
 
                         </div>
@@ -325,7 +325,7 @@
     import packageJson from "~/../package.json";
     import { getServerSettingsFromServer, setServerSettingsToServer } from "~/composables/storage";
     import type { ApiResponse } from "~/model/api";
-    import { NotificationType } from "~/model/notification";
+    import { NotificationLevel } from "~/model/notification";
 
     const i18n = useI18n();
 

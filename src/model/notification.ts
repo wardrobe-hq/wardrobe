@@ -4,7 +4,7 @@
  * Created Date: 2026-04-03 13:31:37
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-05 22:15:36
+ * Last Modified: 2026-04-06 21:54:53
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -15,7 +15,14 @@
  */
 
 
+// Allows identification for notification types
 export enum NotificationType {
+    UNKNOWN,                // Any, potential custom, notification
+    SERVER_SUBSCRIPTION
+}
+
+
+export enum NotificationLevel {
     SUCCESS,
     INFO,
     WARNING,
@@ -26,10 +33,17 @@ export enum NotificationType {
 
 export type NotificationData = {
     type: NotificationType,
+    level: NotificationLevel,
     title: string,
     message: string | undefined,
     actionLabel?: string,
     customDuration?: number
 }
 
-export const defaultNotificationData = { type: NotificationType.INFO, title: "", message: undefined, actionLabel: undefined } as const;
+export const defaultNotificationData = {
+    type: NotificationType.UNKNOWN,
+    level: NotificationLevel.INFO,
+    title: "",
+    message: undefined,
+    actionLabel: undefined
+} as const;

@@ -5,7 +5,7 @@
  * Created Date: 2026-04-02 22:24:30
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-05 22:29:13
+ * Last Modified: 2026-04-06 21:53:49
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -38,10 +38,11 @@
 
                     <!-- Icon -->
                     <div class="" :class="themeClasses.text">
-                        <PhCheck v-if="notificationData.type === NotificationType.SUCCESS"        class="size-6" />
-                        <PhX v-else-if="notificationData.type === NotificationType.ERROR"         class="size-6" />
-                        <PhWarning v-else-if="notificationData.type === NotificationType.WARNING" class="size-6" />
-                        <PhInfo v-else-if="notificationData.type === NotificationType.INFO"       class="size-6" />
+                        <PhCheck   v-if="notificationData.level      === NotificationLevel.SUCCESS" class="size-6" />
+                        <PhX       v-else-if="notificationData.level === NotificationLevel.ERROR"   class="size-6" />
+                        <PhWarning v-else-if="notificationData.level === NotificationLevel.WARNING" class="size-6" />
+                        <PhInfo    v-else-if="notificationData.level === NotificationLevel.INFO"    class="size-6" />
+                        <PhWrench  v-else-if="notificationData.level === NotificationLevel.DEBUG"   class="size-6" />
                     </div>
 
                     <!-- Title -->
@@ -81,8 +82,8 @@
 
 
 <script setup lang="ts">
-    import { PhCheck, PhInfo, PhWarning, PhX } from '@phosphor-icons/vue';
-    import { defaultNotificationData, NotificationType, type NotificationData } from '~/model/notification';
+    import { PhCheck, PhInfo, PhWarning, PhWrench, PhX } from '@phosphor-icons/vue';
+    import { defaultNotificationData, NotificationLevel, type NotificationData } from '~/model/notification';
 
 
     // Refs
@@ -117,7 +118,7 @@
             return;
         }
 
-        if (!data.title || data.type == undefined) {
+        if (!data.title || data.level == undefined) {
             throw new Error("Notification properties title & type are not optional");
         }
 
@@ -147,36 +148,36 @@
     // Handle action button press
     function handleAction() {
         close();
-        useNuxtApp().callHook("app:notification:action", notificationData.value!.actionLabel);
+        useNuxtApp().callHook("app:notification:action", notificationData.value);
     }
 
 
     // Handle notification type
     const themeClasses = computed(() => {
         const themes = {
-            [NotificationType.SUCCESS]: {
+            [NotificationLevel.SUCCESS]: {
                 border: "border-l-4 border-green-500",
                 text: "text-green-500 dark:text-green-400"
             },
-            [NotificationType.ERROR]: {
+            [NotificationLevel.ERROR]: {
                 border: "border-l-4 border-red-500",
                 text: "text-red-500 dark:text-red-400"
             },
-            [NotificationType.WARNING]: {
+            [NotificationLevel.WARNING]: {
                 border: "border-l-4 border-yellow-500",
                 text: "text-yellow-500 dark:text-yellow-400"
             },
-            [NotificationType.INFO]: {
+            [NotificationLevel.INFO]: {
                 border: "border-l-4 border-blue-500",
                 text: "text-blue-500 dark:text-blue-400"
             },
-            [NotificationType.DEBUG]: {
+            [NotificationLevel.DEBUG]: {
                 border: "border-l-4 border-cyan-500",
                 text: "text-cyan-500 dark:text-cyan-400"
             }
         };
 
-        return themes[notificationData.value.type];
+        return themes[notificationData.value.level];
     });
 
 </script>
