@@ -37,36 +37,34 @@
     "url": "https://github.com/wardrobe-hq/wardrobe/issues"
   },
   "dependencies": {
-    "@nuxtjs/i18n": "^10.2.3",
+    "@nuxtjs/i18n": "^10.2.4",
     "@phosphor-icons/vue": "^2.2.1",
     "@seald-io/nedb": "^4.1.2",
-    "@tailwindcss/vite": "^4.2.1",
+    "@tailwindcss/vite": "^4.2.2",
     "@types/three": "^0.183.1",
     "@vueuse/components": "^14.2.1",
     "@vueuse/core": "^14.2.1",
     "@vueuse/integrations": "^14.2.1",
     "@vueuse/nuxt": "^14.2.1",
-    "canvas": "^3.2.1",
-    "nuxt": "^4.3.1",
+    "canvas": "^3.2.3",
+    "nuxt": "^4.4.2",
     "sharp": "^0.34.5",
     "sortablejs": "^1.15.7",
     "systeminformation": "^5.31.5",
-    "tailwindcss": "^4.2.1",
     "three": "^0.183.2",
     "three-stdlib": "^2.36.1",
-    "vue": "^3.5.29"
+    "vue": "^3.5.32"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@nuxt/devtools": "latest",
-    "@types/node": "^25.3.5",
-    "@typescript-eslint/parser": "^8.56.1",
+    "@types/node": "^25.5.2",
+    "@typescript-eslint/parser": "^8.58.1",
     "autoprefixer": "^10.4.27",
-    "eslint": "^10.0.3",
-    "eslint-plugin-jsdoc": "^62.7.1",
+    "eslint": "^10.2.0",
+    "eslint-plugin-jsdoc": "^62.9.0",
     "globals": "^17.4.0",
-    "postcss": "^8.5.8",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.56.1"
+    "postcss": "^8.5.9",
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^8.58.1"
   }
 }
