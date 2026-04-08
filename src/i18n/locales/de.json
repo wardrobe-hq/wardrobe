@@ -90,6 +90,9 @@
     "navbarSourceCodeLink": "Quellcode",
     "navbarLicensedUnder": "Lizensiert unter",
 
+    "serverSubscriptionConnectionLost": "Serververbindung verloren!",
+    "reloadPage": "Seite neu laden",
+
 
     "_dummy4": "-------------- Specific Pages Text --------------",
     "clothingPageEmpty": "Es ist leer hier. Möchtest du ein Kleidungsstück hinzufügen?",

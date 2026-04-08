@@ -90,6 +90,9 @@
     "navbarSourceCodeLink": "Source Code",
     "navbarLicensedUnder": "Licensed under",
 
+    "serverSubscriptionConnectionLost": "Server Connection lost!",
+    "reloadPage": "Reload Page",
+
 
     "_dummy4": "-------------- Specific Pages Text --------------",
     "clothingPageEmpty": "It's empty here. Would you like to add a piece of clothing?",

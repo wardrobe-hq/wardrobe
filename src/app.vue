@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:54:21
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-03 14:28:06
+ * Last Modified: 2026-04-08 18:06:54
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -142,8 +142,7 @@
     import type { PageProperties } from "./model/page";
     import TextOverflowAutoScroll from "./components/textOverflowAutoScroll.vue";
     import Notification from './components/notification.vue';
-    import { handleCacheSubscriptionEvent } from "./composables/storage";
-    import { SubscriptionEventType, type StorageSubscriptionEvent, type SubscriptionEvent } from "./model/api";
+    import { closeServerSubscriptionConnection, establishServerSubscriptionConnection } from "./composables/subscription";
 
     const route       = useRoute();
     let   changesMade = false;
@@ -155,7 +154,6 @@
 
     // Init global cache 'storage.ts'
     await initGlobalCache();
-    let serverSubscriptionEventStream: EventSource;
 
 
     // Handle changesMade event from pages
@@ -190,25 +188,18 @@
         script: [{ src: "/global.js" }] // Sets initial dark mode. Defined in header to fix transition load - https://stackoverflow.com/a/14416030
     });
 
-
-    // Establish server update connection
-    onBeforeMount(() => {
-        serverSubscriptionEventStream = new EventSource("/api/subscribe");
-        serverSubscriptionEventStream.addEventListener("message", handleServerSubscriptionEvent);
-    });
-
-    onUnmounted(() => {
-        if (serverSubscriptionEventStream) serverSubscriptionEventStream.close();
-    });
-
-
     // Do initial page load stuff
     updateGlobalSearchBar(useRoute().meta);
 
     onMounted(() => { // Client side only
         console.debug("Wardrobe mounted!");
         checkForUpdate();
-    })
+        establishServerSubscriptionConnection();
+    });
+
+    onUnmounted(() => {
+        closeServerSubscriptionConnection();
+    });
 
 
     // Resets and toggles global search bar visibility
@@ -235,24 +226,6 @@
         } catch (err) {
 
             console.error("checkForUpdate: Failed to check GitHub repository for an available update. " + err)
-        }
-    }
-
-    // Handles incoming messages from server's 'subscribe' API route
-    function handleServerSubscriptionEvent(msg: MessageEvent<any>) {
-        try {
-            const data = JSON.parse(msg.data) as SubscriptionEvent;
-            console.debug("[DEBUG] Incoming server subscription message:", data)
-
-            switch (data.type) {
-                case SubscriptionEventType.STORAGE:
-                    handleCacheSubscriptionEvent(data as StorageSubscriptionEvent);
-                    break;
-                default:
-                    throw("handleServerSubscriptionEvent: Unsupported server subscripton event type " + data.type)
-            }
-        } catch(err) {
-            console.error(`Failed to parse incoming message from server!`, err);
         }
     }
 
