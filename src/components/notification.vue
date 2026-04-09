@@ -5,7 +5,7 @@
  * Created Date: 2026-04-02 22:24:30
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-09 21:17:08
+ * Last Modified: 2026-04-09 21:18:11
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -65,7 +65,7 @@
 
                 <!-- Content -->
                 <div class="ml-3 flex-1 pt-0.5 w-full">
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400 whitespace-pre-line"> <!-- whitespace-pre-line preserves \n in text -->
                         {{ notificationData.message }}
                     </p>
 

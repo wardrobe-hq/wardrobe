@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:54:21
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-08 18:06:54
+ * Last Modified: 2026-04-09 21:18:16
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -143,6 +143,7 @@
     import TextOverflowAutoScroll from "./components/textOverflowAutoScroll.vue";
     import Notification from './components/notification.vue';
     import { closeServerSubscriptionConnection, establishServerSubscriptionConnection } from "./composables/subscription";
+    import { NotificationLevel } from "./model/notification";
 
     const route       = useRoute();
     let   changesMade = false;
@@ -223,9 +224,16 @@
 
             onlineVersion.value = parsed.version;
 
+            if (onlineVersion.value != packagejson.version) {
+                emitNotificationShowEvent({
+                    level: NotificationLevel.INFO,
+                    title: $t("navbarUpdateAvailable"),
+                    message: `${$t("navbarNewVersion")} ${onlineVersion.value}`
+                });
+            }
         } catch (err) {
 
-            console.error("checkForUpdate: Failed to check GitHub repository for an available update. " + err)
+            console.error("checkForUpdate: Failed to check GitHub repository for an available update. " + err);
         }
     }
 
