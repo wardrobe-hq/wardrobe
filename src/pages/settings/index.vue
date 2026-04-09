@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:51:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-06 21:50:38
+ * Last Modified: 2026-04-09 21:19:07
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -199,7 +199,7 @@
                         <label>v{{ packageJson.dependencies.vue.replace("\^", "") }}</label>
 
                         <label class="custom-label-secondary text-nowrap py-0! px-2! w-fit">Tailwind:</label>
-                        <label>v{{ packageJson.dependencies.tailwindcss.replace("\^", "") }}</label>
+                        <label>v{{ packageJson.dependencies["@tailwindcss/vite"].replace("\^", "") }}</label>
 
                     </div>
                 </div>

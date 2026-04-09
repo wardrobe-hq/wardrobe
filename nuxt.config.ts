@@ -27,6 +27,14 @@ export default defineNuxtConfig({
         plugins: [
             tailwindcss(),
         ],
+        optimizeDeps: {
+            include: [
+                "@vueuse/integrations/useSortable",
+                "@phosphor-icons/vue",
+                "@vue/devtools-core",
+                "@vue/devtools-kit",
+            ]
+        }
     },
 
     srcDir: "src/",
