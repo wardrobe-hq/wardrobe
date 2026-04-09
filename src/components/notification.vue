@@ -5,7 +5,7 @@
  * Created Date: 2026-04-02 22:24:30
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-06 21:53:49
+ * Last Modified: 2026-04-09 21:17:08
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -28,7 +28,7 @@
     >
         <div
             v-if="visible"
-            class="z-99 w-full max-w-sm overflow-hidden rounded-md shadow-md pointer-events-auto bg-bg-field-light dark:bg-bg-field-dark ring-1 ring-black/5 dark:ring-white/10"
+            class="z-99 w-full max-w-sm overflow-hidden rounded-md shadow-xl pointer-events-auto bg-bg-field-light dark:bg-bg-field-dark ring-1 ring-black/5 dark:ring-white/10"
             :class="themeClasses.border + ' ' + props.class"
         >
             <div class="p-4">
@@ -46,12 +46,12 @@
                     </div>
 
                     <!-- Title -->
-                    <p class="font-semibold">
+                    <p class="font-semibold w-full">
                         {{ notificationData.title }}
                     </p>
 
                     <!-- Close button -->
-                    <div class="flex w-full justify-end">
+                    <div class="flex justify-end">
                         <button
                             class="custom-button-icon-only outline-0!"
                             :title="$t('close')"

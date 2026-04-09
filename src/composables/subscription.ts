@@ -4,7 +4,7 @@
  * Created Date: 2026-04-08 17:59:41
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-08 21:15:23
+ * Last Modified: 2026-04-09 21:17:04
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -16,7 +16,7 @@
 
 
 import { handleCacheSubscriptionEvent } from "../composables/storage";
-import { SubscriptionEventType, type StorageSubscriptionEvent, type SubscriptionEvent } from "../model/api";
+import { SubscriptionEventAction, SubscriptionEventType, type StorageSubscriptionEvent, type SubscriptionEvent } from "../model/api";
 import { NotificationLevel, NotificationType, type NotificationData } from "../model/notification";
 
 let serverSubscriptionEventStream: EventSource | undefined;
@@ -32,7 +32,7 @@ function handleServerSubscriptionConnected(event: unknown) { // eslint-disable-l
     emitNotificationShowEvent({
         level: NotificationLevel.DEBUG,
         title: "Server Subscription",
-        message: "Connected",
+        message: "Connected!",
         type: NotificationType.SERVER_SUBSCRIPTION
     });
 }
@@ -50,7 +50,7 @@ function handleServerSubscriptionEvent(msg: MessageEvent<any>) { // eslint-disab
         emitNotificationShowEvent({
             level: NotificationLevel.DEBUG,
             title: "Server Subscription",
-            message: `Message: ${data.action} @ ${data.type}`,
+            message: `Message: ${data.action != null ? SubscriptionEventAction[data.action] : null} @ ${SubscriptionEventType[data.type]}`,
             type: NotificationType.SERVER_SUBSCRIPTION
         });
 
