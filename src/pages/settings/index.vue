@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:51:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-09 21:19:07
+ * Last Modified: 2026-04-09 21:20:34
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -87,6 +87,9 @@
                             <option :value="Unit.CELSIUS">{{ UnitStrMap[Unit.CELSIUS] }}</option>
                             <option :value="Unit.FAHRENHEIT">{{ UnitStrMap[Unit.FAHRENHEIT] }}</option>
                         </select>
+
+                        <label class="custom-label-secondary text-nowrap py-0! px-2! w-fit" for="serverSubscriptionEnabled">{{ $t('settingsServerSubscriptionEnabled') }}</label>
+                        <input id="serverSubscriptionEnabled" type="checkbox" class="size-4 self-center" v-model="localServerSettings.serverSubscriptionEnabled">
                     </div>
                 </div>
 

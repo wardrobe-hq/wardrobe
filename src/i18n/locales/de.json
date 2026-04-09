@@ -111,6 +111,7 @@
 
     "settingsUserSettings": "Nutzereinstellungen",
     "settingsServerSettings": "Servereinstellungen",
+    "settingsServerSubscriptionEnabled": "Aktive Serververbindung?",
     "settingsTemperatureUnit": "Temperatureinheit:",
     "settingsLocationAutomatic": "Ort automatisch bestimmen?",
     "settingsLocationForceLat": "Erzwinge Latitude:",
