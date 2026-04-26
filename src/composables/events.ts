@@ -4,7 +4,7 @@
  * Created Date: 2026-02-11 21:31:19
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-06 21:52:58
+ * Last Modified: 2026-04-26 16:41:56
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -16,6 +16,7 @@
 
 
 import type { HookResult } from "nuxt/schema";
+import type { SubscriptionEvent } from "~/model/api";
 import type { NotificationData } from "~/model/notification";
 
 
@@ -26,6 +27,7 @@ declare module "#app" {
         "app:user:settingsSaved": () => HookResult;
         "app:notification:show": (data: NotificationData | undefined) => HookResult;
         "app:notification:action": (data: NotificationData) => HookResult;
+        "app:subscription:update": (data: SubscriptionEvent) => HookResult;
     }
 }
 
@@ -62,4 +64,13 @@ export function emitNotificationShowEvent(data: NotificationData | undefined) {
  */
 export function emitNotificationActionEvent(data: NotificationData) {
     useNuxtApp().callHook("app:notification:action", data);
+}
+
+
+/**
+ * Notifies listeners that a server subscription event was received
+ * @param data Data of received subscription event
+ */
+export function emitSubscriptionEvent(data: SubscriptionEvent) {
+    useNuxtApp().callHook("app:subscription:update", data);
 }

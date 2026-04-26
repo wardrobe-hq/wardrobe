@@ -4,7 +4,7 @@
  * Created Date: 2026-04-08 17:59:41
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-09 21:17:04
+ * Last Modified: 2026-04-26 16:48:24
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -15,9 +15,9 @@
  */
 
 
-import { handleCacheSubscriptionEvent } from "../composables/storage";
-import { SubscriptionEventAction, SubscriptionEventType, type StorageSubscriptionEvent, type SubscriptionEvent } from "../model/api";
+import { SubscriptionEventAction, SubscriptionEventType, type SubscriptionEvent } from "../model/api";
 import { NotificationLevel, NotificationType, type NotificationData } from "../model/notification";
+import { emitSubscriptionEvent } from "./events";
 
 let serverSubscriptionEventStream: EventSource | undefined;
 
@@ -54,13 +54,7 @@ function handleServerSubscriptionEvent(msg: MessageEvent<any>) { // eslint-disab
             type: NotificationType.SERVER_SUBSCRIPTION
         });
 
-        switch (data.type) {
-            case SubscriptionEventType.STORAGE:
-                handleCacheSubscriptionEvent(data as StorageSubscriptionEvent);
-                break;
-            default:
-                throw("handleServerSubscriptionEvent: Unsupported server subscripton event type " + data.type);
-        }
+        emitSubscriptionEvent(data); // Re-emit event on for frontend
     } catch(err) {
         console.error("Failed to parse incoming message from server!", err);
     }
@@ -86,7 +80,7 @@ function handleServerSubscriptionError(err: unknown) {
 
     useNuxtApp().hook("app:notification:action", (data: NotificationData) => {
         if (data.type == NotificationType.SERVER_SUBSCRIPTION_RELOAD) {
-            console.debug("[DEBUG] Got 'SERVER_SUBSCRIPTION_RECONN' event, reloading page..."); // ...or soft-reload by invalidating cache?
+            console.debug("[DEBUG] Got 'SERVER_SUBSCRIPTION_RECONN' event, reloading page...");
             reloadNuxtApp();
         }
     });

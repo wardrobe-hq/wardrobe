@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:54:21
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-09 21:20:39
+ * Last Modified: 2026-04-26 17:27:27
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -144,6 +144,7 @@
     import Notification from './components/notification.vue';
     import { closeServerSubscriptionConnection, establishServerSubscriptionConnection } from "./composables/subscription";
     import { NotificationLevel } from "./model/notification";
+    import { SubscriptionEventType, type StorageSubscriptionEvent, type SubscriptionEvent } from "./model/api";
 
     const route       = useRoute();
     let   changesMade = false;
@@ -155,6 +156,12 @@
 
     // Init global cache 'storage.ts'
     await initGlobalCache();
+
+    useNuxtApp().hook("app:subscription:update", (data: SubscriptionEvent) => {
+        if (data.type == SubscriptionEventType.STORAGE) {
+            handleCacheSubscriptionEvent(data as StorageSubscriptionEvent);
+        }
+    });
 
 
     // Handle changesMade event from pages
