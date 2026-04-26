@@ -4,7 +4,7 @@
  * Created Date: 2026-03-26 18:57:42
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 19:04:44
+ * Last Modified: 2026-04-26 19:42:40
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -28,11 +28,13 @@ export interface ApiResponse<T> {
 
 // Event types broadcasted by the 'subscribe' API Route
 export enum SubscriptionEventType {
-    STORAGE
+    STORAGE, // Database updates
+    JOB      // Job (un)register/run events
 }
 
 // Event actions
 export enum SubscriptionEventAction {
+    ANY,
     NEW,    // Is this even used?
     UPSERT,
     DELETE
@@ -50,4 +52,10 @@ export interface StorageSubscriptionEvent extends SubscriptionEvent {
     action: SubscriptionEventAction.NEW | SubscriptionEventAction.UPSERT | SubscriptionEventAction.DELETE,
     storage: StorageKind, // Omit<StorageKind, StorageKind.LOCAL_STORAGE>,
     newData: StorageKindDataMap<StorageKind> | { id: string } // This might contain ONLY the prop id on action DELETE btw. // TODO: Also this constraint doesn't seem to work correctly, perhaps the entire interface must be generic?
+}
+
+// Specific SubscriptionEvent type for job events
+export interface JobSubscriptionEvent extends SubscriptionEvent {
+    type: SubscriptionEventType.JOB,
+    action: SubscriptionEventAction.ANY
 }

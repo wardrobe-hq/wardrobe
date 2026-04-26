@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:51:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-09 21:20:34
+ * Last Modified: 2026-04-26 19:42:21
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -327,7 +327,7 @@
     import type { ServerStatistics } from "~/model/statistics";
     import packageJson from "~/../package.json";
     import { getServerSettingsFromServer, setServerSettingsToServer } from "~/composables/storage";
-    import type { ApiResponse } from "~/model/api";
+    import { SubscriptionEventType, type ApiResponse, type StorageSubscriptionEvent, type SubscriptionEvent } from "~/model/api";
     import { NotificationLevel } from "~/model/notification";
 
     const i18n = useI18n();
@@ -343,9 +343,17 @@
     let   serverStatistics:     Ref<ServerStatistics | undefined> = ref();
 
 
-    // Load data
-    const jobRes = await useFetch("/api/get-registered-jobs-info"); // TODO: Probably won't update when job gets registered later
+    // Load data and attach event listener to refresh on subscription event
+    const jobRes = await useFetch("/api/get-registered-jobs-info");
     jobs.value = jobRes.data.value?.document!;
+
+    useNuxtApp().hook("app:subscription:update", async (data: SubscriptionEvent) => {
+        if (data.type == SubscriptionEventType.JOB) {
+            await jobRes.execute();
+            jobs.value = jobRes.data.value?.document!
+        }
+    });
+
 
     // Client side only
     onBeforeMount(() => {

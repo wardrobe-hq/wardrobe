@@ -4,7 +4,7 @@
  * Created Date: 2025-12-29 14:47:41
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:38:27
+ * Last Modified: 2026-04-26 19:42:03
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -20,10 +20,23 @@ import { formatTime } from "~/utils/utils";
 
 // Import core jobs
 import dataCleanupJob from "../utils/jobs/dataCleanup";
+import { SubscriptionUpdateObserver } from "../updateObserver";
+import { SubscriptionEventAction, SubscriptionEventType } from "~/model/api";
 
 
 let _jobInterval; // eslint-disable-line @typescript-eslint/no-unused-vars
 const _registeredJobs: Job[] = [];
+
+
+/**
+ * Notifies registered clients about jobs update
+ */
+function sendJobSubscriptionEvent() {
+    SubscriptionUpdateObserver.getInstance().callSubscribers({
+        type: SubscriptionEventType.JOB,
+        action: SubscriptionEventAction.ANY
+    });
+}
 
 
 /**
@@ -52,6 +65,8 @@ export function registerJob(job: Job) {
     job.info._registeredAt = Date.now();
     _registeredJobs.push(job);
 
+    sendJobSubscriptionEvent();
+
 }
 
 
@@ -72,6 +87,8 @@ export function unregisterJob(jobName: string) {
     // Remove job
     console.log(`Jobs Plugin: Unregistering job '${jobName}'...`);
     _registeredJobs.splice(index, 1);
+
+    sendJobSubscriptionEvent();
 
 }
 
@@ -114,8 +131,9 @@ function _runDueJobs() {
             console.log(`JobManager: Running due job '${job.info.name}'...`);
 
             job.run();
-
             job.info._lastExecTimestamp = Date.now();
+
+            sendJobSubscriptionEvent();
         }
     });
 
