@@ -37,11 +37,11 @@
     "url": "https://github.com/wardrobe-hq/wardrobe/issues"
   },
   "dependencies": {
-    "@nuxtjs/i18n": "^10.2.4",
+    "@nuxtjs/i18n": "^10.3.0",
     "@phosphor-icons/vue": "^2.2.1",
     "@seald-io/nedb": "^4.1.2",
-    "@tailwindcss/vite": "^4.2.2",
-    "@types/three": "^0.183.1",
+    "@tailwindcss/vite": "^4.2.4",
+    "@types/three": "^0.184.0",
     "@vueuse/components": "^14.2.1",
     "@vueuse/core": "^14.2.1",
     "@vueuse/integrations": "^14.2.1",
@@ -51,21 +51,21 @@
     "sharp": "^0.34.5",
     "sortablejs": "^1.15.7",
     "systeminformation": "^5.31.5",
-    "three": "^0.183.2",
+    "three": "^0.184.0",
     "three-stdlib": "^2.36.1",
-    "vue": "^3.5.32"
+    "vue": "^3.5.33"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@nuxt/devtools": "^3.2.4",
-    "@types/node": "^25.5.2",
-    "@typescript-eslint/parser": "^8.58.1",
-    "autoprefixer": "^10.4.27",
-    "eslint": "^10.2.0",
+    "@types/node": "^25.6.0",
+    "@typescript-eslint/parser": "^8.59.0",
+    "autoprefixer": "^10.5.0",
+    "eslint": "^10.2.1",
     "eslint-plugin-jsdoc": "^62.9.0",
-    "globals": "^17.4.0",
-    "postcss": "^8.5.9",
-    "typescript": "^6.0.2",
-    "typescript-eslint": "^8.58.1"
+    "globals": "^17.5.0",
+    "postcss": "^8.5.12",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.0"
   }
 }
