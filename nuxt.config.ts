@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 17:37:49
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-22 13:40:09
+ * Last Modified: 2026-04-24 17:31:26
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -33,6 +33,8 @@ export default defineNuxtConfig({
                 "@phosphor-icons/vue",
                 "@vue/devtools-core",
                 "@vue/devtools-kit",
+                "three",
+                "three-stdlib",
             ]
         }
     },

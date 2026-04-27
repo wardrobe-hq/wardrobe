@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 15:19:23
  * Author: 3urobeat
  *
- * Last Modified: 2026-02-02 21:34:42
+ * Last Modified: 2026-04-10 16:39:51
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -16,7 +16,7 @@
 
 
 /*
-    3urobeat's EsLint Config (TypeScript Variant). Requires eslint, @eslint/js, eslint-plugin-jsdoc, typescript, typescript-eslint & @typescript-eslint/parser to be installed as devDependencies.
+    3urobeat's EsLint Config (TypeScript + Vue Variant). Requires eslint, @eslint/js, eslint-plugin-jsdoc, typescript, typescript-eslint & @typescript-eslint/parser to be installed as devDependencies.
     https://github.com/3urobeat
 */
 
