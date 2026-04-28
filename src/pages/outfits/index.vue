@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:40:46
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:29:55
+ * Last Modified: 2026-04-28 22:18:48
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -52,7 +52,7 @@
                         <button
                             class="custom-wardrobe-label-clickable text-sm @xs:text-base h-fit m-0.5"
                             :class="titleBarFull.selectedFilters.includes(thisLabel.id) ? 'custom-wardrobe-label-selected-outline' : ''"
-                            v-for="thisLabel in storedLabels.filter((e) => thisOutfit.labelIDs.includes(e.id))"
+                            v-for="thisLabel in storedLabels.document!.filter((e) => thisOutfit.labelIDs.includes(e.id))"
                             :key="thisLabel.id"
                             @click.prevent="titleBarFull.toggleFilter(thisLabel.id)"
                         >
@@ -70,7 +70,7 @@
     <!-- Fallback Text -->
     <div class="w-full flex justify-center items-center text-text-secondary-light dark:text-text-secondary-dark select-none"> <!-- TODO: Could be a little lower -->
         <!-- No items available text (DB empty) -->
-        <label class="custom-label-primary flex items-center w-fit" v-if="storedOutfits.length == 0">
+        <label class="custom-label-primary flex items-center w-fit" v-if="storedOutfits.document!.length == 0">
             <PhBinoculars class="shrink-0 mr-2"></PhBinoculars>
             {{ $t('outfitPageEmpty') }}
         </label>
@@ -92,7 +92,6 @@
     import { PhBinoculars, PhMagnifyingGlass, PhPlus } from "@phosphor-icons/vue";
     import ImgLazy from "~/components/imgLazy.vue";
     import TitleBarFull from "~/components/titleBarFull.vue";
-    import type { Label } from "~/model/label";
     import type { Outfit } from "~/model/item";
     import { defaultSortMode, type sortModes } from "~/model/sort-modes";
     import { getAllOutfitsFromServer } from "~/composables/storage";
@@ -105,15 +104,14 @@
 
 
     // Get labels and outfits from cache
-    const storedLabels:  Ref<Label[]>  = getAllLabelsFromServer();
-    const storedOutfits: Ref<Outfit[]> = ref([]);
-    storedOutfits.value = (await getAllOutfitsFromServer()).document!;
+    const storedLabels  = getAllLabelsFromServer();
+    const storedOutfits = await getAllOutfitsFromServer();
 
     // Get refs to props exported by defineExpose() in TitleBarFull
     const titleBarFull: Ref<{ selectedSort: sortModes, selectedFilters: string[], selectedScaling: number, toggleFilter: (thisFilter: string) => void }> = ref({ selectedSort: defaultSortMode, selectedFilters: [], selectedScaling: 0, toggleFilter: () => {} }); // TODO: Can this be an exported type somewhere?
 
 
     // Pre-calculate items that should be shown. Can be accessed multiple times in template without re-calculation. Updates when sort/filter/search changes due to reactivity
-    let outfitsToShow = computed(() => getItemsToShow(storedOutfits.value, titleBarFull.value.selectedSort, titleBarFull.value.selectedFilters) as Outfit[]);
+    let outfitsToShow = computed(() => getItemsToShow(storedOutfits.value.document!, titleBarFull.value.selectedSort, titleBarFull.value.selectedFilters) as Outfit[]);
 
 </script>

@@ -4,7 +4,7 @@
  * Created Date: 2026-01-23 22:00:18
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 19:08:31
+ * Last Modified: 2026-04-28 21:58:06
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -16,7 +16,6 @@
 
 
 import type { ApiResponse } from "~/model/api";
-import type { ServerSettings } from "~/model/storage";
 import type { WeatherData } from "~/model/weather";
 
 
@@ -60,7 +59,7 @@ export async function geolocateClient(): Promise<[ lat: number, lon: number ]> {
 export async function getWeatherFromServer() {
 
     // Get settings
-    const storedServerSettings: Ref<ServerSettings> = getServerSettingsFromServer();
+    const storedServerSettings = getServerSettingsFromServer().value.document!;
 
     const response: { error: string | null, errorMsg: unknown, weather: WeatherData | null } = {
         error: null,
@@ -73,7 +72,7 @@ export async function getWeatherFromServer() {
     let lat;
     let lon;
 
-    if (storedServerSettings.value.location.useGeolocation) {
+    if (storedServerSettings.location.useGeolocation) {
         [ lat, lon ] = await geolocateClient()
             .catch((err) => {
                 response.error = "weatherGeolocationFail";
@@ -81,8 +80,8 @@ export async function getWeatherFromServer() {
                 return [ undefined, undefined ];
             });
     } else {
-        lat = storedServerSettings.value.location.lat;
-        lon = storedServerSettings.value.location.lon;
+        lat = storedServerSettings.location.lat;
+        lon = storedServerSettings.location.lon;
 
         if (lat == undefined || lon == undefined) {
             response.error = "weatherGeolocationDisabledNoLatLonSet";

@@ -4,7 +4,7 @@
  * Created Date: 2026-03-23 21:34:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 19:04:40
+ * Last Modified: 2026-04-28 22:11:18
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -15,11 +15,12 @@
  */
 
 
-import { SubscriptionEventAction, type ApiResponse, type StorageSubscriptionEvent } from "~/model/api";
+import { type ApiResponse, type StorageSubscriptionEvent } from "~/model/api";
 import type { Clothing, Outfit } from "~/model/item";
 import type { Label } from "~/model/label";
 import type { Category } from "~/model/label-category";
 import { StorageKind, type CachedImage, type ServerSettings, type StorageKindDataMap } from "~/model/storage";
+import { emitSettingsSavedEvent } from "~/composables/events";
 
 
 /**
@@ -27,89 +28,27 @@ import { StorageKind, type CachedImage, type ServerSettings, type StorageKindDat
  */
 
 
-// The type of storage kinds we want to cache here. They all have an ID prop, which is used for add/update/remove actions
-type CachableStorageKind =
-  | StorageKind.CLOTHES
-  | StorageKind.LABEL_CATEGORIES
-  | StorageKind.LABELS
-  | StorageKind.OUTFITS
-  | StorageKind.IMAGES;
-
-
-// Cache
-class Cache<T extends CachableStorageKind> {
-    data: Ref<StorageKindDataMap<T>[]> = ref([]);
-
-    // Initializes cache
-    constructor(initData: StorageKindDataMap<T>[]) {
-        this.data.value = initData;
-    }
-
-    // Adds to array and returns new length
-    add(elem: StorageKindDataMap<T>): number {
-        return this.data.value.push(elem);
-    }
-    // Flat-adds array to array and returns new length
-    addArray(elem: StorageKindDataMap<T>[]): number {
-        return this.data.value.push(...elem);
-    }
-
-    // Updates element with matching ID or inserts a new one and returns index
-    upsert(elem: StorageKindDataMap<T>): number {
-        const index = this.data.value.findIndex((e) => e.id == elem.id);
-
-        if (index == -1) {
-            return this.add(elem) - 1; // -1 since add() returns new array length
-        } else {
-            this.data.value[index] = elem;
-            return index;
-        }
-    }
-
-    // Removes any elements with matching ID and returns new length
-    remove(elem: StorageKindDataMap<T>): number {
-        this.data.value = this.data.value.filter((e) => e.id != elem.id);
-        return this.data.value.length;
-    }
-    // Removes array of IDs and returns new length
-    removeArray(ids: string[]): number {
-        this.data.value = this.data.value.filter((e) => !ids.includes(e.id));
-        return this.data.value.length;
-    }
-}
-// TODO: Test Reactivity
-// TODO: Limit size
-
-
-let cachedImages:     Cache<StorageKind.IMAGES>;
-// let cachedClothes:    Cache<StorageKind.CLOTHES>;
-// let cachedOutfits:    Cache<StorageKind.OUTFITS>;
-let storedLabels:     Cache<StorageKind.LABELS>;
-let storedCategories: Cache<StorageKind.LABEL_CATEGORIES>;
-
-const storedServerSettings: Ref<ServerSettings> = ref({} as ServerSettings); // Does not use Cache as it's just a singular object
+let cachedImages: Ref<StorageKindDataMap<StorageKind.IMAGES>[]>;
 
 
 /**
- * Initializes global cache with data required on all pages
+ * Initializes global cache with data required on all pages.
+ * Uses SSR(!) and must be called from app.vue
  */
 export async function initGlobalCache()  {
     console.debug("[DEBUG] Initializing global cache...");
 
-    const [labels, categories, settings] = await Promise.all([
-        useFetch("/api/get-all-labels"),
-        useFetch("/api/get-all-label-categories"),
-        useFetch("/api/get-settings")
+    cachedImages = useState("cached-images", () => []);
+
+    await Promise.all([
+        useFetch("/api/get-all-labels",           { key: "/api/get-all-labels" }),
+        useFetch("/api/get-all-label-categories", { key: "/api/get-all-label-categories" }),
+        useFetch("/api/get-settings",             { key: "/api/get-settings" })
     ]);
     // TODO: Error handling
 
-    cachedImages     = new Cache([]);
-    storedLabels     = new Cache(labels.data.value!.document as Label[]);
-    storedCategories = new Cache(categories.data.value!.document!);
-
-    storedServerSettings.value = settings.data.value!.document!;
+    console.debug("[DEBUG] Finished initializing global cache!");
 }
-// TODO: SSR?
 
 
 /**
@@ -151,44 +90,37 @@ async function sendApiRequest(route: string, data?: object): Promise<any> { // e
  * @param event
  */
 export function handleCacheSubscriptionEvent(event: StorageSubscriptionEvent) {
-    let dest: Cache<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+    let imageId: string;
 
-    // StorageKinds without an ID prop must already be handled here!
     switch (event.storage) {
         case StorageKind.IMAGES:
-            dest = cachedImages;
-            event.action = SubscriptionEventAction.DELETE; // Modify action to DELETE and let ImgLazy figure out reloading image when necessary
+            imageId = (event.newData as StorageKindDataMap<StorageKind.IMAGES>).id;
+            cachedImages.value = cachedImages.value.filter((e) => e.id !== imageId);
+            console.debug(`[DEBUG] handleCacheSubscriptionEvent: Deleting image '${imageId}' from cache...`);
             break;
         case StorageKind.CLOTHES:
-            throw("Clothes Update not implemented");
+            refreshNuxtData("/api/get-all-clothes");
+            console.debug("[DEBUG] handleCacheSubscriptionEvent: Refreshing data of API route '/api/get-all-clothes'...");
+            break;
         case StorageKind.OUTFITS:
-            throw("Outfits Update not implemented");
+            refreshNuxtData("/api/get-all-outfits");
+            console.debug("[DEBUG] handleCacheSubscriptionEvent: Refreshing data of API route '/api/get-all-outfits'...");
+            break;
         case StorageKind.LABELS:
-            dest = storedLabels;
+            refreshNuxtData("/api/get-all-labels");
+            console.debug("[DEBUG] handleCacheSubscriptionEvent: Refreshing data of API route '/api/get-all-labels'...");
             break;
         case StorageKind.LABEL_CATEGORIES:
-            dest = storedCategories;
+            refreshNuxtData("/api/get-all-label-categories");
+            console.debug("[DEBUG] handleCacheSubscriptionEvent: Refreshing data of API route '/api/get-all-label-categories'...");
             break;
         case StorageKind.SERVER_SETTINGS:
-            storedServerSettings.value = event.newData as ServerSettings;
-            emitSettingsSavedEvent();
-            return; // Entire overwrite, not an array, nothing to do here
+            refreshNuxtData("/api/get-settings")
+                .then(() => emitSettingsSavedEvent());
+            console.debug("[DEBUG] handleCacheSubscriptionEvent: Refreshing data of API route '/api/get-settings'...");
+            return;
         default:
             throw("handleCacheSubscriptionEvent: Unsupported storage kind " + event.storage);
-    }
-
-    switch (event.action) {
-        case SubscriptionEventAction.NEW:
-            dest.add(event.newData);
-            break;
-        case SubscriptionEventAction.UPSERT:
-            dest.upsert(event.newData);
-            break;
-        case SubscriptionEventAction.DELETE:
-            dest.remove(event.newData);
-            break;
-        default:
-            throw("handleCacheSubscriptionEvent: Unsupported action " + event.action);
     }
 }
 
@@ -198,18 +130,12 @@ export function handleCacheSubscriptionEvent(event: StorageSubscriptionEvent) {
     -------------------- CLOTHES --------------------
 */
 
-export async function getAllClothesFromServer(): Promise<ApiResponse<Clothing[]>> {
-    /* if (!cachedClothes) {
-        cachedClothes = new Cache([]);          // Asynchronously fill cache - No SSR :(
-        sendApiRequest("get-all-clothes").then((res) => cachedClothes.data.value = res);
-    }
-
-    return cachedClothes.data; */
-    return (await useFetch("/api/get-all-clothes")).data.value!; // SSR
+export async function getAllClothesFromServer(): Promise<Ref<ApiResponse<Clothing[]>>> {
+    return (await useFetch("/api/get-all-clothes")).data as Ref<ApiResponse<Clothing[]>>;
 }
 
-export async function getClothingFromServer(id: string): Promise<ApiResponse<Clothing>> {
-    return await sendApiRequest("get-clothing", { id: id });
+export async function getClothingFromServer(id: string): Promise<Ref<ApiResponse<Clothing>>> {
+    return (await useFetch("/api/get-clothing", { method: "POST", body: { id: id } })).data as Ref<ApiResponse<Clothing>>;
 }
 
 export async function setClothingToServer(data: Clothing): Promise<ApiResponse<Clothing>> {
@@ -225,18 +151,12 @@ export async function rmClothingToServer(id: string): Promise<ApiResponse<never>
     -------------------- OUTFITS --------------------
 */
 
-export async function getAllOutfitsFromServer(): Promise<ApiResponse<Outfit[]>> {
-    /* if (!cachedOutfits) {
-        cachedOutfits = new Cache([]);          // Asynchronously fill cache - No SSR :(
-        sendApiRequest("/api/get-all-outfits").then((res) => cachedOutfits.data.value = res);
-    }
-
-    return cachedOutfits.data; */
-    return (await useFetch("/api/get-all-outfits")).data.value!; // SSR
+export async function getAllOutfitsFromServer(): Promise<Ref<ApiResponse<Outfit[]>>> {
+    return (await useFetch("/api/get-all-outfits")).data as Ref<ApiResponse<Outfit[]>>; // SSR
 }
 
-export async function getOutfitFromServer(id: string): Promise<ApiResponse<Outfit>> {
-    return await sendApiRequest("get-outfit", { id: id });
+export async function getOutfitFromServer(id: string): Promise<Ref<ApiResponse<Outfit>>> {
+    return (await useFetch("/api/get-outfit", { method: "POST", body: { id: id } })).data as Ref<ApiResponse<Outfit>>;
 }
 
 export async function setOutfitToServer(data: Outfit): Promise<ApiResponse<Outfit>> {
@@ -252,12 +172,12 @@ export async function rmOutfitToServer(id: string): Promise<ApiResponse<never>> 
     -------------------- LABELS --------------------
 */
 
-export function getAllLabelsFromServer(): Ref<Label[]> {
-    return storedLabels.data;
+export function getAllLabelsFromServer(): Ref<ApiResponse<Label[]>> {
+    return useNuxtData("/api/get-all-labels").data; // Return values fetched in initGlobalCache()
 }
 
-export function getAllLabelCategoriesFromServer(): Ref<Category[]> {
-    return storedCategories.data;
+export function getAllLabelCategoriesFromServer(): Ref<ApiResponse<Category[]>> {
+    return useNuxtData("/api/get-all-label-categories").data; // Return values fetched in initGlobalCache()
 }
 
 export async function setCategoriesAndLabelsToServer(categoryData: Category[] | undefined, labelsData: Label[] | undefined): Promise<ApiResponse<never>> {
@@ -267,8 +187,8 @@ export async function setCategoriesAndLabelsToServer(categoryData: Category[] | 
     });
 
     if (resBody.success) {
-        if (categoryData) storedCategories.addArray(categoryData);
-        if (labelsData)   storedLabels.addArray(labelsData);
+        if (categoryData) refreshNuxtData("/api/get-all-label-categories"); // storedCategories.value.push(...categoryData);
+        if (labelsData)   refreshNuxtData("/api/get-all-labels"); // storedLabels.value.push(...labelsData);
     }
 
     return resBody;
@@ -281,8 +201,8 @@ export async function rmLabelsToServer(categoryIDs: string[] | undefined, labelI
     });
 
     if (resBody.success) {
-        if (categoryIDs) storedCategories.removeArray(categoryIDs);
-        if (labelIDs)    storedLabels.removeArray(labelIDs);
+        if (categoryIDs) refreshNuxtData("/api/get-all-label-categories"); // storedCategories.value = storedCategories.value.filter((e) => !categoryIDs.includes(e.id));
+        if (labelIDs)    refreshNuxtData("/api/get-all-labels"); // storedLabels.value = storedLabels.value.filter((e) => !labelIDs.includes(e.id));
     }
 
     return resBody;
@@ -293,15 +213,15 @@ export async function rmLabelsToServer(categoryIDs: string[] | undefined, labelI
     -------------------- SETTINGS --------------------
 */
 
-export function getServerSettingsFromServer(): Ref<ServerSettings> {
-    return storedServerSettings;
+export function getServerSettingsFromServer(): Ref<ApiResponse<ServerSettings>> {
+    return useNuxtData("/api/get-settings").data; // Return values fetched in initGlobalCache()
 }
 
 export async function setServerSettingsToServer(data: ServerSettings): Promise<ApiResponse<never>> {
     const resBody = await sendApiRequest("set-settings", data);
 
     if (resBody.success) {
-        storedServerSettings.value = data;
+        refreshNuxtData("/api/get-settings");
     }
 
     return resBody;
@@ -316,7 +236,7 @@ export async function getImageFromServer(imgPath: string, scaleToWidth: number |
     if (!imgPath) return null;
 
     // Attempt to find image with matching size (or none) in cache
-    const cachedImg = cachedImages.data.value.find((e) => e.id == imgPath && e.imgWidth == scaleToWidth);
+    const cachedImg = cachedImages.value.find((e) => e.id == imgPath && e.imgWidth == scaleToWidth);
 
     if (cachedImg) {
         console.debug(`[DEBUG] getImageFromServer: Found image '${imgPath}' in cache!`);
@@ -330,11 +250,12 @@ export async function getImageFromServer(imgPath: string, scaleToWidth: number |
     });
 
     // Add to cache
-    const cacheLength = cachedImages.add(resBody.document!);
-    console.debug(`[DEBUG] getImageFromServer: Fetched image '${imgPath}' from server. Image cache has ${cacheLength} entries now.`);
+    cachedImages.value.push(resBody.document!);
+    console.debug(`[DEBUG] getImageFromServer: Fetched image '${imgPath}' from server. Image cache has ${cachedImages.value.length} entries now.`);
 
-    return cachedImages.data.value[cacheLength - 1]!;
+    return cachedImages.value[cachedImages.value.length - 1]!;
 }
+// TODO: SSR?
 
 export async function sendImageToServer(file: File): Promise<ApiResponse<{ filePath: string }>> {
 
@@ -355,7 +276,7 @@ export async function sendImageToServer(file: File): Promise<ApiResponse<{ fileP
 
     // Remove all references of image from cache to fetch next usage from server again
     // TODO: Return imgBlob from API route and replace every matching imgPath using map() instead of deleting them
-    cachedImages.remove({ id: resBody.filePath, imgBlob: "", imgWidth: 0 });
+    cachedImages.value = cachedImages.value.filter((e) => e.id !== resBody.filePath);
     console.debug(`[DEBUG] sendImageToServer: Removed '${resBody.filePath}' from image cache...`);
 
     return resBody;

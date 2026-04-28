@@ -4,7 +4,7 @@
  * Created Date: 2026-03-04 10:39:01
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 19:04:42
+ * Last Modified: 2026-04-28 21:59:06
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -20,11 +20,10 @@
 */
 
 
-import type { ServerSettings } from "~/model/storage";
 import { temperatureUnitToString, tempKelvinTo, UnitStrMap, Unit, type TemperatureKelvin } from "~/model/unit";
 
 
-const useSet = (): Ref<ServerSettings> => getServerSettingsFromServer();
+const useSet = () => getServerSettingsFromServer();
 
 
 /**
@@ -32,7 +31,7 @@ const useSet = (): Ref<ServerSettings> => getServerSettingsFromServer();
  * @returns Returns configured temp unit type
  */
 export function getConfTempUnit(): Unit {
-    return useSet().value.temperatureUnit;
+    return useSet().value.document!.temperatureUnit;
 }
 
 /**

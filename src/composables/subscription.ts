@@ -4,7 +4,7 @@
  * Created Date: 2026-04-08 17:59:41
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-26 16:48:24
+ * Last Modified: 2026-04-28 21:58:59
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -93,7 +93,7 @@ function handleServerSubscriptionError(err: unknown) {
 export function establishServerSubscriptionConnection() {
     if (serverSubscriptionEventStream) throw("EventStream is not null, close it first");
 
-    if (getServerSettingsFromServer().value.serverSubscriptionEnabled) {
+    if (getServerSettingsFromServer().value.document!.serverSubscriptionEnabled) {
         console.debug("[DEBUG] establishServerSubscriptionConnection: Attempting to connect...");
 
         serverSubscriptionEventStream = new EventSource("/api/subscribe");

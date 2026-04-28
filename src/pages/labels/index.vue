@@ -5,7 +5,7 @@
  * Created Date: 2025-09-09 17:13:32
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-30 18:06:18
+ * Last Modified: 2026-04-28 21:57:36
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -170,8 +170,8 @@
 
 
     // Create local clones of global labels & category cache from app.vue. Changes are synced in saveChanges()
-    const storedLabels:     Ref<Label[]>    = getAllLabelsFromServer();
-    const storedCategories: Ref<Category[]> = getAllLabelCategoriesFromServer();
+    const storedLabels     = getAllLabelsFromServer();
+    const storedCategories = getAllLabelCategoriesFromServer();
 
     let localLabels:       Ref<Label[]>;
     let localCategories:   Ref<Category[]>;
@@ -179,8 +179,8 @@
     let useSortables:      UseSortableReturn[] = [];
 
     function init() {
-        localLabels     = useCloned(storedLabels, { manual: true }).cloned;     // I'm not using useCloned's sync() as it just wouldn't work :shrug:
-        localCategories = useCloned(storedCategories, { manual: true }).cloned;
+        localLabels     = useCloned(storedLabels.value.document!, { manual: true }).cloned;     // I'm not using useCloned's sync() as it just wouldn't work :shrug:
+        localCategories = useCloned(storedCategories.value.document!, { manual: true }).cloned;
 
         // Cleanup before reassigning
         useSortables.forEach((e) => e.stop());

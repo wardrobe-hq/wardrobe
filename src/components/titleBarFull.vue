@@ -5,7 +5,7 @@
  * Created Date: 2025-09-17 17:25:36
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-05 18:43:24
+ * Last Modified: 2026-04-28 21:58:45
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -42,7 +42,7 @@
                 <button
                     class="custom-wardrobe-label-clickable"
                     :class="selectedFilters.includes(thisFilter.id) ? 'custom-wardrobe-label-selected-outline' : ''"
-                    v-for="thisFilter in storedLabels.filter((e) => selectedFilters.includes(e.id))"
+                    v-for="thisFilter in storedLabels.document!.filter((e) => selectedFilters.includes(e.id))"
                     :key="thisFilter.id"
                     @click="toggleFilter(thisFilter.id)"
                 >
@@ -78,7 +78,7 @@
                 <button
                     class="custom-wardrobe-label-clickable text-sm"
                     :class="selectedFilters.includes(thisFilter.id) ? 'custom-wardrobe-label-selected-outline' : ''"
-                    v-for="thisFilter in storedLabels.filter((e) => selectedFilters.includes(e.id))"
+                    v-for="thisFilter in storedLabels.document!.filter((e) => selectedFilters.includes(e.id))"
                     :key="thisFilter.id"
                     @click="toggleFilter(thisFilter.id)"
                 >
@@ -99,7 +99,7 @@
 
 
     // Get global cache from app.vue
-    const storedLabels: Ref<Label[]> = getAllLabelsFromServer();
+    const storedLabels = getAllLabelsFromServer();
 
     // Refs
     const selectedSort:    Ref<sortModes> = ref(sortModes.dateDesc);

@@ -5,7 +5,7 @@
  * Created Date: 2025-09-10 17:37:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:29:57
+ * Last Modified: 2026-04-28 22:19:06
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -67,7 +67,7 @@
                 <div class="flex gap-x-1 overflow-x-auto p-1">
                     <p
                         class="custom-wardrobe-label"
-                        v-for="thisLabel in storedLabels.filter((e: Label) => thisOutfit.labelIDs.includes(e.id))"
+                        v-for="thisLabel in storedLabels.document!.filter((e: Label) => thisOutfit.labelIDs.includes(e.id))"
                         :key="thisLabel.id"
                         v-if="!editModeEnabled"
                     >
@@ -76,7 +76,7 @@
 
                     <button
                         class="custom-wardrobe-label-clickable custom-wardrobe-label-selected-outline mx-0.5"
-                        v-for="thisLabel in storedLabels.filter((e) => thisOutfit.labelIDs.includes(e.id))"
+                        v-for="thisLabel in storedLabels.document!.filter((e) => thisOutfit.labelIDs.includes(e.id))"
                         :key="thisLabel.id"
                         @click="toggleLabel(thisLabel)"
                         v-if="editModeEnabled"
@@ -97,7 +97,7 @@
                     <!-- TODO: Overflows screen width due to being centered to right aligned CaretDown -->
                     <template v-slot:items>
                         <!-- Separate labels by category -->
-                        <div class="flex w-180 max-h-140 my-1.5 gap-x-1.5" v-for="thisCategory in storedCategories" :key="thisCategory.id">
+                        <div class="flex w-180 max-h-140 my-1.5 gap-x-1.5" v-for="thisCategory in storedCategories.document" :key="thisCategory.id">
                             <div class="custom-label-primary text-nowrap py-0! px-2!">
                                 {{ thisCategory.name }}:
                             </div>
@@ -105,7 +105,7 @@
                             <!-- List all labels for this category -->
                             <p
                                 class="custom-wardrobe-label"
-                                v-for="thisLabel in storedLabels.filter((e: Label) => thisOutfit.labelIDs.includes(e.id) && e.categoryID == thisCategory.id)"
+                                v-for="thisLabel in storedLabels.document!.filter((e: Label) => thisOutfit.labelIDs.includes(e.id) && e.categoryID == thisCategory.id)"
                                 :key="thisLabel.id"
                                 v-if="!editModeEnabled"
                             >
@@ -115,7 +115,7 @@
                             <button
                                 class="custom-wardrobe-label-clickable"
                                 :class="thisOutfit.labelIDs.some((e) => e == thisLabel.id) ? 'custom-wardrobe-label-selected-outline' : ''"
-                                v-for="thisLabel in storedLabels.filter((e: Label) => e.categoryID == thisCategory.id)"
+                                v-for="thisLabel in storedLabels.document!.filter((e: Label) => e.categoryID == thisCategory.id)"
                                 :key="thisLabel.id"
                                 @click="toggleLabel(thisLabel)"
                                 v-if="editModeEnabled"
@@ -152,7 +152,7 @@
                         <div class="flex h-50 mx-2 overflow-x-auto"> <!-- TODO: I don't like the hardcoded height but h-full glitches out of the box? Also changing any width breaks scroll overflow? -->
                             <div
                                 class="flex flex-col w-55 shrink-0 px-2 m-2 rounded-xl shadow-md bg-bg-field-light dark:bg-bg-field-dark"
-                                v-for="thisClothing in storedClothes.filter((e) => thisOutfit.clothes.some((f) => f.clothingID == e.id) && e.labelIDs.includes(thisLabel.id))"
+                                v-for="thisClothing in storedClothes.document!.filter((e) => thisOutfit.clothes.some((f) => f.clothingID == e.id) && e.labelIDs.includes(thisLabel.id))"
                                 :key="thisClothing.id"
                             >
                                 <!-- Title bar when in edit mode, let it clip over the image -->
@@ -199,7 +199,7 @@
                                                 <div class="flex h-7 mt-1 overflow-auto gap-0.5">
                                                     <button
                                                         class="custom-wardrobe-label-clickable text-sm h-fit m-0.5"
-                                                        v-for="thisLabel in storedLabels.filter((e) => thisClothing.labelIDs.includes(e.id))"
+                                                        v-for="thisLabel in storedLabels.document!.filter((e) => thisClothing.labelIDs.includes(e.id))"
                                                         :key="thisLabel.name"
                                                     >
                                                         {{ thisLabel.name }}
@@ -247,14 +247,13 @@
 
 
     // Get from cache
-    const storedLabels:     Ref<Label[]>    = getAllLabelsFromServer();
-    const storedCategories: Ref<Category[]> = getAllLabelCategoriesFromServer();
+    const storedLabels     = getAllLabelsFromServer();
+    const storedCategories = getAllLabelCategoriesFromServer();
 
     // Refs
     const thisOutfit:     Ref<Outfit>     = ref({ id: "", title: "", clothes: [], labelIDs: [], previewImgPath: "", addedTimestamp: 0, modifiedTimestamp: 0 });
     const bodyPartLabels: Ref<Label[]>    = ref([]);
-    const storedClothes:  Ref<Clothing[]> = ref([]);
-    storedClothes.value = (await getAllClothesFromServer()).document!;
+    const storedClothes   = await getAllClothesFromServer();
 
 
     // Check if edit mode is enabled based on if name of this route is outfits-view or outfits-edit
@@ -267,20 +266,17 @@
     if (!editModeEnabled && outfitId == "new") useRouter().push("/outfits/edit?id=new");
 
     // Get all labels on page load
-    const bodyPartsCategory = storedCategories.value.find((e) => e.specialityID == CategorySpecialityID.Body_Part);
+    const bodyPartsCategory = storedCategories.value.document!.find((e) => e.specialityID == CategorySpecialityID.Body_Part);
 
     if (bodyPartsCategory) {
-        bodyPartLabels.value = sortLabelsList(getLabelsOfCategory(storedLabels.value!, bodyPartsCategory?.id));
+        bodyPartLabels.value = sortLabelsList(getLabelsOfCategory(storedLabels.value.document!, bodyPartsCategory?.id));
     }
 
 
-    // Load images for clothes // TODO: Lazy load
-    onMounted(async () => {
-        // Get outfit data if not new
-        if (outfitId != "new") {
-            thisOutfit.value = (await getOutfitFromServer(outfitId)).document!;
-        }
-    });
+    // Get outfit data if not new
+    if (outfitId != "new") {
+        thisOutfit.value = (await getOutfitFromServer(outfitId)).value.document!;
+    }
 
 
     // Add clothing to a label of this outfit
@@ -305,7 +301,7 @@
     // Gets items to show to in the popout for each label   // TODO: use computed() to avoid multiple calculations?
     function getClothesToShowInPopout(thisLabel: Label, searchStr: string = "") {
         // Get all clothes that have this body part label
-        const clothesForThisLabel = getItemsToShow(storedClothes.value, defaultSortMode, [ thisLabel.id ]) as Clothing[];
+        const clothesForThisLabel = getItemsToShow(storedClothes.value.document!, defaultSortMode, [ thisLabel.id ]) as Clothing[];
 
         // Remove clothes that are already added to this outfit
         const clothesNotAddedYet = clothesForThisLabel.filter((e) => !thisOutfit.value?.clothes.some((f) => f.clothingID == e.id));

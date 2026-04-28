@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:54:21
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-26 17:27:27
+ * Last Modified: 2026-04-28 21:58:03
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -203,7 +203,7 @@
         console.debug("Wardrobe mounted!");
         checkForUpdate();
 
-        if (getServerSettingsFromServer().value.serverSubscriptionEnabled) {
+        if (getServerSettingsFromServer().value.document?.serverSubscriptionEnabled) {
             establishServerSubscriptionConnection();
         }
     });

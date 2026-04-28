@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:29:51
+ * Last Modified: 2026-04-28 21:57:37
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -112,7 +112,7 @@
                 <div class="w-full h-full overflow-auto self-center rounded-xl shadow-md select-none bg-bg-field-light dark:bg-bg-field-dark">
 
                     <!-- Separate labels by category -->
-                    <div class="flex m-1.5 gap-1.5" v-for="thisCategory in storedCategories" :key="thisCategory.id">
+                    <div class="flex m-1.5 gap-1.5" v-for="thisCategory in storedCategories.document" :key="thisCategory.id">
                         <div class="custom-label-primary text-nowrap text-md w-fit py-0! px-2!">
                             {{ thisCategory.name }}:
                         </div>
@@ -120,7 +120,7 @@
                         <!-- List all labels for this category -->
                         <p
                             class="custom-wardrobe-label"
-                            v-for="thisLabel in storedLabels.filter((e: Label) => thisClothing.labelIDs.includes(e.id) && e.categoryID == thisCategory.id)"
+                            v-for="thisLabel in storedLabels.document!.filter((e: Label) => thisClothing.labelIDs.includes(e.id) && e.categoryID == thisCategory.id)"
                             :key="thisLabel.id"
                             v-if="!editModeEnabled"
                         >
@@ -130,7 +130,7 @@
                         <button
                             class="custom-wardrobe-label-clickable"
                             :class="thisClothing.labelIDs.some((e) => e == thisLabel.id) ? 'custom-wardrobe-label-selected-outline' : ''"
-                            v-for="thisLabel in sortLabelsList(getLabelsOfCategory(storedLabels, thisCategory.id))"
+                            v-for="thisLabel in sortLabelsList(getLabelsOfCategory(storedLabels.document!, thisCategory.id))"
                             :key="thisLabel.id"
                             @click="toggleLabel(thisLabel)"
                             v-if="editModeEnabled"
@@ -164,8 +164,8 @@
 
 
     // Get from cache
-    const storedLabels:     Ref<Label[]>    = getAllLabelsFromServer();
-    const storedCategories: Ref<Category[]> = getAllLabelCategoriesFromServer();
+    const storedLabels     = getAllLabelsFromServer();
+    const storedCategories = getAllLabelCategoriesFromServer();
 
     // Refs
     const thisClothing:        Ref<Clothing> = ref({ id: "", title: "", description: "", imgPath: "", labelIDs: [], addedTimestamp: 0, modifiedTimestamp: 0 });
@@ -182,13 +182,11 @@
 
 
     // Get clothing
-    onMounted(async () => {
-        if (clothingId != "new") {
-            thisClothing.value = (await getClothingFromServer(clothingId)).document!;
+    if (clothingId != "new") {
+        thisClothing.value = (await getClothingFromServer(clothingId)).value.document!; // TODO: Does ref break?
 
-            thisClothingImgBlob.value = (await getImageFromServer(thisClothing.value.imgPath, 512))?.imgBlob || "";
-        }
-    });
+        thisClothingImgBlob.value = (await getImageFromServer(thisClothing.value.imgPath, 512))?.imgBlob || "";
+    }
 
 
     // Adds/Removes a label
@@ -220,7 +218,7 @@
             const newLabel: Label = {
                 id: await getUUIDFromServer(),
                 name: name,
-                orderIndex: getNewLastLabelOrderIndex(getLabelsOfCategory(storedLabels.value, thisCategory.id)),
+                orderIndex: getNewLastLabelOrderIndex(getLabelsOfCategory(storedLabels.value.document!, thisCategory.id)),
                 categoryID: thisCategory.id,
                 specialityValue: CategorySpecialityMap[thisCategory.specialityID].value // Init val
             };

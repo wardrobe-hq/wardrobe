@@ -5,7 +5,7 @@
  * Created Date: 2026-03-01 15:17:09
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:29:41
+ * Last Modified: 2026-04-28 21:58:43
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -55,7 +55,7 @@
                             <div class="flex h-7 mt-1 overflow-auto gap-0.5">
                                 <button
                                     class="custom-wardrobe-label-clickable text-sm h-fit m-0.5"
-                                    v-for="thisLabel in storedLabels.filter((e) => thisOutfit.labelIDs.includes(e.id))"
+                                    v-for="thisLabel in storedLabels.document!.filter((e) => thisOutfit.labelIDs.includes(e.id))"
                                     :key="thisLabel.name"
                                 >
                                     {{ thisLabel.name }}
@@ -75,8 +75,6 @@
 
 <script setup lang="ts">
     import { PhLightbulb } from '@phosphor-icons/vue';
-    import type { Label } from '~/model/label';
-    import type { Category } from '~/model/label-category';
     import { CategorySpecialityID, type CategorySpecialityLabelValueMap } from '~/model/label-category';
     import type { Outfit } from '~/model/item';
     import { getWeatherFromServer } from '~/utils/utils';
@@ -84,17 +82,14 @@
     const i18n = useI18n();
 
     // Refs
-    const storedLabels:     Ref<Label[]>    = getAllLabelsFromServer();
-    const storedCategories: Ref<Category[]> = getAllLabelCategoriesFromServer();
+    const storedLabels     = getAllLabelsFromServer();
+    const storedCategories = getAllLabelCategoriesFromServer();
 
-    const storedOutfits:    Ref<Outfit[]> = ref([]);
+    const storedOutfits    = await getAllOutfitsFromServer();
 
     const recommendedOutfits:     Ref<Outfit[]> = ref([]);
     let   weatherAPIErrorMessage: string | null = null;
 
-
-    // Get all outfits and their details on load
-    storedOutfits.value = (await getAllOutfitsFromServer()).document!;
 
     // Generate recommendations
     onMounted(async () => {
@@ -120,11 +115,11 @@
         }
 
         // Find season category which includes temperature & date range settings
-        const seasonCategory = storedCategories.value.find((e) => e.specialityID == CategorySpecialityID.Season);
+        const seasonCategory = storedCategories.value.document!.find((e) => e.specialityID == CategorySpecialityID.Season);
         if (!seasonCategory) return; // No season category configured
 
         // Find labels of season category that match current weather and (if both are set) or (if one is set) date range
-        const applicableLabels = storedLabels.value.filter((e) => {
+        const applicableLabels = storedLabels.value.document!.filter((e) => {
             if (e.categoryID == seasonCategory.id) {
                 let value = e.specialityValue as CategorySpecialityLabelValueMap<CategorySpecialityID.Season>;
 
@@ -149,7 +144,7 @@
         });
 
         // Find outfits tagged with season label that matches current date and or weather
-        return storedOutfits.value.filter((e) => e.labelIDs.some((f) => applicableLabels.some((g) => f == g.id))); // Filtering with an m to n relationship looks weird, is this overcomplicated?
+        return storedOutfits.value.document!.filter((e) => e.labelIDs.some((f) => applicableLabels.some((g) => f == g.id))); // Filtering with an m to n relationship looks weird, is this overcomplicated?
 
     }
 
