@@ -4,7 +4,7 @@
  * Created Date: 2026-04-29 17:32:34
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-29 17:49:17
+ * Last Modified: 2026-04-29 17:49:51
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -16,6 +16,7 @@
 
 
 export enum State {
+    SERVER_SUBSCRIPTION_CONNECTED = "serverSubscriptionConnected",
     CACHED_IMAGES                 = "cachedImages",
     GLOBAL_SEARCH_STRING          = "globalSearchStr",
     GLOBAL_SEARCH_BAR_SHOWN       = "globalSearchBarShown"
@@ -26,6 +27,7 @@ export enum State {
  * Initializes all states with default value
  */
 export function initState() {
+    useState(State.SERVER_SUBSCRIPTION_CONNECTED, () => false);
     useState(State.CACHED_IMAGES, () => []);
     useState(State.GLOBAL_SEARCH_STRING, () => null);
     useState(State.GLOBAL_SEARCH_BAR_SHOWN, () => false);

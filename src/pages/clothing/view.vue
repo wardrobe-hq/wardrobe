@@ -169,7 +169,7 @@
 
     // Refs
     const thisClothing:        Ref<Clothing> = ref({ id: "", title: "", description: "", imgPath: "", labelIDs: [], addedTimestamp: 0, modifiedTimestamp: 0 });
-    const thisClothingImgBlob: Ref<string>   = ref("")
+    const thisClothingImgBlob: Ref<string>   = ref("");
 
     // Check if edit mode is enabled based on if name of this route is outfits-view or outfits-edit
     const editModeEnabled = (useRoute().name == "clothing-edit");

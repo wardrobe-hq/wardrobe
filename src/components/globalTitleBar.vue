@@ -5,7 +5,7 @@
  * Created Date: 2025-12-28 15:07:43
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-29 17:48:44
+ * Last Modified: 2026-04-29 18:10:10
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -22,12 +22,15 @@
     <div class="fixed flex items-center z-40 shrink-0 h-15 min-w-screen dark:text-text-dark border-y border-y-border-primary-light dark:border-y-border-primary-dark border-t-0">
 
         <!-- Left side -->
-        <div class="fixed h-8 left-12.5 lg:left-7.5 flex gap-4 select-none">
+        <div class="fixed h-8 left-12.5 lg:left-7.5 flex gap-5 select-none">
             <!-- Wardrobe Icon(s) for light/dark mode with cut for expanded search bar on mobile -->
             <NuxtLink class="z-20 cursor-pointer transition-opacity duration-500" to="/">
-                <div :class="globalSearchStr != null ? 'w-10 sm:w-fit' : ''">
-                    <img src="/logo-dark.png" class="h-7.5 object-left object-cover sm:object-contain hidden dark:block">
-                    <img src="/logo-light.png" class="h-7.5 object-left object-cover sm:object-contain block dark:hidden">
+                <div :class="globalSearchStr != null ? 'w-10 sm:w-fit' : ''" class="relative inline-block">
+                    <img src="/logo-dark.png" class="h-7.5 object-left object-cover sm:object-contain hidden dark:block" />
+                    <img src="/logo-light.png" class="h-7.5 object-left object-cover sm:object-contain block dark:hidden" />
+
+                    <!-- Server Connection Status dot, positioned to bottom right of logo -->
+                    <div class="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/3 rounded-full size-3 bg-green-500/80 shadow-md" v-if="subscriptionState" :title="$t('serverSubscriptionConnected')"></div>
                 </div>
             </NuxtLink>
 
@@ -126,6 +129,7 @@
     const globalSearchInput                         = useTemplateRef("globalSearchInput");
     const globalSearchBarShown: Ref<boolean>        = useState(State.GLOBAL_SEARCH_BAR_SHOWN); // Poor woman's approach at page properties
     const globalSearchStr:      Ref<string|null>    = useState(State.GLOBAL_SEARCH_STRING);    // null on page load, set to "" on click to expand input
+    const subscriptionState:    Ref<boolean>        = useState(State.SERVER_SUBSCRIPTION_CONNECTED);
 
     const currentWeather: Ref<WeatherData|null> = ref(null);
     const weatherLoading: Ref<boolean>          = ref(false);

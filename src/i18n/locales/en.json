@@ -49,6 +49,7 @@
 
 
     "_dummy3": "-------------- Shared Components Text --------------",
+    "serverSubscriptionConnected": "Server Connection established",
     "weatherLoadFail": "Couldn't load weather!",
     "weatherForLocation": "Weather for {location}:",
     "weatherTempFeelsLike": "feels like",
