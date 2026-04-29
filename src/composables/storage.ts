@@ -4,7 +4,7 @@
  * Created Date: 2026-03-23 21:34:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-28 22:11:18
+ * Last Modified: 2026-04-29 17:45:11
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -21,6 +21,7 @@ import type { Label } from "~/model/label";
 import type { Category } from "~/model/label-category";
 import { StorageKind, type CachedImage, type ServerSettings, type StorageKindDataMap } from "~/model/storage";
 import { emitSettingsSavedEvent } from "~/composables/events";
+import { State } from "./state";
 
 
 /**
@@ -38,7 +39,7 @@ let cachedImages: Ref<StorageKindDataMap<StorageKind.IMAGES>[]>;
 export async function initGlobalCache()  {
     console.debug("[DEBUG] Initializing global cache...");
 
-    cachedImages = useState("cached-images", () => []);
+    cachedImages = useState(State.CACHED_IMAGES);
 
     await Promise.all([
         useFetch("/api/get-all-labels",           { key: "/api/get-all-labels" }),

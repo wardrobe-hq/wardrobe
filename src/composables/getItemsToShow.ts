@@ -4,7 +4,7 @@
  * Created Date: 2025-09-17 17:25:36
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-31 18:21:45
+ * Last Modified: 2026-04-29 17:45:11
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -17,6 +17,7 @@
 
 import type { Item } from "~/model/item";
 import { sortModes } from "~/model/sort-modes";
+import { State } from "./state";
 
 
 /**
@@ -28,7 +29,7 @@ import { sortModes } from "~/model/sort-modes";
 export default function(storedItems: Item[], selectedSort?: sortModes, selectedFilters?: string[]): Item[] {
 
     // Get search string ref from app.vue
-    const searchStr: Ref<string|null> = useState("globalSearchStr");
+    const searchStr: Ref<string|null> = useState(State.GLOBAL_SEARCH_STRING);
 
     // Apply search
     if (searchStr.value != null) {

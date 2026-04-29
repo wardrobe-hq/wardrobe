@@ -5,7 +5,7 @@
  * Created Date: 2025-12-28 15:07:43
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-26 18:41:34
+ * Last Modified: 2026-04-29 17:48:44
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -118,13 +118,14 @@
     import { WeatherConditionGroupID, weatherIdToCondition, type WeatherData } from "~/model/weather";
     import { getWeatherFromServer } from "~/utils/utils";
     import { onClickOutside } from '@vueuse/core'
+    import { State } from "~/composables/state";
 
     const i18n = useI18n();
 
     // Refs
     const globalSearchInput                         = useTemplateRef("globalSearchInput");
-    const globalSearchBarShown: Ref<boolean>        = useState("globalSearchBarShown", () => false); // Poor woman's approach at page properties
-    const globalSearchStr:      Ref<string|null>    = useState("globalSearchStr",      () => null);  // null on page load, set to "" on click to expand input
+    const globalSearchBarShown: Ref<boolean>        = useState(State.GLOBAL_SEARCH_BAR_SHOWN); // Poor woman's approach at page properties
+    const globalSearchStr:      Ref<string|null>    = useState(State.GLOBAL_SEARCH_STRING);    // null on page load, set to "" on click to expand input
 
     const currentWeather: Ref<WeatherData|null> = ref(null);
     const weatherLoading: Ref<boolean>          = ref(false);

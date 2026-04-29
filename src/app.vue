@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:54:21
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-28 21:58:03
+ * Last Modified: 2026-04-29 17:45:11
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -145,6 +145,7 @@
     import { closeServerSubscriptionConnection, establishServerSubscriptionConnection } from "./composables/subscription";
     import { NotificationLevel } from "./model/notification";
     import { SubscriptionEventType, type StorageSubscriptionEvent, type SubscriptionEvent } from "./model/api";
+    import { initState, State } from "./composables/state";
 
     const route       = useRoute();
     let   changesMade = false;
@@ -154,7 +155,8 @@
     const showNavbar    = ref(false);
     const onlineVersion = ref("");
 
-    // Init global cache 'storage.ts'
+    // Init
+    initState();
     await initGlobalCache();
 
     useNuxtApp().hook("app:subscription:update", (data: SubscriptionEvent) => {
@@ -215,12 +217,12 @@
 
     // Resets and toggles global search bar visibility
     function updateGlobalSearchBar(pageProps: PageProperties) {
-        useState("globalSearchStr").value = null;
+        useState(State.GLOBAL_SEARCH_STRING).value = null;
 
         if (pageProps && pageProps.showGlobalSearchBar) {
-            useState("globalSearchBarShown").value = true;
+            useState(State.GLOBAL_SEARCH_BAR_SHOWN).value = true;
         } else {
-            useState("globalSearchBarShown").value = false;
+            useState(State.GLOBAL_SEARCH_BAR_SHOWN).value = false;
         }
     }
 
