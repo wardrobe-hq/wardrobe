@@ -4,7 +4,7 @@
  * Created Date: 2026-03-23 21:34:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-29 17:45:11
+ * Last Modified: 2026-04-29 18:37:33
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -232,6 +232,15 @@ export async function setServerSettingsToServer(data: ServerSettings): Promise<A
 /*
     -------------------- IMAGES --------------------
 */
+
+export async function getSSRImageFromServer(imgPath: string, scaleToWidth: number | undefined): Promise<Ref<ApiResponse<CachedImage>>> { // Variant that supports SSR for image loads on page load
+    const body = {
+        filePath: imgPath,
+        width: scaleToWidth
+    };
+
+    return (await useFetch("/api/get-image", { method: "POST", body: body })).data as Ref<ApiResponse<CachedImage>>;
+}
 
 export async function getImageFromServer(imgPath: string, scaleToWidth: number | undefined): Promise<CachedImage | null> {
     if (!imgPath) return null;
