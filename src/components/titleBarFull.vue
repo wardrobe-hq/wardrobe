@@ -5,7 +5,7 @@
  * Created Date: 2025-09-17 17:25:36
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-28 21:58:45
+ * Last Modified: 2026-04-29 18:45:52
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -26,11 +26,11 @@
         <div class="flex w-full justify-between md:justify-end gap-x-4 p-1.5 rounded-2xl backdrop-blur-lg">
             <!-- Sort dropdown -->
             <div class="flex min-w-18 sm:min-w-32 justify-end rounded-xl shadow-md select-none bg-bg-field-light dark:bg-bg-field-dark">
-                <select class="w-full px-2 m-0.5" v-model="selectedSort">
-                    <option :value="sortModes.dateDesc">{{ $t('sortByDateDesc') }}</option>
-                    <option :value="sortModes.dateAsc">{{ $t('sortByDateAsc') }}</option>
-                    <option :value="sortModes.nameDesc">{{ $t('sortByNameDesc') }}</option>
-                    <option :value="sortModes.nameAsc">{{ $t('sortByNameAsc') }}</option>
+                <select class="w-full px-2 m-0.5" v-model="selectedSort" v-on:change="saveUxSetting">
+                    <option :value="SortMode.dateDesc">{{ $t('sortByDateDesc') }}</option>
+                    <option :value="SortMode.dateAsc">{{ $t('sortByDateAsc') }}</option>
+                    <option :value="SortMode.nameDesc">{{ $t('sortByNameDesc') }}</option>
+                    <option :value="SortMode.nameAsc">{{ $t('sortByNameAsc') }}</option>
                 </select>
             </div>
 
@@ -95,26 +95,28 @@
 <script setup lang="ts">
     import { defaultUXSettings } from '~/model/storage';
     import type { Label } from '~/model/label';
-    import { sortModes } from '~/model/sort-modes';
+    import { SortMode } from '~/model/sort-modes';
 
 
     // Get global cache from app.vue
     const storedLabels = getAllLabelsFromServer();
 
     // Refs
-    const selectedSort:    Ref<sortModes> = ref(sortModes.dateDesc);
+    const selectedSort:    Ref<SortMode>  = ref(SortMode.dateDesc);
     const selectedFilters: Ref<string[]>  = ref([]);
     const selectedScaling: Ref<number>    = ref(defaultUXSettings.selectedItemCardsScaling);
 
     // Client side only
     onBeforeMount(() => {
         selectedScaling.value = getUXSettings().selectedItemCardsScaling;
+        selectedSort.value    = getUXSettings().selectedItemSort;
     });
 
 
     // Save scaling setting
     function saveUxSetting() {
         setUXSetting("selectedItemCardsScaling", selectedScaling.value);
+        setUXSetting("selectedItemSort", selectedSort.value);
     }
 
 

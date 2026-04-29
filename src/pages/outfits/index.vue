@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:40:46
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-28 22:18:48
+ * Last Modified: 2026-04-29 18:44:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -93,7 +93,7 @@
     import ImgLazy from "~/components/imgLazy.vue";
     import TitleBarFull from "~/components/titleBarFull.vue";
     import type { Outfit } from "~/model/item";
-    import { defaultSortMode, type sortModes } from "~/model/sort-modes";
+    import { defaultSortMode, type SortMode } from "~/model/sort-modes";
     import { getAllOutfitsFromServer } from "~/composables/storage";
 
 
@@ -108,7 +108,7 @@
     const storedOutfits = await getAllOutfitsFromServer();
 
     // Get refs to props exported by defineExpose() in TitleBarFull
-    const titleBarFull: Ref<{ selectedSort: sortModes, selectedFilters: string[], selectedScaling: number, toggleFilter: (thisFilter: string) => void }> = ref({ selectedSort: defaultSortMode, selectedFilters: [], selectedScaling: 0, toggleFilter: () => {} }); // TODO: Can this be an exported type somewhere?
+    const titleBarFull: Ref<{ selectedSort: SortMode, selectedFilters: string[], selectedScaling: number, toggleFilter: (thisFilter: string) => void }> = ref({ selectedSort: defaultSortMode, selectedFilters: [], selectedScaling: 0, toggleFilter: () => {} }); // TODO: Can this be an exported type somewhere?
 
 
     // Pre-calculate items that should be shown. Can be accessed multiple times in template without re-calculation. Updates when sort/filter/search changes due to reactivity

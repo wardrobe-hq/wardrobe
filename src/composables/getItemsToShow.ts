@@ -4,7 +4,7 @@
  * Created Date: 2025-09-17 17:25:36
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-29 17:45:11
+ * Last Modified: 2026-04-29 18:44:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -16,7 +16,7 @@
 
 
 import type { Item } from "~/model/item";
-import { sortModes } from "~/model/sort-modes";
+import { SortMode } from "~/model/sort-modes";
 import { State } from "./state";
 
 
@@ -26,7 +26,7 @@ import { State } from "./state";
  * @param selectedSort
  * @param selectedFilters
  */
-export default function(storedItems: Item[], selectedSort?: sortModes, selectedFilters?: string[]): Item[] {
+export default function(storedItems: Item[], selectedSort?: SortMode, selectedFilters?: string[]): Item[] {
 
     // Get search string ref from app.vue
     const searchStr: Ref<string|null> = useState(State.GLOBAL_SEARCH_STRING);
@@ -43,19 +43,19 @@ export default function(storedItems: Item[], selectedSort?: sortModes, selectedF
 
     // Apply sort to storedItems
     switch (selectedSort) {
-        case sortModes.dateDesc:
+        case SortMode.dateDesc:
             storedItems = storedItems.sort((a, b) => b.addedTimestamp - a.addedTimestamp);
             break;
 
-        case sortModes.dateAsc:
+        case SortMode.dateAsc:
             storedItems = storedItems.sort((a, b) => a.addedTimestamp - b.addedTimestamp);
             break;
 
-        case sortModes.nameDesc:
+        case SortMode.nameDesc:
             storedItems = storedItems.sort((a, b) => a.title.charCodeAt(0) - b.title.charCodeAt(0)); /* TODO: Does not sort e.g. "Bc 1" & "Bd 2" */
             break;
 
-        case sortModes.nameAsc:
+        case SortMode.nameAsc:
             storedItems = storedItems.sort((a, b) => b.title.charCodeAt(0) - a.title.charCodeAt(0));
             break;
 

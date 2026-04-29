@@ -4,7 +4,7 @@
  * Created Date: 2025-09-21 00:07:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-02-02 21:32:26
+ * Last Modified: 2026-04-29 18:44:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,11 +15,11 @@
  */
 
 
-export enum sortModes {
+export enum SortMode {
     dateDesc,
     dateAsc,
     nameDesc,
     nameAsc
 }
 
-export const defaultSortMode = sortModes.dateDesc;
+export const defaultSortMode = SortMode.dateDesc;

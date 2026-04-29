@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 15:21:35
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-05 21:01:49
+ * Last Modified: 2026-04-29 18:48:38
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -18,6 +18,7 @@
 import type { Clothing, Outfit } from "./item";
 import type { Label } from "./label";
 import type { Category } from "./label-category";
+import { SortMode } from "./sort-modes";
 import type { Unit } from "./unit";
 
 
@@ -58,8 +59,9 @@ export type UXSettings = {
     // Boolean if user changed dark mode, null if automatic
     darkModeEnabled: boolean | null, // WARN: Used in public/global.js as well
 
-    // Selected scaling for item cards in titleBarFull
+    // Selected scaling and sort mode for item cards in titleBarFull
     selectedItemCardsScaling: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9,
+    selectedItemSort: SortMode,
 
     // Whether user enabled if selected filters should be persisted
     saveSelectedFilters: boolean // TODO
@@ -70,6 +72,7 @@ export type UXSettings = {
 export const defaultUXSettings: UXSettings = {
     darkModeEnabled: null,
     selectedItemCardsScaling: 6,
+    selectedItemSort: SortMode.dateDesc,
     saveSelectedFilters: false
 };
 
