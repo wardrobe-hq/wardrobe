@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-29 18:33:15
+ * Last Modified: 2026-04-30 09:12:47
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -185,7 +185,11 @@
     if (clothingId != "new") {
         thisClothing.value = (await getClothingFromServer(clothingId)).value.document!; // TODO: Does ref break?
 
-        thisClothingImgBlob.value = (await getSSRImageFromServer(thisClothing.value.imgPath, 512))?.value.document?.imgBlob || ""; // TODO: Does ref break?
+        // I think it actually provides a better user experience fetching the image afterwards here
+        // thisClothingImgBlob.value = (await getSSRImageFromServer(thisClothing.value.imgPath, 512))?.value.document?.imgBlob || "";
+        onMounted(async () => {
+            thisClothingImgBlob.value = (await getImageFromServer(thisClothing.value.imgPath, 512))?.imgBlob || ""; // TODO: Does ref break?
+        });
     }
 
 
