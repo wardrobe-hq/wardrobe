@@ -4,7 +4,7 @@
  * Created Date: 2026-04-08 17:59:41
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-29 17:45:11
+ * Last Modified: 2026-05-02 14:54:28
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -15,10 +15,11 @@
  */
 
 
-import { SubscriptionEventAction, SubscriptionEventType, type SubscriptionEvent } from "../model/api";
+import { SubscriptionEventAction, SubscriptionEventType, type StorageSubscriptionEvent, type SubscriptionEvent } from "../model/api";
 import { NotificationLevel, NotificationType, type NotificationData } from "../model/notification";
 import { emitSubscriptionEvent } from "./events";
 import { State } from "./state";
+import { handleStorageSubscriptionEvent } from "./storage";
 
 let serverSubscriptionEventStream: EventSource | undefined;
 
@@ -45,7 +46,7 @@ function handleServerSubscriptionConnected(event: unknown) { // eslint-disable-l
  * Handles incoming messages from server's 'subscribe' API route
  * @param msg
  */
-function handleServerSubscriptionEvent(msg: MessageEvent<any>) { // eslint-disable-line @typescript-eslint/no-explicit-any
+async function handleServerSubscriptionEvent(msg: MessageEvent<any>) { // eslint-disable-line @typescript-eslint/no-explicit-any
     try {
         const data = JSON.parse(msg.data) as SubscriptionEvent;
         console.debug("[DEBUG] Incoming server subscription message:", data);
@@ -57,7 +58,12 @@ function handleServerSubscriptionEvent(msg: MessageEvent<any>) { // eslint-disab
             type: NotificationType.SERVER_SUBSCRIPTION
         });
 
-        emitSubscriptionEvent(data); // Re-emit event on for frontend
+        if (data.type == SubscriptionEventType.STORAGE) {
+            await handleStorageSubscriptionEvent(data as StorageSubscriptionEvent);
+        }
+
+        // Re-emit event for frontend when data was re-fetched
+        emitSubscriptionEvent(data);
     } catch(err) {
         console.error("Failed to parse incoming message from server!", err);
     }

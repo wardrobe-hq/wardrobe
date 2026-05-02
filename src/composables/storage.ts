@@ -4,7 +4,7 @@
  * Created Date: 2026-03-23 21:34:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-29 18:37:33
+ * Last Modified: 2026-05-02 14:54:53
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -29,7 +29,7 @@ import { State } from "./state";
  */
 
 
-let cachedImages: Ref<StorageKindDataMap<StorageKind.IMAGES>[]>;
+let cachedImages: Ref<StorageKindDataMap<StorageKind.IMAGES>[]>; // Perhaps replaceable by using useFetch() with !immediate?
 
 
 /**
@@ -89,39 +89,42 @@ async function sendApiRequest(route: string, data?: object): Promise<any> { // e
 /**
  * Handles incoming server storage update events
  * @param event
+ * @returns Returns Promise resolving when data has been refreshed
  */
-export function handleCacheSubscriptionEvent(event: StorageSubscriptionEvent) {
+export async function handleStorageSubscriptionEvent(event: StorageSubscriptionEvent): Promise<void> {
     let imageId: string;
 
     switch (event.storage) {
         case StorageKind.IMAGES:
             imageId = (event.newData as StorageKindDataMap<StorageKind.IMAGES>).id;
             cachedImages.value = cachedImages.value.filter((e) => e.id !== imageId);
-            console.debug(`[DEBUG] handleCacheSubscriptionEvent: Deleting image '${imageId}' from cache...`);
+            console.debug(`[DEBUG] handleStorageSubscriptionEvent: Deleting image '${imageId}' from cache...`);
             break;
         case StorageKind.CLOTHES:
-            refreshNuxtData("/api/get-all-clothes");
-            console.debug("[DEBUG] handleCacheSubscriptionEvent: Refreshing data of API route '/api/get-all-clothes'...");
+            await refreshNuxtData("/api/get-all-clothes");
+            console.debug("[DEBUG] handleStorageSubscriptionEvent: Refreshing data of API route '/api/get-all-clothes'...");
+
+            // TODO: How am I going to refresh a single clothing?
             break;
         case StorageKind.OUTFITS:
-            refreshNuxtData("/api/get-all-outfits");
-            console.debug("[DEBUG] handleCacheSubscriptionEvent: Refreshing data of API route '/api/get-all-outfits'...");
+            await refreshNuxtData("/api/get-all-outfits");
+            console.debug("[DEBUG] handleStorageSubscriptionEvent: Refreshing data of API route '/api/get-all-outfits'...");
             break;
         case StorageKind.LABELS:
-            refreshNuxtData("/api/get-all-labels");
-            console.debug("[DEBUG] handleCacheSubscriptionEvent: Refreshing data of API route '/api/get-all-labels'...");
+            await refreshNuxtData("/api/get-all-labels");
+            console.debug("[DEBUG] handleStorageSubscriptionEvent: Refreshing data of API route '/api/get-all-labels'...");
             break;
         case StorageKind.LABEL_CATEGORIES:
-            refreshNuxtData("/api/get-all-label-categories");
-            console.debug("[DEBUG] handleCacheSubscriptionEvent: Refreshing data of API route '/api/get-all-label-categories'...");
+            await refreshNuxtData("/api/get-all-label-categories");
+            console.debug("[DEBUG] handleStorageSubscriptionEvent: Refreshing data of API route '/api/get-all-label-categories'...");
             break;
         case StorageKind.SERVER_SETTINGS:
-            refreshNuxtData("/api/get-settings")
-                .then(() => emitSettingsSavedEvent());
-            console.debug("[DEBUG] handleCacheSubscriptionEvent: Refreshing data of API route '/api/get-settings'...");
+            await refreshNuxtData("/api/get-settings");
+            emitSettingsSavedEvent();
+            console.debug("[DEBUG] handleStorageSubscriptionEvent: Refreshing data of API route '/api/get-settings'...");
             return;
         default:
-            throw("handleCacheSubscriptionEvent: Unsupported storage kind " + event.storage);
+            throw("handleStorageSubscriptionEvent: Unsupported storage kind " + event.storage);
     }
 }
 

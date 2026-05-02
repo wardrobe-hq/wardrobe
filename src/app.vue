@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:54:21
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-29 17:45:11
+ * Last Modified: 2026-05-02 14:50:35
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -158,12 +158,6 @@
     // Init
     initState();
     await initGlobalCache();
-
-    useNuxtApp().hook("app:subscription:update", (data: SubscriptionEvent) => {
-        if (data.type == SubscriptionEventType.STORAGE) {
-            handleCacheSubscriptionEvent(data as StorageSubscriptionEvent);
-        }
-    });
 
 
     // Handle changesMade event from pages
