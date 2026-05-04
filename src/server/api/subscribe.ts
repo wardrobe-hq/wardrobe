@@ -4,7 +4,7 @@
  * Created Date: 2026-03-26 18:49:20
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 19:05:03
+ * Last Modified: 2026-05-04 17:14:33
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -41,7 +41,7 @@ export default defineEventHandler(async (event) => {
     event.node.res.flushHeaders();
 
     // Register client
-    SubscriptionUpdateObserver.createSubscriber(event.node.req, res);
+    await SubscriptionUpdateObserver.createSubscriber(event.node.req, res);
 
     event._handled = true;
 

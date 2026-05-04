@@ -4,7 +4,7 @@
  * Created Date: 2026-03-26 18:53:29
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 19:05:16
+ * Last Modified: 2026-05-04 17:15:30
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -16,7 +16,7 @@
 
 
 import { IncomingMessage, ServerResponse } from "http";
-import type { SubscriptionEvent } from "~/model/api";
+import { SubscriptionEventAction, SubscriptionEventType, type SubscriptionEvent } from "~/model/api";
 
 
 type UpdateFunction<UpdateData> = (arg0: UpdateData) => void;
@@ -59,8 +59,7 @@ function UpdateObserver<UpdateData>() {
          */
         addSubscriber(subscriber: UpdateFunction<UpdateData>) {
             const lastSub = this.subscribers[this.subscribers.length - 1] || { id: -1 };
-
-            const length = this.subscribers.push({ id: lastSub.id + 1, func: subscriber });
+            const length  = this.subscribers.push({ id: lastSub.id + 1, func: subscriber });
 
             console.debug(`[DEBUG] UpdateObserver: New subscription request, adding sub with id ${lastSub.id + 1}. There are/is now ${length} subscriber(s)`);
 
@@ -109,7 +108,7 @@ export class SubscriptionUpdateObserver extends UpdateObserver<SubscriptionEvent
      * @param request
      * @param responseStream
      */
-    static createSubscriber(request: IncomingMessage, responseStream: ServerResponse<IncomingMessage>) {
+    static async createSubscriber(request: IncomingMessage, responseStream: ServerResponse<IncomingMessage>) {
 
         // Create update function and register it
         const updateClient: UpdateFunction<SubscriptionEvent> = async (newData: SubscriptionEvent) => {
@@ -122,6 +121,10 @@ export class SubscriptionUpdateObserver extends UpdateObserver<SubscriptionEvent
                 console.error("SubscriptionUpdateObserver: Failed to update event stream with new data! ", err);
             }
         };
+
+        // Attempt to call new subscriber
+        console.debug("[DEBUG] SubscriptionUpdateObserver: Attempting to call new subscriber...");
+        await updateClient({ type: SubscriptionEventType.SUBSCRIPTION, action: SubscriptionEventAction.ANY });
 
         const id = SubscriptionUpdateObserver.getInstance().addSubscriber(updateClient);
 

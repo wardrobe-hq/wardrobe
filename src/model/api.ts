@@ -4,7 +4,7 @@
  * Created Date: 2026-03-26 18:57:42
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-26 19:42:40
+ * Last Modified: 2026-05-04 17:13:44
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -28,8 +28,9 @@ export interface ApiResponse<T> {
 
 // Event types broadcasted by the 'subscribe' API Route
 export enum SubscriptionEventType {
-    STORAGE, // Database updates
-    JOB      // Job (un)register/run events
+    SUBSCRIPTION, // Subscription meta stuff, e.g. successful registration
+    STORAGE,      // Database updates
+    JOB           // Job (un)register/run events
 }
 
 // Event actions
