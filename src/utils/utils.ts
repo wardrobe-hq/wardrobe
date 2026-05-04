@@ -4,7 +4,7 @@
  * Created Date: 2026-01-23 22:00:18
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-28 21:58:06
+ * Last Modified: 2026-05-04 16:58:18
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -125,7 +125,7 @@ export async function getWeatherFromServer() {
  * @returns Rounded number
  */
 export function round(value: number, decimals: number): number {
-    return Number(Math.round(value+"e"+decimals)+"e-"+decimals);
+    return Number((value).toFixed(decimals)); // Number(Math.round(value+"e"+decimals)+"e-"+decimals);
 }
 
 
