@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:54:21
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-02 14:50:35
+ * Last Modified: 2026-05-04 19:30:40
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -37,7 +37,7 @@
         <div class="absolute left-1/2 transform -translate-x-1/2 top-2 w-34">
             <div class="my-3"></div> <!-- Add some space above everything-->
 
-            <NuxtLink to="/" class="group flex px-2 py-1 mb-1 rounded-md hover:bg-bg-input-hover-light hover:dark:bg-bg-input-hover-dark hover:transition-all">
+            <NuxtLink to="/" class="group custom-navbar-link">
                 <span class="fixed self-center mb-1 text-xl font-bold text-green-600" v-show="route.name === 'index' || route.name === 'clothing'">|</span>
 
                 <TextOverflowAutoScroll class="ml-4">
@@ -47,21 +47,21 @@
 
             <div class="my-2 h-0.5 bg-border-secondary-light dark:bg-border-secondary-dark opacity-50"></div> <!-- Divider to give Browse more presence -->
 
-            <NuxtLink to="/outfits" class="group flex px-2 py-1 mb-1 rounded-md hover:bg-bg-input-hover-light hover:dark:bg-bg-input-hover-dark hover:transition-all">
+            <NuxtLink to="/outfits" class="group custom-navbar-link">
                 <span class="fixed self-center mb-1 text-xl font-bold text-green-600" v-show="route.name === 'outfits'">|</span>
 
                 <TextOverflowAutoScroll class="ml-4">
                     <PhCoatHanger class="mr-2" /> {{ $t("outfits") }}
                 </TextOverflowAutoScroll>
             </NuxtLink>
-            <NuxtLink to="/labels" class="group flex px-2 py-1 mb-1 rounded-md hover:bg-bg-input-hover-light hover:dark:bg-bg-input-hover-dark hover:transition-all">
+            <NuxtLink to="/labels" class="group custom-navbar-link">
                 <span class="fixed self-center mb-1 text-xl font-bold text-green-600" v-show="route.name === 'labels'">|</span>
 
                 <TextOverflowAutoScroll class="ml-4">
                     <PhTag class="mr-2" /> {{ $t("labels") }}
                 </TextOverflowAutoScroll>
             </NuxtLink>
-            <NuxtLink to="/settings" class="group flex px-2 py-1 mb-1 rounded-md hover:bg-bg-input-hover-light hover:dark:bg-bg-input-hover-dark hover:transition-all">
+            <NuxtLink to="/settings" class="group custom-navbar-link">
                 <span class="fixed self-center mb-1 text-xl font-bold text-green-600" v-show="route.name === 'settings'">|</span>
 
                 <TextOverflowAutoScroll class="ml-4">

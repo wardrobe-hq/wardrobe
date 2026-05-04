@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 16:08:20
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-30 18:10:20
+ * Last Modified: 2026-05-04 19:29:36
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -56,11 +56,15 @@
     --color-bg-light: #f8f9fa;
     --color-bg-dark: #181a1b;
 
+    --color-bg-input-click-light: #c0c0c2;
+    --color-bg-input-click-dark: #2f3335;
     --color-bg-input-hover-light: #d9dadc;
     --color-bg-input-hover-dark: #25282a;
     --color-bg-input-light: #e8e9eb;
     --color-bg-input-dark: #202224;
 
+    --color-bg-field-click-light: #d3d4d6;
+    --color-bg-field-click-dark: #333639;
     --color-bg-field-hover-light: #e2e3e5;
     --color-bg-field-hover-dark: #242628;
     --color-bg-field-light: #f2f3f4;
@@ -104,26 +108,31 @@
 
 /* Primary button, used in various places on <button> container. Put Icon and Text inside. */
 .custom-button-primary {
-    @apply flex items-center justify-center h-8 py-1 px-3 rounded-md shadow-md cursor-pointer bg-bg-input-light dark:bg-bg-input-dark outline-border-primary-light dark:outline-border-primary-dark outline-2 hover:bg-bg-input-hover-light hover:dark:bg-bg-input-hover-dark hover:transition-all disabled:bg-bg-input-hover-light disabled:dark:bg-bg-input-hover-dark disabled:cursor-not-allowed;
+    @apply flex items-center justify-center h-8 py-1 px-3 rounded-md shadow-md cursor-pointer bg-bg-input-light dark:bg-bg-input-dark outline-border-primary-light dark:outline-border-primary-dark outline-2 hover:bg-bg-input-hover-light hover:dark:bg-bg-input-hover-dark active:bg-bg-input-click-light active:dark:bg-bg-input-click-dark hover:transition-all disabled:bg-bg-input-hover-light disabled:dark:bg-bg-input-hover-dark disabled:cursor-not-allowed;
 }
 
 /* Small square button without text, used on <button> container. Put Icon inside. */
 .custom-button-icon-only {
-    @apply p-1 rounded-md shadow-md bg-bg-input-light dark:bg-bg-input-dark outline-border-primary-light dark:outline-border-primary-dark outline-2 hover:bg-bg-input-hover-light hover:dark:bg-bg-input-hover-dark hover:transition-all disabled:bg-bg-input-hover-light disabled:dark:bg-bg-input-hover-dark disabled:cursor-not-allowed;
+    @apply p-1 rounded-md shadow-md bg-bg-input-light dark:bg-bg-input-dark outline-border-primary-light dark:outline-border-primary-dark outline-2 hover:bg-bg-input-hover-light hover:dark:bg-bg-input-hover-dark active:bg-bg-input-click-light active:dark:bg-bg-input-click-dark hover:transition-all disabled:bg-bg-input-hover-light disabled:dark:bg-bg-input-hover-dark disabled:cursor-not-allowed;
 }
 
 .custom-button-icon-only-secondary {
-    @apply p-1 rounded-md shadow-md bg-bg-field-light dark:bg-bg-field-dark outline-border-secondary-light dark:outline-border-secondary-dark outline-2 hover:bg-bg-field-hover-light hover:dark:bg-bg-field-hover-dark hover:transition-all disabled:bg-bg-field-hover-light disabled:dark:dark:bg-bg-field-hover-dark disabled:cursor-not-allowed;
+    @apply p-1 rounded-md shadow-md bg-bg-field-light dark:bg-bg-field-dark outline-border-secondary-light dark:outline-border-secondary-dark outline-2 hover:bg-bg-field-hover-light hover:dark:bg-bg-field-hover-dark hover:transition-all active:bg-bg-input-click-light active:dark:bg-bg-input-click-dark disabled:bg-bg-field-hover-light disabled:dark:dark:bg-bg-field-hover-dark disabled:cursor-not-allowed;
+}
+
+/* Navbar page switch button */
+.custom-navbar-link {
+    @apply flex px-2 py-1 mb-1 rounded-md hover:bg-bg-input-hover-light hover:dark:bg-bg-input-hover-dark active:bg-bg-input-click-light active:dark:bg-bg-input-click-dark hover:transition-all
 }
 
 /* Primary input, used in various places on <input> or even secondary <button> container */
 .custom-input-primary {
-    @apply h-7.5 px-3 rounded-md shadow-md bg-bg-field-light dark:bg-bg-field-dark outline-2 outline-border-secondary-light dark:outline-border-secondary-dark hover:bg-bg-field-hover-light hover:dark:bg-bg-field-hover-dark hover:transition-all disabled:bg-bg-field-hover-light disabled:dark:bg-bg-field-hover-dark disabled:cursor-not-allowed;
+    @apply h-7.5 px-3 rounded-md shadow-md bg-bg-field-light dark:bg-bg-field-dark outline-2 outline-border-secondary-light dark:outline-border-secondary-dark hover:bg-bg-field-hover-light hover:dark:bg-bg-field-hover-dark active:bg-bg-field-click-light active:dark:bg-bg-field-click-dark hover:transition-all disabled:bg-bg-field-hover-light disabled:dark:bg-bg-field-hover-dark disabled:cursor-not-allowed;
 }
 
 /* Duplicates custom-input-primary with different outline, sadly cannot reference component in this component */
 .custom-input-secondary {
-    @apply h-7.5 px-3 rounded-md shadow-md bg-bg-field-light dark:bg-bg-field-dark outline-2 outline-border-primary-light dark:outline-border-primary-dark hover:bg-bg-field-hover-light hover:dark:bg-bg-field-hover-dark hover:transition-all disabled:bg-bg-field-hover-light disabled:dark:bg-bg-field-hover-dark disabled:cursor-not-allowed;
+    @apply h-7.5 px-3 rounded-md shadow-md bg-bg-field-light dark:bg-bg-field-dark outline-2 outline-border-primary-light dark:outline-border-primary-dark hover:bg-bg-field-hover-light hover:dark:bg-bg-field-hover-dark active:bg-bg-field-click-light active:dark:bg-bg-field-click-dark hover:transition-all disabled:bg-bg-field-hover-light disabled:dark:bg-bg-field-hover-dark disabled:cursor-not-allowed;
 }
 
 /* Primary label to display text */
@@ -147,7 +156,7 @@
 
 /* Duplicates custom-wardrobe-label with hovering enabled, sadly cannot reference component in this component */
 .custom-wardrobe-label-clickable {
-    @apply text-nowrap rounded-xl shadow-md px-2 text-gray-100 bg-gray-400 dark:bg-gray-600 hover:bg-gray-600 dark:hover:bg-gray-400 hover:transition-all;
+    @apply text-nowrap rounded-xl shadow-md px-2 text-gray-100 bg-gray-400 dark:bg-gray-600 hover:bg-gray-600 dark:hover:bg-gray-400 active:bg-gray-700 active:dark:bg-gray-300 hover:transition-all;
 }
 
 /* Add with conditional class to mark wardrobe label as selected */
@@ -160,5 +169,5 @@
     @apply grid gap-x-4 gap-y-6 md:gap-x-6 md:gap-y-10
 }
 .custom-items-grid-card {
-    @apply @container aspect-square md:aspect-auto rounded-2xl shadow-lg select-none bg-bg-input-light dark:bg-bg-input-dark hover:bg-bg-input-hover-light hover:dark:bg-bg-input-hover-dark hover:transition-all
+    @apply @container aspect-square md:aspect-auto rounded-2xl shadow-lg select-none bg-bg-input-light dark:bg-bg-input-dark hover:bg-bg-input-hover-light hover:dark:bg-bg-input-hover-dark active:bg-bg-input-click-light active:dark:bg-bg-input-click-dark hover:transition-all
 }
