@@ -5,7 +5,7 @@
  * Created Date: 2025-09-09 17:13:32
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-28 21:57:36
+ * Last Modified: 2026-05-04 22:52:34
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -209,7 +209,9 @@
             name: "",
             orderIndex: getNewLastLabelOrderIndex(labelsPerCategory[category.id]!),
             categoryID: category.id,
-            specialityValue: CategorySpecialityMap[category.specialityID].value // Init val
+            specialityValue: CategorySpecialityMap[category.specialityID].value, // Init val
+            addedTimestamp: 0,
+            modifiedTimestamp: 0
         };
 
         localLabels.value.push(newLabel);
@@ -269,7 +271,9 @@
         const e: Category = {
             id: await getUUIDFromServer(),
             name: "",
-            specialityID: CategorySpecialityID.No_Speciality
+            specialityID: CategorySpecialityID.No_Speciality,
+            addedTimestamp: 0,
+            modifiedTimestamp: 0
         };
 
         localCategories.value.push(e);

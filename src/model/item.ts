@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 15:45:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 19:04:46
+ * Last Modified: 2026-05-04 22:52:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,38 +15,30 @@
  */
 
 
-import type { Implements } from "./Implements";
+import type { DatabaseItem } from "./storage";
 
 
 // Base type for Clothing & Outfit, used by generic components & composables.
-export type Item = {
-    id: string,
-    title: string,          // Used for sorting
-    labelIDs: string[], // Label[],        // Used as filters/for filtering
-    addedTimestamp: number,  // Used for sorting
-    modifiedTimestamp: number
+export interface WardrobeItem extends DatabaseItem {
+    title: string,      // Used for sorting
+    labelIDs: string[], // Used as filters/for filtering
 }
 
 
-// Implements Item
-export type Clothing = Implements<Item, {
+// Implements WardrobeItem
+export interface Clothing extends WardrobeItem {
     id: string,
     title: string,
     description: string,
     imgPath: string,
-    labelIDs: string[], // IMPORTANT: May reference non-existent labels if dataCleanUp job did not run yet!
-    addedTimestamp: number,
-    modifiedTimestamp: number
-}>
+    labelIDs: string[] // IMPORTANT: May reference non-existent labels if dataCleanUp job did not run yet!
+}
 
 
-// Implements Item
-export type Outfit = Implements<Item, {
-    id: string,
+// Implements WardrobeItem
+export interface Outfit extends WardrobeItem {
     title: string,
     clothes: { order: number, clothingID: string }[], // IMPORTANT: May reference non-existent clothes if dataCleanUp job did not run yet!
     labelIDs: string[],                               // IMPORTANT: May reference non-existent labels if dataCleanUp job did not run yet!
-    previewImgPath: string,
-    addedTimestamp: number,
-    modifiedTimestamp: number
-}>
+    previewImgPath: string
+}

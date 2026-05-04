@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:32:51
+ * Last Modified: 2026-05-04 22:52:42
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -19,7 +19,7 @@ import nedb from "@seald-io/nedb";
 import crypto from "node:crypto";
 import { SubscriptionEventAction } from "~/model/api";
 import type { Outfit } from "~/model/item";
-import { StorageKind } from "~/model/storage";
+import { StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
 import { generateOutfitPreviewImage } from "~/server/utils/outfitPreviewImage";
 
 
@@ -57,11 +57,7 @@ export async function upsertOutfit(outfit: Outfit): Promise<Outfit | null> {
     }
 
     // Update metadata
-    if (!outfit.addedTimestamp) {
-        outfit.addedTimestamp = Date.now();
-    }
-
-    outfit.modifiedTimestamp = Date.now();
+    updateDatabaseItemMetadata(outfit);
 
     const res      = await outfitsDb.updateAsync({ id: outfit.id }, { $set: outfit }, { upsert: true, returnUpdatedDocs: true });
     const affected = res.affectedDocuments ? res.affectedDocuments as unknown as Outfit : null;

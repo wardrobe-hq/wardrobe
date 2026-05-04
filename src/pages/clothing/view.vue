@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-30 09:12:47
+ * Last Modified: 2026-05-04 22:52:32
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -224,7 +224,9 @@
                 name: name,
                 orderIndex: getNewLastLabelOrderIndex(getLabelsOfCategory(storedLabels.value.document!, thisCategory.id)),
                 categoryID: thisCategory.id,
-                specialityValue: CategorySpecialityMap[thisCategory.specialityID].value // Init val
+                specialityValue: CategorySpecialityMap[thisCategory.specialityID].value, // Init val
+                addedTimestamp: 0,
+                modifiedTimestamp: 0
             };
 
             // Send new label to server

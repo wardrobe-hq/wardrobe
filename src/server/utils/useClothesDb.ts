@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:32:45
+ * Last Modified: 2026-05-04 22:52:38
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -19,7 +19,7 @@ import nedb from "@seald-io/nedb";
 import crypto from "node:crypto";
 import { SubscriptionEventAction } from "~/model/api";
 import type { Clothing } from "~/model/item";
-import { StorageKind } from "~/model/storage";
+import { StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
 import { updateImagesOfAffectedOutfits } from "~/server/utils/outfitPreviewImage";
 
 
@@ -50,11 +50,7 @@ export async function upsertClothing(clothing: Clothing): Promise<Clothing | nul
     }
 
     // Update metadata
-    if (!clothing.addedTimestamp) {
-        clothing.addedTimestamp = Date.now();
-    }
-
-    clothing.modifiedTimestamp = Date.now();
+    updateDatabaseItemMetadata(clothing);
 
     // Unused image will be deleted by periodic database cleanup job
 

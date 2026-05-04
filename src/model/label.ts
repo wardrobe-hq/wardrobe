@@ -4,7 +4,7 @@
  * Created Date: 2025-09-09 21:59:50
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-30 17:00:01
+ * Last Modified: 2026-05-04 22:52:28
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -14,8 +14,10 @@
  * You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 import type { Category } from "./label-category";
 import { CategorySpecialityMap } from "./label-category";
+import type { DatabaseItem } from "./storage";
 
 
 /**
@@ -23,8 +25,7 @@ import { CategorySpecialityMap } from "./label-category";
  */
 
 
-export type Label = {
-    id: string,
+export interface Label extends DatabaseItem {
     name: string,
     orderIndex: number,         // Floating point number
     categoryID: string,         // IMPORTANT: May reference non-existent category if dataCleanUp job did not run yet!

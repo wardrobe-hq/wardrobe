@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:32:48
+ * Last Modified: 2026-05-04 22:52:40
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -19,7 +19,7 @@ import nedb from "@seald-io/nedb";
 import { SubscriptionEventAction } from "~/model/api";
 import type { Label } from "~/model/label";
 import type { Category } from "~/model/label-category";
-import { StorageKind } from "~/model/storage";
+import { StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
 
 
 // Load database
@@ -48,6 +48,9 @@ async function upsertLabel(label: Label): Promise<Label | null> {
     if (!label.id) {
         label.id = crypto.randomUUID();
     }
+
+    // Update metadata
+    updateDatabaseItemMetadata(label);
 
     const res      = await labelsDb.updateAsync({ id: label.id }, { $set: label }, { upsert: true, returnUpdatedDocs: true });
     const affected = res.affectedDocuments ? res.affectedDocuments as unknown as Label : null;
@@ -131,6 +134,9 @@ async function upsertLabelCategory(category: Category): Promise<Category | null>
     if (!category.id) {
         category.id = crypto.randomUUID();
     }
+
+    // Update metadata
+    updateDatabaseItemMetadata(category);
 
     const res      = await labelCategoriesDb.updateAsync({ id: category.id }, { $set: category }, { upsert: true, returnUpdatedDocs: true });
     const affected = res.affectedDocuments ? res.affectedDocuments as unknown as Category : null;

@@ -4,7 +4,7 @@
  * Created Date: 2025-12-31 17:00:33
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-27 19:01:56
+ * Last Modified: 2026-05-04 22:52:23
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -16,11 +16,11 @@
 
 
 import type { Label } from "./label";
+import type { DatabaseItem } from "./storage";
 import type { TemperatureKelvin } from "./unit";
 
 
-export type Category = {
-    id: string,
+export interface Category extends DatabaseItem {
     name: string,
     specialityID: CategorySpecialityID
 }
