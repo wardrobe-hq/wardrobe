@@ -4,7 +4,7 @@
  * Created Date: 2025-12-08 17:43:05
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-06 19:12:28
+ * Last Modified: 2026-05-06 19:55:37
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -52,8 +52,8 @@ export default defineEventHandler(async (event): Promise<ApiResponse<void>> => {
     return await getApiResponse<void>(async () => {
         await upsertLabelCategories(updatedCategories);
         await upsertLabels(updatedLabels);
-        await removeLabels(deletedLabels.flatMap((e) => e.id));
-        await removeLabelCategories(deletedCategories.flatMap((e) => e.id));
+        await deleteLabels(deletedLabels.flatMap((e) => e.id));
+        await deleteLabelCategories(deletedCategories.flatMap((e) => e.id));
     });
 
 });

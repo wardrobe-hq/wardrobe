@@ -4,7 +4,7 @@
  * Created Date: 2025-12-30 22:18:23
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:38:13
+ * Last Modified: 2026-05-06 19:54:55
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -17,7 +17,7 @@
 
 import { getClothes, upsertClothing } from "~/server/utils/useClothesDb";
 import { deleteImage, getAllImagePaths, imgCategory } from "~/server/utils/useImagesStorage";
-import { getAllLabelCategories, getAllLabels, removeLabels } from "~/server/utils/useLabelsDb";
+import { getAllLabelCategories, getAllLabels, deleteLabels } from "~/server/utils/useLabelsDb";
 import { getOutfit, upsertOutfit } from "~/server/utils/useOutfitsDb";
 import type { Clothing } from "~/model/item";
 import type { Outfit } from "~/model/item";
@@ -93,7 +93,7 @@ export default {
         });
 
         console.debug("DEBUG - dataCleanup: Unreferenced labels: ", labelIDsToRemove);
-        removeLabels(labelIDsToRemove);
+        deleteLabels(labelIDsToRemove);
 
 
         // Filter clothes for non existent labels // TODO: Not (yet) in separate function due to amount of in/out params
