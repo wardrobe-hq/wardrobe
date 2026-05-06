@@ -47,6 +47,7 @@
     "@vueuse/integrations": "^14.2.1",
     "@vueuse/nuxt": "^14.2.1",
     "canvas": "^3.2.3",
+    "jsondiffpatch": "^0.7.3",
     "nuxt": "^4.4.2",
     "sharp": "^0.34.5",
     "sortablejs": "^1.15.7",

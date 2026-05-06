@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 15:21:35
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-04 22:52:27
+ * Last Modified: 2026-05-06 19:16:03
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -20,6 +20,12 @@ import type { Label } from "./label";
 import type { Category } from "./label-category";
 import { SortMode } from "./sort-modes";
 import type { Unit } from "./unit";
+import type { ArrayDelta, Delta } from "jsondiffpatch";
+
+
+// Provide jsondiffpatch Delta alias with type annotation and custom FullObjectsInArray ArrayDelta types
+export type Diff<T>                   = Delta;      // eslint-disable-line @typescript-eslint/no-unused-vars
+export type FullObjectsInArrayDiff<T> = ArrayDelta; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 
 // Fields every database record is required to have

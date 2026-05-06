@@ -5,7 +5,7 @@
  * Created Date: 2025-09-09 17:13:32
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-04 22:52:34
+ * Last Modified: 2026-05-06 19:15:00
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -167,20 +167,23 @@
     import { UnitType } from "~/model/unit";
     import DayMonthInput from "~/components/dayMonthInput.vue";
     import { setCategoriesAndLabelsToServer } from "~/composables/storage";
+    import { SubscriptionEventType, type ApiResponse, type StorageSubscriptionEvent, type SubscriptionEvent } from "~/model/api";
+    import { StorageKind, type Diff, type FullObjectsInArrayDiff } from "~/model/storage";
 
 
-    // Create local clones of global labels & category cache from app.vue. Changes are synced in saveChanges()
-    const storedLabels     = getAllLabelsFromServer();
-    const storedCategories = getAllLabelCategoriesFromServer();
-
+    // Create local clones of global labels & category cache from app.vue
+    let storedLabels:      Ref<ApiResponse<Label[]>>;
+    let storedCategories:  Ref<ApiResponse<Category[]>>;
     let localLabels:       Ref<Label[]>;
     let localCategories:   Ref<Category[]>;
     let labelsPerCategory: Reactive<{ [key: string]: Label[] }> = reactive({}); // Nested data structure must use reactive to update correctly in template when dragged
     let useSortables:      UseSortableReturn[] = [];
 
     function init() {
-        localLabels     = useCloned(storedLabels.value.document!, { manual: true }).cloned;     // I'm not using useCloned's sync() as it just wouldn't work :shrug:
-        localCategories = useCloned(storedCategories.value.document!, { manual: true }).cloned;
+        storedLabels     = useCloned(getAllLabelsFromServer(), { manual: true }).cloned;          // Clone the original to be able to create diff when storage updates
+        storedCategories = useCloned(getAllLabelCategoriesFromServer(), { manual: true }).cloned;
+        localLabels      = useCloned(storedLabels.value.document!, { manual: true }).cloned;      // I'm not using useCloned's sync() as it just wouldn't work :shrug:
+        localCategories  = useCloned(storedCategories.value.document!, { manual: true }).cloned;
 
         // Cleanup before reassigning
         useSortables.forEach((e) => e.stop());
@@ -195,11 +198,6 @@
     }
 
     init();
-
-
-    // Cache labels & categories that should be deleted
-    let labelIDsToDelete:    string[] = [];
-    let categoryIDsToDelete: string[] = [];
 
 
     // Add a new label to a category
@@ -226,7 +224,6 @@
         const confirmed = confirm($t('labelsDeleteLabelConfirmationPrompt', { name: selectedLabel.name }));
 
         if (confirmed) {
-            labelIDsToDelete.push(selectedLabel.id);
             localLabels.value = localLabels.value.filter((e) => e.id != selectedLabel.id);
             labelsPerCategory[selectedLabel.categoryID]! = labelsPerCategory[selectedLabel.categoryID]!.filter((e: Label) => e != selectedLabel);
 
@@ -288,14 +285,12 @@
         const confirmed = confirm($t('labelsDeleteCategoryConfirmationPrompt', { name: selectedCategory.name }));
 
         if (confirmed) {
-            categoryIDsToDelete.push(selectedCategory.id);
             localCategories.value = localCategories.value.filter((e) => e.id != selectedCategory.id);
             delete labelsPerCategory[selectedCategory.id];
 
             // Delete all labels of this category
             localLabels.value = localLabels.value.filter((e) => {
                 if (e.categoryID === selectedCategory.id) {
-                    labelIDsToDelete.push(e.id);
                     return false;
                 }
                 return true;
@@ -323,29 +318,33 @@
     // Sends changes to the database
     async function saveChanges() {
 
-        // Send labels & categories data to API
-        let rmResBody = { success: true }; // Default
+        // Send labels & categories diff data to API
+        const categoryDiff = getDiff(storedCategories.value.document!, localCategories.value) as FullObjectsInArrayDiff<Label[]>; // TODO: Delete labels of deleted categories
+        const labelsDiff   = getDiff(storedLabels.value.document!, localLabels.value) as FullObjectsInArrayDiff<Label[]>;
 
-        if (labelIDsToDelete.length > 0 || categoryIDsToDelete.length > 0) {
-            rmResBody = await rmLabelsToServer(categoryIDsToDelete, labelIDsToDelete);
+        // Did something change?
+        if (categoryDiff || labelsDiff) {
+            // Extract new objects from diffs
+            const updatedCategories: Category[] = getUpdatedFromFullObjectsInArrayDiff(categoryDiff);
+            const deletedCategories: Category[] = getDeletedFromFullObjectsInArrayDiff(categoryDiff);
+            const updatedLabels:     Label[]    = getUpdatedFromFullObjectsInArrayDiff(labelsDiff);
+            const deletedLabels:     Label[]    = getDeletedFromFullObjectsInArrayDiff(labelsDiff);
+
+            const setResBody = await setCategoriesAndLabelsToServer(updatedCategories, deletedCategories, updatedLabels, deletedLabels);
+
+            // Update local refs depending on success/failure and indicate result
+            if (setResBody.success) {
+                responseIndicatorSuccess();
+
+                emitChangesMadeEvent(false);
+
+                // Manually sync local clones to global cache, useCloned's sync() didn't work. Refresh clone of localServerSettings to avoid it gaining reactivity
+                init(); // TODO: Buggy reordering list
+            } else {
+                responseIndicatorFailure();
+            }
+            // TODO: Handle !success better
         }
-
-        const setResBody = await setCategoriesAndLabelsToServer(localCategories.value, localLabels.value);
-
-        // Update local refs depending on success/failure and indicate result
-        if (rmResBody.success && setResBody.success) {
-            responseIndicatorSuccess();
-
-            emitChangesMadeEvent(false);
-            labelIDsToDelete    = [];
-            categoryIDsToDelete = [];
-
-            // Manually sync local clones to global cache, useCloned's sync() didn't work. Refresh clone of localServerSettings to avoid it gaining reactivity
-            init(); // TODO: Buggy reordering list
-        } else {
-            responseIndicatorFailure();
-        }
-        // TODO: Handle !success better
 
     }
 

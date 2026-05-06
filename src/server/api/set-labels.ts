@@ -4,7 +4,7 @@
  * Created Date: 2025-12-08 17:43:05
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:39:26
+ * Last Modified: 2026-05-06 19:12:28
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -16,12 +16,14 @@
 
 
 import type { ApiResponse } from "~/model/api";
+import { Label } from "~/model/label";
+import { Category } from "~/model/label-category";
 import { upsertLabelCategories, upsertLabels } from "~/server/utils/useLabelsDb";
 
 
 /**
- * This API route inserts/updates labels and label categories
- * Params: { labels?: Label[], categories?: Category[] }
+ * This API route upserts/removes labels and label categories
+ * Params: { updatedLabels?: Label[], deletedLabels?: Label[], updatedCategories?: Category[], deletedCategories?: Category[] }
  * Returns:
  */
 
@@ -32,19 +34,26 @@ export default defineEventHandler(async (event): Promise<ApiResponse<void>> => {
     // Read body of the request we received
     const params = await readBody(event);
 
-    if (!params || (!params.labels && !params.categories)) {
+    if (!params || (!params.updatedLabels && !params.deletedLabels && !params.updatedCategories && !params.deletedCategories)) {
         throw createError({
             statusCode: 400,
             statusMessage: "No labels or categories to set!",
         });
     }
 
-    console.debug(getApiLogPrefix(event), "Received request for: ", params.labels, params.categories);
+    const updatedCategories: Category[] = params.updatedCategories;
+    const deletedCategories: Category[] = params.deletedCategories;
+    const updatedLabels:     Label[]    = params.updatedLabels;
+    const deletedLabels:     Label[]    = params.deletedLabels;
 
-    // Ask db helper to process entries
+    console.debug(getApiLogPrefix(event), "Received request for:", "\n updatedCategories:\n", updatedCategories, "\n deletedLabels:\n", deletedLabels, "\n updatedLabels:\n", updatedLabels, "\n deletedCategories:\n", deletedCategories);
+
+    // Write to DB
     return await getApiResponse<void>(async () => {
-        await upsertLabelCategories(params.categories);
-        await upsertLabels(params.labels);
+        await upsertLabelCategories(updatedCategories);
+        await upsertLabels(updatedLabels);
+        await removeLabels(deletedLabels.flatMap((e) => e.id));
+        await removeLabelCategories(deletedCategories.flatMap((e) => e.id));
     });
 
 });

@@ -35,6 +35,7 @@ export default defineNuxtConfig({
                 "@vue/devtools-kit",
                 "three",
                 "three-stdlib",
+                "jsondiffpatch"
             ]
         }
     },

@@ -4,7 +4,7 @@
  * Created Date: 2026-03-23 21:34:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-02 14:54:53
+ * Last Modified: 2026-05-06 18:44:41
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -184,29 +184,17 @@ export function getAllLabelCategoriesFromServer(): Ref<ApiResponse<Category[]>> 
     return useNuxtData("/api/get-all-label-categories").data; // Return values fetched in initGlobalCache()
 }
 
-export async function setCategoriesAndLabelsToServer(categoryData: Category[] | undefined, labelsData: Label[] | undefined): Promise<ApiResponse<never>> {
+export async function setCategoriesAndLabelsToServer(updatedCategories: Category[] | undefined, deletedCategories: Category[] | undefined, updatedLabels: Label[] | undefined, deletedLabels: Label[] | undefined): Promise<ApiResponse<never>> {
     const resBody = await sendApiRequest("set-labels", {
-        categories: categoryData,
-        labels: labelsData
+        updatedCategories: updatedCategories,
+        deletedCategories: deletedCategories,
+        updatedLabels: updatedLabels,
+        deletedLabels: deletedLabels
     });
 
     if (resBody.success) {
-        if (categoryData) refreshNuxtData("/api/get-all-label-categories"); // storedCategories.value.push(...categoryData);
-        if (labelsData)   refreshNuxtData("/api/get-all-labels"); // storedLabels.value.push(...labelsData);
-    }
-
-    return resBody;
-}
-
-export async function rmLabelsToServer(categoryIDs: string[] | undefined, labelIDs: string[] | undefined): Promise<ApiResponse<never>> {
-    const resBody = await sendApiRequest("rm-labels", {
-        categoryIDs: categoryIDs,
-        labelIDs: labelIDs
-    });
-
-    if (resBody.success) {
-        if (categoryIDs) refreshNuxtData("/api/get-all-label-categories"); // storedCategories.value = storedCategories.value.filter((e) => !categoryIDs.includes(e.id));
-        if (labelIDs)    refreshNuxtData("/api/get-all-labels"); // storedLabels.value = storedLabels.value.filter((e) => !labelIDs.includes(e.id));
+        refreshNuxtData("/api/get-all-label-categories"); // storedCategories.value.push(...categoryData);
+        refreshNuxtData("/api/get-all-labels"); // storedLabels.value.push(...labelsData);
     }
 
     return resBody;
