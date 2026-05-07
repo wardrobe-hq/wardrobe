@@ -4,7 +4,7 @@
  * Created Date: 2026-04-08 17:59:41
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-02 14:54:28
+ * Last Modified: 2026-05-07 21:11:32
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -77,6 +77,8 @@ async function handleServerSubscriptionEvent(msg: MessageEvent<any>) { // eslint
 function handleServerSubscriptionError(err: unknown) {
     const i18n = useNuxtApp().$i18n;
     console.error("Server Subscription Event Stream Error!", err);
+
+    useState(State.SERVER_SUBSCRIPTION_CONNECTED).value = false;
 
     emitNotificationShowEvent({
         level: NotificationLevel.ERROR,
