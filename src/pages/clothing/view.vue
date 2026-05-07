@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-04 22:52:32
+ * Last Modified: 2026-05-07 19:49:12
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -163,6 +163,8 @@
     import { getImageFromServer, setCategoriesAndLabelsToServer } from "~/composables/storage";
 
 
+    const i18n = useI18n();
+
     // Get from cache
     const storedLabels     = getAllLabelsFromServer();
     const storedCategories = getAllLabelCategoriesFromServer();
@@ -215,7 +217,7 @@
 
     // Label quick add function
     async function quickAddLabel(thisCategory: Category) {
-        const name = prompt("clothingQuickAddLabelNamePrompt");
+        const name = prompt(i18n.t("clothingQuickAddLabelNamePrompt"));
 
         // If prompt was submitted with content
         if (name) {
@@ -230,7 +232,7 @@
             };
 
             // Send new label to server
-            const res = await setCategoriesAndLabelsToServer(undefined, [ newLabel ]);
+            const res = await setCategoriesAndLabelsToServer(undefined, undefined, [ newLabel ], undefined);
 
             // Directly select new label
             thisClothing.value.labelIDs.push(newLabel.id);
