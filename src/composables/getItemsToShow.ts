@@ -4,7 +4,7 @@
  * Created Date: 2025-09-17 17:25:36
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-04 22:52:51
+ * Last Modified: 2026-05-07 19:32:33
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -27,42 +27,42 @@ import { State } from "./state";
  * @param selectedFilters
  */
 export default function(storedItems: WardrobeItem[], selectedSort?: SortMode, selectedFilters?: string[]): WardrobeItem[] {
+    let res = [...storedItems];
 
     // Get search string ref from app.vue
     const searchStr: Ref<string|null> = useState(State.GLOBAL_SEARCH_STRING);
 
     // Apply search
     if (searchStr.value != null) {
-        storedItems = storedItems.filter((e) => e.title.toLowerCase().includes(searchStr.value!.toLowerCase())); // Hey TS, how can searchStr.value be "possibly null" at this point?
+        res = res.filter((e) => e.title.toLowerCase().includes(searchStr.value!.toLowerCase())); // Hey TS, how can searchStr.value be "possibly null" at this point?
     }
 
     // Apply filter
     if (selectedFilters && selectedFilters.length > 0) {
-        storedItems = storedItems.filter((e) => selectedFilters.every((f) => e.labelIDs.includes(f)));
+        res = res.filter((e) => selectedFilters.every((f) => e.labelIDs.includes(f)));
     }
 
-    // Apply sort to storedItems
+    // Apply sort
     switch (selectedSort) {
         case SortMode.dateDesc:
-            storedItems = storedItems.sort((a, b) => b.addedTimestamp - a.addedTimestamp);
+            res = res.sort((a, b) => b.addedTimestamp - a.addedTimestamp);
             break;
 
         case SortMode.dateAsc:
-            storedItems = storedItems.sort((a, b) => a.addedTimestamp - b.addedTimestamp);
+            res = res.sort((a, b) => a.addedTimestamp - b.addedTimestamp);
             break;
 
         case SortMode.nameDesc:
-            storedItems = storedItems.sort((a, b) => a.title.charCodeAt(0) - b.title.charCodeAt(0)); /* TODO: Does not sort e.g. "Bc 1" & "Bd 2" */
+            res = res.sort((a, b) => a.title.charCodeAt(0) - b.title.charCodeAt(0)); /* TODO: Does not sort e.g. "Bc 1" & "Bd 2" */
             break;
 
         case SortMode.nameAsc:
-            storedItems = storedItems.sort((a, b) => b.title.charCodeAt(0) - a.title.charCodeAt(0));
+            res = res.sort((a, b) => b.title.charCodeAt(0) - a.title.charCodeAt(0));
             break;
 
         default:
             break; // Sorted by ID, invisible to user
     }
 
-    return storedItems;
-
+    return res;
 }
