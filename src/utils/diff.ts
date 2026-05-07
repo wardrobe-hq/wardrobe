@@ -4,7 +4,7 @@
  * Created Date: 2026-05-04 18:16:50
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-06 19:13:09
+ * Last Modified: 2026-05-07 20:33:44
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -94,7 +94,7 @@ export function getUpdatedFromFullObjectsInArrayDiff<T extends DatabaseItem[]>(d
         if (key == "_t") continue; // Skip diff type prop
 
         if (!key.startsWith("_")) {
-            res.push(val[0]);
+            res.push(val[1] ? val[1] : val[0]); // Diff consists out of [old, new] on update or [new] on insert
         }
     }
 
