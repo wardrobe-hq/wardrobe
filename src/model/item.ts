@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 15:45:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-04 22:52:22
+ * Last Modified: 2026-05-08 18:51:20
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,30 +15,25 @@
  */
 
 
-import type { DatabaseItem } from "./storage";
+import type { DatabaseItem, ItemID } from "./storage";
 
 
 // Base type for Clothing & Outfit, used by generic components & composables.
 export interface WardrobeItem extends DatabaseItem {
     title: string,      // Used for sorting
-    labelIDs: string[], // Used as filters/for filtering
+    labelIDs: ItemID[], // Used as filters/for filtering. IMPORTANT: May reference non-existent labels if dataCleanUp job did not run yet!
 }
 
 
 // Implements WardrobeItem
 export interface Clothing extends WardrobeItem {
-    id: string,
-    title: string,
     description: string,
     imgPath: string,
-    labelIDs: string[] // IMPORTANT: May reference non-existent labels if dataCleanUp job did not run yet!
 }
 
 
 // Implements WardrobeItem
 export interface Outfit extends WardrobeItem {
-    title: string,
-    clothes: { order: number, clothingID: string }[], // IMPORTANT: May reference non-existent clothes if dataCleanUp job did not run yet!
-    labelIDs: string[],                               // IMPORTANT: May reference non-existent labels if dataCleanUp job did not run yet!
+    clothes: { order: number, clothingID: ItemID }[], // IMPORTANT: May reference non-existent clothes if dataCleanUp job did not run yet!
     previewImgPath: string
 }

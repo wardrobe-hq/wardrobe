@@ -4,7 +4,7 @@
  * Created Date: 2025-12-28 21:38:23
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:32:42
+ * Last Modified: 2026-05-08 19:05:17
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -20,6 +20,7 @@ import type { Outfit } from "~/model/item";
 import { getClothes } from "~/server/utils/useClothesDb";
 import { upsertOutfit, getOutfitsContainingClothing } from "~/server/utils/useOutfitsDb";
 import { getImage, imgCategory, saveImage } from "~/server/utils/useImagesStorage";
+import type { ItemID } from "~/model/storage";
 
 
 /**
@@ -120,7 +121,7 @@ export async function generateOutfitPreviewImage(outfit: Outfit): Promise<string
  * Asynchronously re-generates preview images of outfits containing a piece of clothing
  * @param clothingID
  */
-export function updateImagesOfAffectedOutfits(clothingID: string) {
+export function updateImagesOfAffectedOutfits(clothingID: ItemID) {
 
     // Get all outfits containing this piece of clothing
     getOutfitsContainingClothing(clothingID)

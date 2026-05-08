@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-07 19:49:12
+ * Last Modified: 2026-05-08 19:05:08
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -19,7 +19,7 @@ import nedb from "@seald-io/nedb";
 import { SubscriptionEventAction } from "~/model/api";
 import type { Label } from "~/model/label";
 import type { Category } from "~/model/label-category";
-import { StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
+import { type ItemID, StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
 
 
 // Load database
@@ -86,7 +86,7 @@ export async function upsertLabels(labels: Label[]): Promise<void> {
  * @param labelID Label ID to remove
  * @returns
  */
-async function deleteLabel(labelID: string): Promise<void> {
+async function deleteLabel(labelID: ItemID): Promise<void> {
 
     await labelsDb.removeAsync({ id: labelID }, {});
 
@@ -104,7 +104,7 @@ async function deleteLabel(labelID: string): Promise<void> {
  * @param labelIDs Labels to remove
  * @returns
  */
-export async function deleteLabels(labelIDs: string[]): Promise<void> {
+export async function deleteLabels(labelIDs: ItemID[]): Promise<void> {
 
     // Call deleteLabel for every label and await all resulting promises
     await Promise.all(labelIDs.map((e) => deleteLabel(e)));
@@ -171,7 +171,7 @@ export async function upsertLabelCategories(categories: Category[]): Promise<voi
  * @param categoryID Category ID to remove
  * @returns
  */
-async function deleteLabelCategory(categoryID: string): Promise<void> {
+async function deleteLabelCategory(categoryID: ItemID): Promise<void> {
 
     await labelCategoriesDb.removeAsync({ id: categoryID }, {});
 
@@ -191,7 +191,7 @@ async function deleteLabelCategory(categoryID: string): Promise<void> {
  * @param categoryIDs Labels to remove
  * @returns
  */
-export async function deleteLabelCategories(categoryIDs: string[]): Promise<void> {
+export async function deleteLabelCategories(categoryIDs: ItemID[]): Promise<void> {
 
     // Call deleteLabelCategory for every category and await all resulting promises
     await Promise.all(categoryIDs.map((e) => deleteLabelCategory(e)));

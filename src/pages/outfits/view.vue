@@ -5,7 +5,7 @@
  * Created Date: 2025-09-10 17:37:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 16:45:50
+ * Last Modified: 2026-05-08 18:57:15
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -244,6 +244,7 @@
     import { responseIndicatorFailure, responseIndicatorSuccess } from "~/composables/responseIndicator";
     import threedModelViewer from "~/components/threedModelViewer.vue";
     import { getAllClothesFromServer, getOutfitFromServer, rmOutfitToServer, setOutfitToServer } from "~/composables/storage";
+    import type { ItemID } from "../../model/storage";
 
 
     // Get from cache
@@ -281,7 +282,7 @@
 
 
     // Add clothing to a label of this outfit
-    function addClothing(id: string) {
+    function addClothing(id: ItemID) {
         thisOutfit.value.clothes.push({
             order: 0,       // TODO: Order
             clothingID: id
@@ -292,7 +293,7 @@
 
 
     // Remove clothing from a label of this outfit
-    function removeClothing(id: string) {
+    function removeClothing(id: ItemID) {
         thisOutfit.value.clothes = thisOutfit.value.clothes.filter((e) => e.clothingID != id);
 
         emitChangesMadeEvent();
@@ -317,7 +318,7 @@
     // Adds/Removes a label
     async function toggleLabel(selectedLabel: Label) {
         // Get all selected labels without this one
-        const filtered = thisOutfit.value.labelIDs.filter((e: string) => e != selectedLabel.id);
+        const filtered = thisOutfit.value.labelIDs.filter((e: ItemID) => e != selectedLabel.id);
 
         // If length does not match, the label must be selected
         if (filtered.length != thisOutfit.value.labelIDs.length) {

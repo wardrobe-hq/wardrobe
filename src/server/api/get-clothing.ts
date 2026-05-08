@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 16:16:54
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:42:25
+ * Last Modified: 2026-05-08 18:56:09
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -22,7 +22,7 @@ import { getClothes } from "~/server/utils/useClothesDb";
 
 /**
  * This API route gets details for a stored clothing and returns them
- * Params: { id: string }
+ * Params: { id: ItemID }
  * Returns: Clothing | null
  */
 

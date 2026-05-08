@@ -4,7 +4,7 @@
  * Created Date: 2026-01-23 22:00:18
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 16:46:08
+ * Last Modified: 2026-05-08 19:04:54
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -16,6 +16,7 @@
 
 
 import type { ApiResponse } from "~/model/api";
+import type { ItemID } from "~/model/storage";
 import type { WeatherData } from "~/model/weather";
 
 
@@ -23,9 +24,9 @@ import type { WeatherData } from "~/model/weather";
  * Helper function to query generate-uuid API route
  * @returns UUID
  */
-export async function getUUIDFromServer(): Promise<string> {
+export async function getUUIDFromServer(): Promise<ItemID> {
     const res = await fetch("/api/generate-uuid");
-    const resBody: ApiResponse<string> = await res?.json();
+    const resBody: ApiResponse<ItemID> = await res?.json();
     return resBody.document!;
 }
 

@@ -4,7 +4,7 @@
  * Created Date: 2026-03-26 18:57:42
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-04 17:13:44
+ * Last Modified: 2026-05-08 19:05:55
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -15,7 +15,7 @@
  */
 
 
-import type { StorageKind, StorageKindDataMap } from "./storage";
+import type { ItemID, StorageKind, StorageKindDataMap } from "./storage";
 
 
 // Data Format returned by API Routes
@@ -52,7 +52,7 @@ export interface StorageSubscriptionEvent extends SubscriptionEvent {
     type: SubscriptionEventType.STORAGE,
     action: SubscriptionEventAction.NEW | SubscriptionEventAction.UPSERT | SubscriptionEventAction.DELETE,
     storage: StorageKind, // Omit<StorageKind, StorageKind.LOCAL_STORAGE>,
-    newData: StorageKindDataMap<StorageKind> | { id: string } // This might contain ONLY the prop id on action DELETE btw. // TODO: Also this constraint doesn't seem to work correctly, perhaps the entire interface must be generic?
+    newData: StorageKindDataMap<StorageKind> | { id: ItemID } // This might contain ONLY the prop id on action DELETE btw. // TODO: Also this constraint doesn't seem to work correctly, perhaps the entire interface must be generic?
 }
 
 // Specific SubscriptionEvent type for job events

@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 15:21:35
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-06 19:16:03
+ * Last Modified: 2026-05-08 18:27:54
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -27,10 +27,11 @@ import type { ArrayDelta, Delta } from "jsondiffpatch";
 export type Diff<T>                   = Delta;      // eslint-disable-line @typescript-eslint/no-unused-vars
 export type FullObjectsInArrayDiff<T> = ArrayDelta; // eslint-disable-line @typescript-eslint/no-unused-vars
 
+export type ItemID = string;
 
 // Fields every database record is required to have
 export interface DatabaseItem {
-    id: string,
+    id: ItemID,
     addedTimestamp: number,
     modifiedTimestamp: number
 }

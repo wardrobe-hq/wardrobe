@@ -4,7 +4,7 @@
  * Created Date: 2026-01-23 21:48:30
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:37:58
+ * Last Modified: 2026-05-08 19:05:49
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -17,18 +17,19 @@
 
 import { randomUUID } from "crypto";
 import type { ApiResponse } from "~/model/api";
+import type { ItemID } from "~/model/storage";
 
 
 /**
  * This API route generates a new UUID server sided
  * Params:
- * Returns: string
+ * Returns: ItemID
  */
 
 
 // This function is executed when this API route is called
-export default defineEventHandler(async (): Promise<ApiResponse<string>> => {
+export default defineEventHandler(async (): Promise<ApiResponse<ItemID>> => {
 
-    return await getApiResponse<string>(async () => randomUUID());
+    return await getApiResponse<ItemID>(async () => randomUUID());
 
 });

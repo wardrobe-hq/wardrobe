@@ -4,7 +4,7 @@
  * Created Date: 2026-03-23 21:34:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 16:44:10
+ * Last Modified: 2026-05-08 18:51:01
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -19,7 +19,7 @@ import { type ApiResponse, type StorageSubscriptionEvent } from "~/model/api";
 import type { Clothing, Outfit } from "~/model/item";
 import type { Label } from "~/model/label";
 import type { Category } from "~/model/label-category";
-import { StorageKind, type CachedImage, type ServerSettings, type StorageKindDataMap } from "~/model/storage";
+import { StorageKind, type CachedImage, type ItemID, type ServerSettings, type StorageKindDataMap } from "~/model/storage";
 import { emitSettingsSavedEvent } from "~/composables/events";
 import { State } from "./state";
 
@@ -92,7 +92,7 @@ async function sendApiRequest(route: string, data?: object): Promise<any> { // e
  * @returns Returns Promise resolving when data has been refreshed
  */
 export async function handleStorageSubscriptionEvent(event: StorageSubscriptionEvent): Promise<void> {
-    let imageId: string;
+    let imageId: ItemID;
 
     switch (event.storage) {
         case StorageKind.IMAGES:
@@ -142,7 +142,7 @@ export function getAllClothesFromCache(): Ref<ApiResponse<Clothing[]>> {
     return useNuxtData("/api/get-all-clothes").data; // Return nuxt data cache for fetched data to make refreshNuxtData() work
 }
 
-export async function getClothingFromServer(id: string): Promise<Ref<ApiResponse<Clothing>>> {
+export async function getClothingFromServer(id: ItemID): Promise<Ref<ApiResponse<Clothing>>> {
     return (await useFetch("/api/get-clothing", { method: "POST", body: { id: id } })).data as Ref<ApiResponse<Clothing>>;
 }
 
@@ -156,7 +156,7 @@ export async function setClothingToServer(data: Clothing): Promise<ApiResponse<C
     return resBody;
 }
 
-export async function rmClothingToServer(id: string): Promise<ApiResponse<never>> {
+export async function rmClothingToServer(id: ItemID): Promise<ApiResponse<never>> {
     const resBody = await sendApiRequest("rm-clothing", { id: id });
 
     if (resBody.success) {
@@ -179,7 +179,7 @@ export function getAllOutfitsFromCache(): Ref<ApiResponse<Outfit[]>> {
     return useNuxtData("/api/get-all-outfits").data; // Return nuxt data cache for fetched data to make refreshNuxtData() work
 }
 
-export async function getOutfitFromServer(id: string): Promise<Ref<ApiResponse<Outfit>>> {
+export async function getOutfitFromServer(id: ItemID): Promise<Ref<ApiResponse<Outfit>>> {
     return (await useFetch("/api/get-outfit", { method: "POST", body: { id: id } })).data as Ref<ApiResponse<Outfit>>;
 }
 
@@ -193,7 +193,7 @@ export async function setOutfitToServer(data: Outfit): Promise<ApiResponse<Outfi
     return resBody;
 }
 
-export async function rmOutfitToServer(id: string): Promise<ApiResponse<never>> {
+export async function rmOutfitToServer(id: ItemID): Promise<ApiResponse<never>> {
     const resBody = await sendApiRequest("rm-outfit", { id: id });
 
     if (resBody.success) {

@@ -4,7 +4,7 @@
  * Created Date: 2025-12-30 22:18:23
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-06 19:54:55
+ * Last Modified: 2026-05-08 19:05:26
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -21,6 +21,7 @@ import { getAllLabelCategories, getAllLabels, deleteLabels } from "~/server/util
 import { getOutfit, upsertOutfit } from "~/server/utils/useOutfitsDb";
 import type { Clothing } from "~/model/item";
 import type { Outfit } from "~/model/item";
+import type { ItemID } from "~/model/storage";
 
 
 /*
@@ -80,7 +81,7 @@ export default {
 
 
         // Delete labels pointing to deleted categories // TODO: Not (yet) in separate function due to amount of in/out params
-        const labelIDsToRemove: string[] = [];
+        const labelIDsToRemove: ItemID[] = [];
 
         labels = labels.filter((label) => {
             if (categories.findIndex((f) => f.id === label.categoryID) === -1) {

@@ -4,7 +4,7 @@
  * Created Date: 2025-12-27 10:07:47
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:40:32
+ * Last Modified: 2026-05-08 18:56:02
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -21,7 +21,7 @@ import { deleteClothing } from "~/server/utils/useClothesDb";
 
 /**
  * This API route deletes a piece of clothing
- * Params: { id: string }
+ * Params: { id: ItemID }
  * Returns:
  */
 

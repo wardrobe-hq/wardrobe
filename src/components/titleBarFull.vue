@@ -5,7 +5,7 @@
  * Created Date: 2025-09-17 17:25:36
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 16:43:57
+ * Last Modified: 2026-05-08 18:59:13
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -103,7 +103,7 @@
 
     // Refs
     const selectedSort:    Ref<SortMode>  = ref(SortMode.dateDesc);
-    const selectedFilters: Ref<string[]>  = ref([]);
+    const selectedFilters: Ref<ItemID[]>  = ref([]);
     const selectedScaling: Ref<number>    = ref(defaultUXSettings.selectedItemCardsScaling);
 
     // Client side only
@@ -124,10 +124,10 @@
      * Applies or removes a filter to/from the view
      * @param thisFilter Filter to add/remove
      */
-    const toggleFilter = (thisFilter: string) => {
+    const toggleFilter = (thisFilter: ItemID) => {
 
         // Get all selected labels without this one
-        const filtered = selectedFilters.value.filter((e: string) => e != thisFilter);
+        const filtered = selectedFilters.value.filter((e: ItemID) => e != thisFilter);
 
         // If length does not match, the label must be selected
         if (filtered.length != selectedFilters.value.length) {

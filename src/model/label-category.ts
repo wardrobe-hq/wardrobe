@@ -4,7 +4,7 @@
  * Created Date: 2025-12-31 17:00:33
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-04 22:52:23
+ * Last Modified: 2026-05-08 18:51:34
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -16,7 +16,7 @@
 
 
 import type { Label } from "./label";
-import type { DatabaseItem } from "./storage";
+import type { DatabaseItem, ItemID } from "./storage";
 import type { TemperatureKelvin } from "./unit";
 
 
@@ -32,7 +32,7 @@ export interface Category extends DatabaseItem {
  * @param categoryID ID of Category to filter for
  * @returns {Label[]} Array of labels from `list` belonging to `categoryID`
  */
-export function getLabelsOfCategory(list: Label[], categoryID: string) {
+export function getLabelsOfCategory(list: Label[], categoryID: ItemID) {
     return list.filter((e) => e.categoryID == categoryID);
 }
 

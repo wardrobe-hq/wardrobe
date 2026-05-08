@@ -5,7 +5,7 @@
  * Created Date: 2025-09-09 17:13:32
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 16:45:27
+ * Last Modified: 2026-05-08 19:08:58
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -169,6 +169,7 @@
     import { setCategoriesAndLabelsToServer } from "~/composables/storage";
     import { SubscriptionEventType, type ApiResponse, type StorageSubscriptionEvent, type SubscriptionEvent } from "~/model/api";
     import { StorageKind, type Diff, type FullObjectsInArrayDiff } from "~/model/storage";
+    import type { ItemID } from "../../model/storage";
 
 
     // Create local clones of global labels & category cache from app.vue
@@ -176,7 +177,7 @@
     let storedCategories:  Ref<ApiResponse<Category[]>>;
     let localLabels:       Ref<Label[]>;
     let localCategories:   Ref<Category[]>;
-    let labelsPerCategory: Reactive<{ [key: string]: Label[] }> = reactive({}); // Nested data structure must use reactive to update correctly in template when dragged
+    let labelsPerCategory: Reactive<{ [key: ItemID]: Label[] }> = reactive({}); // Nested data structure must use reactive to update correctly in template when dragged
     let useSortables:      UseSortableReturn[] = [];
 
     function init() {

@@ -4,7 +4,7 @@
  * Created Date: 2025-09-09 21:59:50
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-04 22:52:28
+ * Last Modified: 2026-05-08 18:51:43
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -17,7 +17,7 @@
 
 import type { Category } from "./label-category";
 import { CategorySpecialityMap } from "./label-category";
-import type { DatabaseItem } from "./storage";
+import type { DatabaseItem, ItemID } from "./storage";
 
 
 /**
@@ -28,7 +28,7 @@ import type { DatabaseItem } from "./storage";
 export interface Label extends DatabaseItem {
     name: string,
     orderIndex: number,         // Floating point number
-    categoryID: string,         // IMPORTANT: May reference non-existent category if dataCleanUp job did not run yet!
+    categoryID: ItemID,         // IMPORTANT: May reference non-existent category if dataCleanUp job did not run yet!
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     specialityValue: any        // Arbitrary data submitted for label if selected category speciality calls for it
 }

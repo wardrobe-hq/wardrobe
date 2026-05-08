@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-04 22:52:38
+ * Last Modified: 2026-05-08 19:05:11
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -19,7 +19,7 @@ import nedb from "@seald-io/nedb";
 import crypto from "node:crypto";
 import { SubscriptionEventAction } from "~/model/api";
 import type { Clothing } from "~/model/item";
-import { StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
+import { type ItemID, StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
 import { updateImagesOfAffectedOutfits } from "~/server/utils/outfitPreviewImage";
 
 
@@ -77,7 +77,7 @@ export async function upsertClothing(clothing: Clothing): Promise<Clothing | nul
  * @throws Throws Exception on failure
  * @param clothingID ID of the clothing to remove
  */
-export async function deleteClothing(clothingID: string): Promise<void> {
+export async function deleteClothing(clothingID: ItemID): Promise<void> {
     // Unused image will be deleted by periodic database cleanup job
 
     await clothesDb.removeAsync({ id: clothingID }, {});
@@ -94,6 +94,6 @@ export async function deleteClothing(clothingID: string): Promise<void> {
  * @param id Optional: Array of IDs of the clothes to retrieve. Leave empty to get all clothes
  * @returns Returns an array of all matching clothes
  */
-export async function getClothes(id?: string[]): Promise<Clothing[]> {
+export async function getClothes(id?: ItemID[]): Promise<Clothing[]> {
     return await clothesDb.findAsync(id && id.length > 0 ? { id: { $in: id } } : {});
 }

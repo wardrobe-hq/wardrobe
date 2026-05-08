@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-04 22:52:42
+ * Last Modified: 2026-05-08 19:05:02
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -19,7 +19,7 @@ import nedb from "@seald-io/nedb";
 import crypto from "node:crypto";
 import { SubscriptionEventAction } from "~/model/api";
 import type { Outfit } from "~/model/item";
-import { StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
+import { type ItemID, StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
 import { generateOutfitPreviewImage } from "~/server/utils/outfitPreviewImage";
 
 
@@ -80,7 +80,7 @@ export async function upsertOutfit(outfit: Outfit): Promise<Outfit | null> {
  * @param outfitID ID of the outfit to remove
  * @returns
  */
-export async function deleteOutfit(outfitID: string): Promise<void> {
+export async function deleteOutfit(outfitID: ItemID): Promise<void> {
     // Unused image will be deleted by periodic database cleanup job
 
     await outfitsDb.removeAsync({ id: outfitID }, {});
@@ -97,7 +97,7 @@ export async function deleteOutfit(outfitID: string): Promise<void> {
  * @param id Optional: ID of the outfit to retrieve. Leave empty to get all outfits
  * @returns Returns an array of all matching outfits
  */
-export async function getOutfit(id: string|null): Promise<Outfit[]> {
+export async function getOutfit(id: ItemID|null): Promise<Outfit[]> {
     return await outfitsDb.findAsync(id ? { id: id } : {});
 }
 
@@ -106,6 +106,6 @@ export async function getOutfit(id: string|null): Promise<Outfit[]> {
  * @param clothingID ID of clothing to search for
  * @returns Returns an array of outfits
  */
-export async function getOutfitsContainingClothing(clothingID: string): Promise<Outfit[]> {
+export async function getOutfitsContainingClothing(clothingID: ItemID): Promise<Outfit[]> {
     return await outfitsDb.findAsync({ clothes: { $elemMatch: { clothingID: clothingID } } });
 }

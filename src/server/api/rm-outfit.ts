@@ -4,7 +4,7 @@
  * Created Date: 2025-12-27 11:53:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:40:32
+ * Last Modified: 2026-05-08 18:56:00
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -21,7 +21,7 @@ import { deleteOutfit } from "~/server/utils/useOutfitsDb";
 
 /**
  * This API route deletes an outfit
- * Params: { id: string }
+ * Params: { id: ItemID }
  * Returns:
  */
 

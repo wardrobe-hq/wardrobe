@@ -4,7 +4,7 @@
  * Created Date: 2025-09-17 17:25:36
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-07 19:32:33
+ * Last Modified: 2026-05-08 19:06:01
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -18,6 +18,7 @@
 import type { WardrobeItem } from "~/model/item";
 import { SortMode } from "~/model/sort-modes";
 import { State } from "./state";
+import type { ItemID } from "~/model/storage";
 
 
 /**
@@ -26,7 +27,7 @@ import { State } from "./state";
  * @param selectedSort
  * @param selectedFilters
  */
-export default function(storedItems: WardrobeItem[], selectedSort?: SortMode, selectedFilters?: string[]): WardrobeItem[] {
+export default function(storedItems: WardrobeItem[], selectedSort?: SortMode, selectedFilters?: ItemID[]): WardrobeItem[] {
     let res = [...storedItems];
 
     // Get search string ref from app.vue

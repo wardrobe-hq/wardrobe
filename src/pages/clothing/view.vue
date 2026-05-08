@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 16:45:10
+ * Last Modified: 2026-05-08 18:53:23
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -200,7 +200,7 @@
         console.debug("DEBUG: Toggling label " + selectedLabel.id);
 
         // Get all selected labels without this one
-        const filtered = thisClothing.value.labelIDs.filter((e: string) => e != selectedLabel.id);
+        const filtered = thisClothing.value.labelIDs.filter((e: ItemID) => e != selectedLabel.id);
 
         // If length does not match, the label must be selected
         if (filtered.length != thisClothing.value.labelIDs.length) {
