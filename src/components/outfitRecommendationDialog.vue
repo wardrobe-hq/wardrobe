@@ -5,7 +5,7 @@
  * Created Date: 2026-03-01 15:17:09
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-28 21:58:43
+ * Last Modified: 2026-05-08 16:43:33
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -82,10 +82,11 @@
     const i18n = useI18n();
 
     // Refs
-    const storedLabels     = getAllLabelsFromServer();
-    const storedCategories = getAllLabelCategoriesFromServer();
+    const storedLabels     = getAllLabelsFromCache();
+    const storedCategories = getAllLabelCategoriesFromCache();
 
-    const storedOutfits    = await getAllOutfitsFromServer();
+    await getAllOutfitsFromServer();
+    const storedOutfits    = getAllOutfitsFromCache();
 
     const recommendedOutfits:     Ref<Outfit[]> = ref([]);
     let   weatherAPIErrorMessage: string | null = null;

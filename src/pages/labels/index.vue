@@ -5,7 +5,7 @@
  * Created Date: 2025-09-09 17:13:32
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-06 19:15:00
+ * Last Modified: 2026-05-08 16:45:27
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -180,8 +180,8 @@
     let useSortables:      UseSortableReturn[] = [];
 
     function init() {
-        storedLabels     = useCloned(getAllLabelsFromServer(), { manual: true }).cloned;          // Clone the original to be able to create diff when storage updates
-        storedCategories = useCloned(getAllLabelCategoriesFromServer(), { manual: true }).cloned;
+        storedLabels     = useCloned(getAllLabelsFromCache(), { manual: true }).cloned;          // Clone the original to be able to create diff when storage updates
+        storedCategories = useCloned(getAllLabelCategoriesFromCache(), { manual: true }).cloned;
         localLabels      = useCloned(storedLabels.value.document!, { manual: true }).cloned;      // I'm not using useCloned's sync() as it just wouldn't work :shrug:
         localCategories  = useCloned(storedCategories.value.document!, { manual: true }).cloned;
 
@@ -198,6 +198,40 @@
     }
 
     init();
+
+
+    // Attach storage update handler to patch local copy of labels & categories
+    useNuxtApp().hook("app:subscription:update", (data: SubscriptionEvent) => {
+        if (data.type == SubscriptionEventType.STORAGE) {
+            let storageData = data as StorageSubscriptionEvent;
+
+            if (storageData.storage == StorageKind.LABELS) {
+                const newLabels    = getAllLabelsFromCache();
+                const diff         = getDiff(storedLabels.value.document!, newLabels.value.document!); // Get diff between old database and new database state
+
+                localLabels.value  = applyDiff(localLabels.value, diff) as Label[];                    // Apply diff to useSortables clone
+                storedLabels.value = newLabels.value;
+
+                // Rebuild labelsPerCategory from updated localLabels
+                localCategories.value.forEach((thisCategory) => {
+                    labelsPerCategory[thisCategory.id] = sortLabelsList(getLabelsOfCategory(localLabels.value, thisCategory.id));
+                });
+            } else if (storageData.storage == StorageKind.LABEL_CATEGORIES) {
+                const newCategories    = getAllLabelCategoriesFromCache();
+                const diff             = getDiff(storedCategories.value.document!, newCategories.value.document!);
+
+                localCategories.value  = applyDiff(localCategories.value, diff) as Category[];
+                storedCategories.value = newCategories.value;
+
+                // Rebuild labelsPerCategory for new/updated categories
+                localCategories.value.forEach((thisCategory) => {
+                    if (!labelsPerCategory[thisCategory.id]) {
+                        labelsPerCategory[thisCategory.id] = sortLabelsList(getLabelsOfCategory(localLabels.value, thisCategory.id));
+                    }
+                });
+            }
+        }
+    });
 
 
     // Add a new label to a category

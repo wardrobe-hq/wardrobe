@@ -4,7 +4,7 @@
  * Created Date: 2026-01-23 22:00:18
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-04 16:58:18
+ * Last Modified: 2026-05-08 16:46:08
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -59,7 +59,7 @@ export async function geolocateClient(): Promise<[ lat: number, lon: number ]> {
 export async function getWeatherFromServer() {
 
     // Get settings
-    const storedServerSettings = getServerSettingsFromServer().value.document!;
+    const storedServerSettings = getServerSettingsFromCache().value.document!;
 
     const response: { error: string | null, errorMsg: unknown, weather: WeatherData | null } = {
         error: null,

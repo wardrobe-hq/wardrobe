@@ -4,7 +4,7 @@
  * Created Date: 2026-04-08 17:59:41
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-07 21:11:32
+ * Last Modified: 2026-05-08 16:44:39
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -106,7 +106,7 @@ export function establishServerSubscriptionConnection() {
 
     useState(State.SERVER_SUBSCRIPTION_CONNECTED).value = false;
 
-    if (getServerSettingsFromServer().value.document!.serverSubscriptionEnabled) {
+    if (getServerSettingsFromCache().value.document!.serverSubscriptionEnabled) {
         console.debug("[DEBUG] establishServerSubscriptionConnection: Attempting to connect...");
 
         serverSubscriptionEventStream = new EventSource("/api/subscribe");

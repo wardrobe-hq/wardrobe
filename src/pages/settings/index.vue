@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:51:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-28 22:12:44
+ * Last Modified: 2026-05-08 16:45:58
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -326,14 +326,14 @@
     import { formatTimeLocalized } from "~/composables/unitConversion";
     import type { ServerStatistics } from "~/model/statistics";
     import packageJson from "~/../package.json";
-    import { getServerSettingsFromServer, setServerSettingsToServer } from "~/composables/storage";
+    import { getServerSettingsFromCache, setServerSettingsToServer } from "~/composables/storage";
     import { SubscriptionEventType, type ApiResponse, type StorageSubscriptionEvent, type SubscriptionEvent } from "~/model/api";
     import { NotificationLevel } from "~/model/notification";
 
     const i18n = useI18n();
 
     // Refs
-    const storedServerSettings: ServerSettings      = getServerSettingsFromServer().value.document!;
+    const storedServerSettings: ServerSettings      = getServerSettingsFromCache().value.document!;
     let   localServerSettings:  Ref<ServerSettings> = useCloned(storedServerSettings, { manual: true }).cloned; // I'm not using useCloned's sync() as it just wouldn't work :shrug:
     const jobs:                 Ref<JobInfo[]>      = ref([]);
 

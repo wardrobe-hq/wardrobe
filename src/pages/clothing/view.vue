@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-07 19:49:12
+ * Last Modified: 2026-05-08 16:45:10
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -166,8 +166,8 @@
     const i18n = useI18n();
 
     // Get from cache
-    const storedLabels     = getAllLabelsFromServer();
-    const storedCategories = getAllLabelCategoriesFromServer();
+    const storedLabels     = getAllLabelsFromCache();
+    const storedCategories = getAllLabelCategoriesFromCache();
 
     // Refs
     const thisClothing:        Ref<Clothing> = ref({ id: "", title: "", description: "", imgPath: "", labelIDs: [], addedTimestamp: 0, modifiedTimestamp: 0 });

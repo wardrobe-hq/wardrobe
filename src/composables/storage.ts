@@ -4,7 +4,7 @@
  * Created Date: 2026-03-23 21:34:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-06 18:44:41
+ * Last Modified: 2026-05-08 16:44:10
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -134,8 +134,12 @@ export async function handleStorageSubscriptionEvent(event: StorageSubscriptionE
     -------------------- CLOTHES --------------------
 */
 
-export async function getAllClothesFromServer(): Promise<Ref<ApiResponse<Clothing[]>>> {
-    return (await useFetch("/api/get-all-clothes")).data as Ref<ApiResponse<Clothing[]>>;
+export async function getAllClothesFromServer(): Promise<void> {
+    await useFetch("/api/get-all-clothes", { key: "/api/get-all-clothes" }); // Fetch data initially
+}
+
+export function getAllClothesFromCache(): Ref<ApiResponse<Clothing[]>> {
+    return useNuxtData("/api/get-all-clothes").data; // Return nuxt data cache for fetched data to make refreshNuxtData() work
 }
 
 export async function getClothingFromServer(id: string): Promise<Ref<ApiResponse<Clothing>>> {
@@ -143,11 +147,23 @@ export async function getClothingFromServer(id: string): Promise<Ref<ApiResponse
 }
 
 export async function setClothingToServer(data: Clothing): Promise<ApiResponse<Clothing>> {
-    return await sendApiRequest("set-clothing", { clothing: data });
+    const resBody = await sendApiRequest("set-clothing", { clothing: data });
+
+    if (resBody.success) {
+        await refreshNuxtData("/api/get-all-clothes");
+    }
+
+    return resBody;
 }
 
 export async function rmClothingToServer(id: string): Promise<ApiResponse<never>> {
-    return await sendApiRequest("rm-clothing", { id: id });
+    const resBody = await sendApiRequest("rm-clothing", { id: id });
+
+    if (resBody.success) {
+        await refreshNuxtData("/api/get-all-clothes");
+    }
+
+    return resBody;
 }
 
 
@@ -155,8 +171,12 @@ export async function rmClothingToServer(id: string): Promise<ApiResponse<never>
     -------------------- OUTFITS --------------------
 */
 
-export async function getAllOutfitsFromServer(): Promise<Ref<ApiResponse<Outfit[]>>> {
-    return (await useFetch("/api/get-all-outfits")).data as Ref<ApiResponse<Outfit[]>>; // SSR
+export async function getAllOutfitsFromServer(): Promise<void> {
+    await useFetch("/api/get-all-outfits", { key: "/api/get-all-outfits" }); // Fetch data initially
+}
+
+export function getAllOutfitsFromCache(): Ref<ApiResponse<Outfit[]>> {
+    return useNuxtData("/api/get-all-outfits").data; // Return nuxt data cache for fetched data to make refreshNuxtData() work
 }
 
 export async function getOutfitFromServer(id: string): Promise<Ref<ApiResponse<Outfit>>> {
@@ -164,11 +184,23 @@ export async function getOutfitFromServer(id: string): Promise<Ref<ApiResponse<O
 }
 
 export async function setOutfitToServer(data: Outfit): Promise<ApiResponse<Outfit>> {
-    return await sendApiRequest("set-outfit", { outfit: data });
+    const resBody = await sendApiRequest("set-outfit", { outfit: data });
+
+    if (resBody.success) {
+        await refreshNuxtData("/api/get-all-outfits");
+    }
+
+    return resBody;
 }
 
 export async function rmOutfitToServer(id: string): Promise<ApiResponse<never>> {
-    return await sendApiRequest("rm-outfit", { id: id });
+    const resBody = await sendApiRequest("rm-outfit", { id: id });
+
+    if (resBody.success) {
+        await refreshNuxtData("/api/get-all-outfits");
+    }
+
+    return resBody;
 }
 
 
@@ -176,11 +208,11 @@ export async function rmOutfitToServer(id: string): Promise<ApiResponse<never>> 
     -------------------- LABELS --------------------
 */
 
-export function getAllLabelsFromServer(): Ref<ApiResponse<Label[]>> {
+export function getAllLabelsFromCache(): Ref<ApiResponse<Label[]>> {
     return useNuxtData("/api/get-all-labels").data; // Return values fetched in initGlobalCache()
 }
 
-export function getAllLabelCategoriesFromServer(): Ref<ApiResponse<Category[]>> {
+export function getAllLabelCategoriesFromCache(): Ref<ApiResponse<Category[]>> {
     return useNuxtData("/api/get-all-label-categories").data; // Return values fetched in initGlobalCache()
 }
 
@@ -193,8 +225,8 @@ export async function setCategoriesAndLabelsToServer(updatedCategories: Category
     });
 
     if (resBody.success) {
-        refreshNuxtData("/api/get-all-label-categories"); // storedCategories.value.push(...categoryData);
-        refreshNuxtData("/api/get-all-labels"); // storedLabels.value.push(...labelsData);
+        await refreshNuxtData("/api/get-all-label-categories"); // storedCategories.value.push(...categoryData);
+        await refreshNuxtData("/api/get-all-labels"); // storedLabels.value.push(...labelsData);
     }
 
     return resBody;
@@ -205,7 +237,7 @@ export async function setCategoriesAndLabelsToServer(updatedCategories: Category
     -------------------- SETTINGS --------------------
 */
 
-export function getServerSettingsFromServer(): Ref<ApiResponse<ServerSettings>> {
+export function getServerSettingsFromCache(): Ref<ApiResponse<ServerSettings>> {
     return useNuxtData("/api/get-settings").data; // Return values fetched in initGlobalCache()
 }
 
@@ -213,7 +245,7 @@ export async function setServerSettingsToServer(data: ServerSettings): Promise<A
     const resBody = await sendApiRequest("set-settings", data);
 
     if (resBody.success) {
-        refreshNuxtData("/api/get-settings");
+        await refreshNuxtData("/api/get-settings");
     }
 
     return resBody;

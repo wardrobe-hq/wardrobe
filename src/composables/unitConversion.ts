@@ -4,7 +4,7 @@
  * Created Date: 2026-03-04 10:39:01
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-28 21:59:06
+ * Last Modified: 2026-05-08 16:44:48
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -23,7 +23,7 @@
 import { temperatureUnitToString, tempKelvinTo, UnitStrMap, Unit, type TemperatureKelvin } from "~/model/unit";
 
 
-const useSet = () => getServerSettingsFromServer();
+const useSet = () => getServerSettingsFromCache();
 
 
 /**

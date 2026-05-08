@@ -5,7 +5,7 @@
  * Created Date: 2025-09-10 17:37:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-28 22:19:06
+ * Last Modified: 2026-05-08 16:45:50
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -247,13 +247,14 @@
 
 
     // Get from cache
-    const storedLabels     = getAllLabelsFromServer();
-    const storedCategories = getAllLabelCategoriesFromServer();
+    const storedLabels     = getAllLabelsFromCache();
+    const storedCategories = getAllLabelCategoriesFromCache();
 
     // Refs
     const thisOutfit:     Ref<Outfit>     = ref({ id: "", title: "", clothes: [], labelIDs: [], previewImgPath: "", addedTimestamp: 0, modifiedTimestamp: 0 });
     const bodyPartLabels: Ref<Label[]>    = ref([]);
-    const storedClothes   = await getAllClothesFromServer();
+    await getAllClothesFromServer();
+    const storedClothes   = getAllClothesFromCache();
 
 
     // Check if edit mode is enabled based on if name of this route is outfits-view or outfits-edit
