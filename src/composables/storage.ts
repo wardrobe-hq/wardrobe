@@ -4,7 +4,7 @@
  * Created Date: 2026-03-23 21:34:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 18:51:01
+ * Last Modified: 2026-05-09 20:37:01
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -92,23 +92,23 @@ async function sendApiRequest(route: string, data?: object): Promise<any> { // e
  * @returns Returns Promise resolving when data has been refreshed
  */
 export async function handleStorageSubscriptionEvent(event: StorageSubscriptionEvent): Promise<void> {
-    let imageId: ItemID;
+    let newData;
 
     switch (event.storage) {
         case StorageKind.IMAGES:
-            imageId = (event.newData as StorageKindDataMap<StorageKind.IMAGES>).id;
-            cachedImages.value = cachedImages.value.filter((e) => e.id !== imageId);
-            console.debug(`[DEBUG] handleStorageSubscriptionEvent: Deleting image '${imageId}' from cache...`);
+            newData = event.newData as StorageKindDataMap<StorageKind.IMAGES>;
+            cachedImages.value = cachedImages.value.filter((e) => e.id !== newData.id);
+            console.debug(`[DEBUG] handleStorageSubscriptionEvent: Deleting image '${newData.id}' from cache...`);
             break;
         case StorageKind.CLOTHES:
-            await refreshNuxtData("/api/get-all-clothes");
-            console.debug("[DEBUG] handleStorageSubscriptionEvent: Refreshing data of API route '/api/get-all-clothes'...");
-
-            // TODO: How am I going to refresh a single clothing?
+            newData = event.newData as StorageKindDataMap<StorageKind.CLOTHES>;
+            console.debug(`[DEBUG] handleStorageSubscriptionEvent: Refreshing data of API route '/api/get-all-clothes' & '/api/get-clothing/${newData.id}'...`);
+            await Promise.all([ refreshNuxtData("/api/get-all-clothes"), refreshNuxtData("/api/get-clothing/" + newData.id) ]);
             break;
         case StorageKind.OUTFITS:
-            await refreshNuxtData("/api/get-all-outfits");
-            console.debug("[DEBUG] handleStorageSubscriptionEvent: Refreshing data of API route '/api/get-all-outfits'...");
+            newData = event.newData as StorageKindDataMap<StorageKind.OUTFITS>;
+            console.debug(`[DEBUG] handleStorageSubscriptionEvent: Refreshing data of API route '/api/get-all-outfits' & '/api/get-outfit/${newData.id}'...`);
+            await Promise.all([ refreshNuxtData("/api/get-all-outfits"), refreshNuxtData("/api/get-outfit/" + newData.id) ]);
             break;
         case StorageKind.LABELS:
             await refreshNuxtData("/api/get-all-labels");
@@ -142,8 +142,12 @@ export function getAllClothesFromCache(): Ref<ApiResponse<Clothing[]>> {
     return useNuxtData("/api/get-all-clothes").data; // Return nuxt data cache for fetched data to make refreshNuxtData() work
 }
 
-export async function getClothingFromServer(id: ItemID): Promise<Ref<ApiResponse<Clothing>>> {
-    return (await useFetch("/api/get-clothing", { method: "POST", body: { id: id } })).data as Ref<ApiResponse<Clothing>>;
+export async function getClothingFromServer(id: ItemID): Promise<void> {
+    await useFetch("/api/get-clothing", { method: "POST", body: { id: id }, key: "/api/get-clothing/" + id });
+}
+
+export function getClothingFromCache(id: ItemID): Ref<ApiResponse<Clothing>> {
+    return useNuxtData("/api/get-clothing/" + id).data;
 }
 
 export async function setClothingToServer(data: Clothing): Promise<ApiResponse<Clothing>> {
@@ -179,8 +183,12 @@ export function getAllOutfitsFromCache(): Ref<ApiResponse<Outfit[]>> {
     return useNuxtData("/api/get-all-outfits").data; // Return nuxt data cache for fetched data to make refreshNuxtData() work
 }
 
-export async function getOutfitFromServer(id: ItemID): Promise<Ref<ApiResponse<Outfit>>> {
-    return (await useFetch("/api/get-outfit", { method: "POST", body: { id: id } })).data as Ref<ApiResponse<Outfit>>;
+export async function getOutfitFromServer(id: ItemID): Promise<void> {
+    await useFetch("/api/get-outfit", { method: "POST", body: { id: id }, key: "/api/get-outfit/" + id });
+}
+
+export function getOutfitFromCache(id: ItemID): Ref<ApiResponse<Outfit>> {
+    return useNuxtData("/api/get-outfit/" + id).data;
 }
 
 export async function setOutfitToServer(data: Outfit): Promise<ApiResponse<Outfit>> {

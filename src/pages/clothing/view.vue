@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 18:53:23
+ * Last Modified: 2026-05-09 21:16:42
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -85,12 +85,12 @@
                     class="custom-label-primary w-full sm:w-1/2 self-center sm:self-start"
                     v-if="!editModeEnabled"
                 >
-                    {{ thisClothing.title }}
+                    {{ localClothing.document!.title }}
                 </p>
                 <input
                     class="custom-input-secondary shrink-0 w-full sm:w-1/2 self-center sm:self-start"
                     :placeholder="$t('name')"
-                    v-model.trim="thisClothing.title"
+                    v-model.trim="localClothing.document!.title"
                     v-if="editModeEnabled"
                 />
 
@@ -99,12 +99,12 @@
                     class="custom-label-primary w-full h-20! shrink-0 py-1"
                     v-if="!editModeEnabled"
                 >
-                    {{ thisClothing.description }}
+                    {{ localClothing.document!.description }}
                 </p>
                 <textarea
                     class="custom-input-secondary w-full h-20! shrink-0 py-1"
                     :placeholder="$t('description')"
-                    v-model.trim="thisClothing.description"
+                    v-model.trim="localClothing.document!.description"
                     v-if="editModeEnabled"
                 />
 
@@ -120,7 +120,7 @@
                         <!-- List all labels for this category -->
                         <p
                             class="custom-wardrobe-label"
-                            v-for="thisLabel in storedLabels.document!.filter((e: Label) => thisClothing.labelIDs.includes(e.id) && e.categoryID == thisCategory.id)"
+                            v-for="thisLabel in storedLabels.document!.filter((e: Label) => localClothing.document!.labelIDs.includes(e.id) && e.categoryID == thisCategory.id)"
                             :key="thisLabel.id"
                             v-if="!editModeEnabled"
                         >
@@ -129,7 +129,7 @@
 
                         <button
                             class="custom-wardrobe-label-clickable"
-                            :class="thisClothing.labelIDs.some((e) => e == thisLabel.id) ? 'custom-wardrobe-label-selected-outline' : ''"
+                            :class="localClothing.document!.labelIDs.some((e) => e == thisLabel.id) ? 'custom-wardrobe-label-selected-outline' : ''"
                             v-for="thisLabel in sortLabelsList(getLabelsOfCategory(storedLabels.document!, thisCategory.id))"
                             :key="thisLabel.id"
                             @click="toggleLabel(thisLabel)"
@@ -161,6 +161,8 @@
     import { getLabelsOfCategory, type Category } from "~/model/label-category";
     import { CategorySpecialityMap } from "~/model/label-category";
     import { getImageFromServer, setCategoriesAndLabelsToServer } from "~/composables/storage";
+    import { type ItemID } from "~/model/storage";
+    import { type ApiResponse } from "~/model/api";
 
 
     const i18n = useI18n();
@@ -169,9 +171,11 @@
     const storedLabels     = getAllLabelsFromCache();
     const storedCategories = getAllLabelCategoriesFromCache();
 
-    // Refs
-    const thisClothing:        Ref<Clothing> = ref({ id: "", title: "", description: "", imgPath: "", labelIDs: [], addedTimestamp: 0, modifiedTimestamp: 0 });
-    const thisClothingImgBlob: Ref<string>   = ref("");
+    // Refs, init for new piece of clothing
+    let   storedClothing:      Ref<ApiResponse<Clothing>> = ref({ success: true, message: null, document: { id: "", title: "", description: "", imgPath: "", labelIDs: [], addedTimestamp: 0, modifiedTimestamp: 0 } });
+    let   localClothing:       Ref<ApiResponse<Clothing>> = storedClothing;
+    const thisClothingImgBlob: Ref<string>                = ref("");
+
 
     // Check if edit mode is enabled based on if name of this route is outfits-view or outfits-edit
     const editModeEnabled = (useRoute().name == "clothing-edit");
@@ -183,14 +187,21 @@
     if (!editModeEnabled && clothingId == "new") useRouter().push("/clothing/edit?id=new");
 
 
-    // Get clothing
+    // Get clothing if not new
     if (clothingId != "new") {
-        thisClothing.value = (await getClothingFromServer(clothingId)).value.document!; // TODO: Does ref break?
+        await getClothingFromServer(clothingId);
+        storedClothing = getClothingFromCache(clothingId);
+
+        if (editModeEnabled) { // If edit mode is enabled, we need to clone the cache entry to break reactivity
+            localClothing = useCloned(storedClothing.value, { manual: true }).cloned
+        } else {
+            localClothing = storedClothing;
+        }
 
         // I think it actually provides a better user experience fetching the image afterwards here
         // thisClothingImgBlob.value = (await getSSRImageFromServer(thisClothing.value.imgPath, 512))?.value.document?.imgBlob || "";
         onMounted(async () => {
-            thisClothingImgBlob.value = (await getImageFromServer(thisClothing.value.imgPath, 512))?.imgBlob || ""; // TODO: Does ref break?
+            thisClothingImgBlob.value = (await getImageFromServer(localClothing.value.document!.imgPath, 512))?.imgBlob || ""; // TODO: Does ref break?
         });
     }
 
@@ -200,15 +211,15 @@
         console.debug("DEBUG: Toggling label " + selectedLabel.id);
 
         // Get all selected labels without this one
-        const filtered = thisClothing.value.labelIDs.filter((e: ItemID) => e != selectedLabel.id);
+        const filtered = localClothing.value.document!.labelIDs.filter((e: ItemID) => e != selectedLabel.id);
 
         // If length does not match, the label must be selected
-        if (filtered.length != thisClothing.value.labelIDs.length) {
+        if (filtered.length != localClothing.value.document!.labelIDs.length) {
             // ...and we can simply remove it without filtering again
-            thisClothing.value.labelIDs = filtered;
+            localClothing.value.document!.labelIDs = filtered;
         } else {
             // ...otherwise we can simply add it
-            thisClothing.value.labelIDs.push(selectedLabel.id);
+            localClothing.value.document!.labelIDs.push(selectedLabel.id);
         }
 
         emitChangesMadeEvent();
@@ -235,7 +246,7 @@
             const res = await setCategoriesAndLabelsToServer(undefined, undefined, [ newLabel ], undefined);
 
             // Directly select new label
-            thisClothing.value.labelIDs.push(newLabel.id);
+            localClothing.value.document!.labelIDs.push(newLabel.id);
 
             // Vue does not detect this change (as no element was edited in the DOM) so we need to track this manually
             emitChangesMadeEvent();
@@ -247,8 +258,8 @@
     async function updateImage(fileName: string) {
         if (!fileName) throw("Error: Image was uploaded without file name?");
 
-        thisClothing.value.imgPath = fileName;
-        console.debug("DEBUG - updateImage: Setting imgPath of clothing to " + thisClothing.value.imgPath);
+        localClothing.value.document!.imgPath = fileName;
+        console.debug("DEBUG - updateImage: Setting imgPath of clothing to " + localClothing.value.document!.imgPath);
 
         thisClothingImgBlob.value = (await getImageFromServer(fileName, 512))?.imgBlob || "";
     }
@@ -257,11 +268,11 @@
     // Sends delete request to the database
     async function deleteClothing() {
 
-        const confirmed = confirm($t('deleteConfirmationPrompt', { name: thisClothing.value.title }));
+        const confirmed = confirm($t('deleteConfirmationPrompt', { name: localClothing.value.document!.title }));
 
         // Send request to API if user confirmed
         if (confirmed) {
-            const resBody = await rmClothingToServer(thisClothing.value.id);
+            const resBody = await rmClothingToServer(localClothing.value.document!.id);
 
             // Indicate success/failure
             if (resBody.success) {
@@ -284,21 +295,20 @@
     async function saveChanges() {
 
         // Send data to API
-        const resBody = await setClothingToServer(thisClothing.value);
+        const resBody = await setClothingToServer(localClothing.value.document!);
 
         // Update local refs depending on success/failure and indicate result
         if (resBody.success) {
             responseIndicatorSuccess();
 
             emitChangesMadeEvent(false);
-            thisClothing.value = resBody.document!;
             thisClothingImgBlob.value = (await getImageFromServer(resBody.document!.imgPath, 512))?.imgBlob || "";
         } else {
             responseIndicatorFailure();
         }
 
-        // Redirect back on success
-        useRouter().push("/clothing/view?id=" + thisClothing.value.id);
+        // Redirect back on success, no need to update thisClothing
+        useRouter().push("/clothing/view?id=" + localClothing.value.document!.id);
 
     }
 

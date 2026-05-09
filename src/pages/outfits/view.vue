@@ -5,7 +5,7 @@
  * Created Date: 2025-09-10 17:37:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 18:57:15
+ * Last Modified: 2026-05-09 21:16:51
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -27,14 +27,14 @@
 
     <!-- Title Bar for view -->
     <TitleBarBasic backRedirectTo="/outfits" v-if="!editModeEnabled">
-        <NuxtLink :to="'/outfits/edit?id=' + (thisOutfit ? thisOutfit.id : 'new')" class="custom-button-primary">
+        <NuxtLink :to="'/outfits/edit?id=' + (storedOutfit ? localOutfit.document!.id : 'new')" class="custom-button-primary">
             <PhPencil class="mr-2 size-5"></PhPencil>
             {{ $t('edit') }}
         </NuxtLink>
     </TitleBarBasic>
 
     <!-- Title bar for edit -->
-    <TitleBarBasic :backRedirectTo="outfitId == 'new' ? '/outfits' : '/outfits/view?id=' + (thisOutfit ? thisOutfit.id : 'new')" v-if="editModeEnabled">
+    <TitleBarBasic :backRedirectTo="outfitId == 'new' ? '/outfits' : '/outfits/view?id=' + (storedOutfit ? localOutfit.document!.id : 'new')" v-if="editModeEnabled">
         <template v-slot:secondary v-if="outfitId != 'new'">
             <button class="custom-button-primary" @click="deleteOutfit">
                 <PhTrash class="mr-2 size-5 text-red-600"></PhTrash>
@@ -57,8 +57,8 @@
         <div class="flex gap-4 mb-4 md:mb-8 justify-between">
             <!-- Outfit title -->
             <div class="w-1/3 shrink-0">
-                <p     v-if="!editModeEnabled" class="custom-label-primary text-nowrap w-full">{{ thisOutfit.title }}</p>
-                <input v-if="editModeEnabled"  class="custom-input-secondary w-full" :placeholder="$t('name')" v-model.trim="thisOutfit.title" />
+                <p     v-if="!editModeEnabled" class="custom-label-primary text-nowrap w-full">{{ localOutfit.document!.title }}</p>
+                <input v-if="editModeEnabled"  class="custom-input-secondary w-full" :placeholder="$t('name')" v-model.trim="localOutfit.document!.title" />
             </div>
 
             <!-- Label selector bar with expanding popup -->
@@ -67,7 +67,7 @@
                 <div class="flex gap-x-1 overflow-x-auto p-1">
                     <p
                         class="custom-wardrobe-label"
-                        v-for="thisLabel in storedLabels.document!.filter((e: Label) => thisOutfit.labelIDs.includes(e.id))"
+                        v-for="thisLabel in storedLabels.document!.filter((e: Label) => localOutfit.document!.labelIDs.includes(e.id))"
                         :key="thisLabel.id"
                         v-if="!editModeEnabled"
                     >
@@ -76,7 +76,7 @@
 
                     <button
                         class="custom-wardrobe-label-clickable custom-wardrobe-label-selected-outline mx-0.5"
-                        v-for="thisLabel in storedLabels.document!.filter((e) => thisOutfit.labelIDs.includes(e.id))"
+                        v-for="thisLabel in storedLabels.document!.filter((e) => localOutfit.document!.labelIDs.includes(e.id))"
                         :key="thisLabel.id"
                         @click="toggleLabel(thisLabel)"
                         v-if="editModeEnabled"
@@ -105,7 +105,7 @@
                             <!-- List all labels for this category -->
                             <p
                                 class="custom-wardrobe-label"
-                                v-for="thisLabel in storedLabels.document!.filter((e: Label) => thisOutfit.labelIDs.includes(e.id) && e.categoryID == thisCategory.id)"
+                                v-for="thisLabel in storedLabels.document!.filter((e: Label) => localOutfit.document!.labelIDs.includes(e.id) && e.categoryID == thisCategory.id)"
                                 :key="thisLabel.id"
                                 v-if="!editModeEnabled"
                             >
@@ -114,7 +114,7 @@
 
                             <button
                                 class="custom-wardrobe-label-clickable"
-                                :class="thisOutfit.labelIDs.some((e) => e == thisLabel.id) ? 'custom-wardrobe-label-selected-outline' : ''"
+                                :class="localOutfit.document!.labelIDs.some((e) => e == thisLabel.id) ? 'custom-wardrobe-label-selected-outline' : ''"
                                 v-for="thisLabel in storedLabels.document!.filter((e: Label) => e.categoryID == thisCategory.id)"
                                 :key="thisLabel.id"
                                 @click="toggleLabel(thisLabel)"
@@ -152,7 +152,7 @@
                         <div class="flex h-50 mx-2 overflow-x-auto"> <!-- TODO: I don't like the hardcoded height but h-full glitches out of the box? Also changing any width breaks scroll overflow? -->
                             <div
                                 class="flex flex-col w-55 shrink-0 px-2 m-2 rounded-xl shadow-md bg-bg-field-light dark:bg-bg-field-dark"
-                                v-for="thisClothing in storedClothes.document!.filter((e) => thisOutfit.clothes.some((f) => f.clothingID == e.id) && e.labelIDs.includes(thisLabel.id))"
+                                v-for="thisClothing in storedClothes.document!.filter((e) => localOutfit.document!.clothes.some((f) => f.clothingID == e.id) && e.labelIDs.includes(thisLabel.id))"
                                 :key="thisClothing.id"
                             >
                                 <!-- Title bar when in edit mode, let it clip over the image -->
@@ -244,16 +244,18 @@
     import { responseIndicatorFailure, responseIndicatorSuccess } from "~/composables/responseIndicator";
     import threedModelViewer from "~/components/threedModelViewer.vue";
     import { getAllClothesFromServer, getOutfitFromServer, rmOutfitToServer, setOutfitToServer } from "~/composables/storage";
-    import type { ItemID } from "../../model/storage";
+    import { type ItemID } from "../../model/storage";
+    import { type ApiResponse } from "~/model/api";
 
 
     // Get from cache
     const storedLabels     = getAllLabelsFromCache();
     const storedCategories = getAllLabelCategoriesFromCache();
 
-    // Refs
-    const thisOutfit:     Ref<Outfit>     = ref({ id: "", title: "", clothes: [], labelIDs: [], previewImgPath: "", addedTimestamp: 0, modifiedTimestamp: 0 });
-    const bodyPartLabels: Ref<Label[]>    = ref([]);
+    // Refs, init for new outfit
+    let   storedOutfit:     Ref<ApiResponse<Outfit>> = ref({ success: true, message: null, document: { id: "", title: "", clothes: [], labelIDs: [], previewImgPath: "", addedTimestamp: 0, modifiedTimestamp: 0 } });
+    let   localOutfit:      Ref<ApiResponse<Outfit>> = storedOutfit;
+    const bodyPartLabels:   Ref<Label[]>             = ref([]);
     await getAllClothesFromServer();
     const storedClothes   = getAllClothesFromCache();
 
@@ -277,13 +279,20 @@
 
     // Get outfit data if not new
     if (outfitId != "new") {
-        thisOutfit.value = (await getOutfitFromServer(outfitId)).value.document!;
+        await getOutfitFromServer(outfitId);
+        storedOutfit = getOutfitFromCache(outfitId);
+
+        if (editModeEnabled) { // If edit mode is enabled, we need to clone the cache entry to break reactivity
+            localOutfit = useCloned(storedOutfit.value, { manual: true }).cloned
+        } else {
+            localOutfit = storedOutfit;
+        }
     }
 
 
     // Add clothing to a label of this outfit
     function addClothing(id: ItemID) {
-        thisOutfit.value.clothes.push({
+        localOutfit.value.document!.clothes.push({
             order: 0,       // TODO: Order
             clothingID: id
         });
@@ -294,7 +303,7 @@
 
     // Remove clothing from a label of this outfit
     function removeClothing(id: ItemID) {
-        thisOutfit.value.clothes = thisOutfit.value.clothes.filter((e) => e.clothingID != id);
+        localOutfit.value.document!.clothes = localOutfit.value.document!.clothes.filter((e) => e.clothingID != id);
 
         emitChangesMadeEvent();
     }
@@ -306,7 +315,7 @@
         const clothesForThisLabel = getItemsToShow(storedClothes.value.document!, defaultSortMode, [ thisLabel.id ]) as Clothing[];
 
         // Remove clothes that are already added to this outfit
-        const clothesNotAddedYet = clothesForThisLabel.filter((e) => !thisOutfit.value?.clothes.some((f) => f.clothingID == e.id));
+        const clothesNotAddedYet = clothesForThisLabel.filter((e) => !storedOutfit.value.document!.clothes.some((f) => f.clothingID == e.id));
 
         // Remove clothes that do not match search string
         const clothesMatchingSearch = clothesNotAddedYet.filter((e) => e.title.toLowerCase().includes(searchStr.toLowerCase())); // TODO: How much does this search suck compared to some guideline?
@@ -318,15 +327,15 @@
     // Adds/Removes a label
     async function toggleLabel(selectedLabel: Label) {
         // Get all selected labels without this one
-        const filtered = thisOutfit.value.labelIDs.filter((e: ItemID) => e != selectedLabel.id);
+        const filtered = localOutfit.value.document!.labelIDs.filter((e: ItemID) => e != selectedLabel.id);
 
         // If length does not match, the label must be selected
-        if (filtered.length != thisOutfit.value.labelIDs.length) {
+        if (filtered.length != localOutfit.value.document!.labelIDs.length) {
             // ...and we can simply remove it without filtering again
-            thisOutfit.value.labelIDs = filtered;
+            localOutfit.value.document!.labelIDs = filtered;
         } else {
             // ...otherwise we can simply add it
-            thisOutfit.value.labelIDs.push(selectedLabel.id);
+            localOutfit.value.document!.labelIDs.push(selectedLabel.id);
         }
 
         emitChangesMadeEvent();
@@ -336,11 +345,11 @@
     // Sends delete request to the database
     async function deleteOutfit() {
 
-        const confirmed = confirm($t('deleteConfirmationPrompt', { name: thisOutfit.value.title }));
+        const confirmed = confirm($t('deleteConfirmationPrompt', { name: localOutfit.value.document!.title }));
 
         // Send request to API if user confirmed
         if (confirmed) {
-            const resBody = await rmOutfitToServer(thisOutfit.value.id);
+            const resBody = await rmOutfitToServer(localOutfit.value.document!.id);
 
             // Indicate success/failure
             if (resBody.success) {
@@ -363,20 +372,19 @@
     async function saveChanges() {
 
         // Send data to API
-        const resBody = (await setOutfitToServer(thisOutfit.value));
+        const resBody = (await setOutfitToServer(localOutfit.value.document!));
 
         // Update local refs depending on success/failure and indicate result
         if (resBody.success) {
             responseIndicatorSuccess();
 
             emitChangesMadeEvent(false);
-            thisOutfit.value = resBody.document!;
         } else {
             responseIndicatorFailure();
         }
 
         // Redirect back on success
-        useRouter().push("/outfits/view?id=" + thisOutfit.value.id);
+        useRouter().push("/outfits/view?id=" + localOutfit.value.document!.id);
 
     }
 
