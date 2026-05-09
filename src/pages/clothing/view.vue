@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-09 22:03:15
+ * Last Modified: 2026-05-09 23:23:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -322,15 +322,13 @@
         // Send data to API
         const resBody = await setClothingToServer(localClothing.value.document!);
 
-        // Update local refs depending on success/failure and indicate result
-        if (resBody.success) {
-            responseIndicatorSuccess();
-
-            emitChangesMadeEvent(false);
-            thisClothingImgBlob.value = (await getImageFromServer(resBody.document!.imgPath, 512))?.imgBlob || "";
-        } else {
+        if (!resBody.success) {
             responseIndicatorFailure();
+            return;
         }
+
+        responseIndicatorSuccess();
+        emitChangesMadeEvent(false);
 
         // Redirect back on success, no need to update thisClothing
         useRouter().push("/clothing/view?id=" + localClothing.value.document!.id);

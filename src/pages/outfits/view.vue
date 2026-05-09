@@ -5,7 +5,7 @@
  * Created Date: 2025-09-10 17:37:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-09 21:52:40
+ * Last Modified: 2026-05-09 23:23:51
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -400,14 +400,13 @@
         // Send data to API
         const resBody = (await setOutfitToServer(localOutfit.value.document!));
 
-        // Update local refs depending on success/failure and indicate result
-        if (resBody.success) {
-            responseIndicatorSuccess();
-
-            emitChangesMadeEvent(false);
-        } else {
+        if (!resBody.success) {
             responseIndicatorFailure();
+            return;
         }
+
+        responseIndicatorSuccess();
+        emitChangesMadeEvent(false);
 
         // Redirect back on success
         useRouter().push("/outfits/view?id=" + localOutfit.value.document!.id);
