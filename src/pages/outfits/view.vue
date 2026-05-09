@@ -5,7 +5,7 @@
  * Created Date: 2025-09-10 17:37:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-09 21:16:51
+ * Last Modified: 2026-05-09 21:52:40
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -244,8 +244,8 @@
     import { responseIndicatorFailure, responseIndicatorSuccess } from "~/composables/responseIndicator";
     import threedModelViewer from "~/components/threedModelViewer.vue";
     import { getAllClothesFromServer, getOutfitFromServer, rmOutfitToServer, setOutfitToServer } from "~/composables/storage";
-    import { type ItemID } from "../../model/storage";
-    import { type ApiResponse } from "~/model/api";
+    import { StorageKind, type ItemID } from "../../model/storage";
+    import { SubscriptionEventAction, SubscriptionEventType, type ApiResponse, type StorageSubscriptionEvent, type SubscriptionEvent } from "~/model/api";
 
 
     // Get from cache
@@ -280,14 +280,40 @@
     // Get outfit data if not new
     if (outfitId != "new") {
         await getOutfitFromServer(outfitId);
-        storedOutfit = getOutfitFromCache(outfitId);
 
-        if (editModeEnabled) { // If edit mode is enabled, we need to clone the cache entry to break reactivity
-            localOutfit = useCloned(storedOutfit.value, { manual: true }).cloned
+        if (editModeEnabled) { // If edit mode is enabled, we need to clone the cache entry to break reactivity and handle updating using manual diffing below
+            storedOutfit = useCloned(getOutfitFromCache(outfitId), { manual: true }).cloned;
+            localOutfit  = useCloned(storedOutfit.value, { manual: true }).cloned;
         } else {
-            localOutfit = storedOutfit;
+            storedOutfit = getOutfitFromCache(outfitId);
+            localOutfit  = storedOutfit;
         }
     }
+
+
+    // Attach storage update handler to patch local copy of outfit
+    useNuxtApp().hook("app:subscription:update", (data: SubscriptionEvent) => {
+        if (outfitId != "new" && data.type == SubscriptionEventType.STORAGE) { // Don't care about event when outfit is new (= not in storage yet)
+            let storageData = data as StorageSubscriptionEvent;
+
+            if (storageData.storage == StorageKind.OUTFITS) {
+                let newOutfitData = storageData.newData as Outfit;
+
+                if(newOutfitData.id == localOutfit.value.document!.id) {
+                    if (storageData.action == SubscriptionEventAction.DELETE) { // Outfit was deleted on server
+                        responseIndicatorSuccess();
+                        useRouter().push("/outfits");
+                        return;
+                    }
+                    if (editModeEnabled) { // Requires patching
+                        const diff = getDiff(storedOutfit.value.document!, newOutfitData);
+                        console.log(diff)
+                        //localClothing.value = applyDiff(localClothing.value, diff);
+                    }
+                }
+            }
+        }
+    });
 
 
     // Add clothing to a label of this outfit

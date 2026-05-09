@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-09 21:16:42
+ * Last Modified: 2026-05-09 22:03:15
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -161,8 +161,8 @@
     import { getLabelsOfCategory, type Category } from "~/model/label-category";
     import { CategorySpecialityMap } from "~/model/label-category";
     import { getImageFromServer, setCategoriesAndLabelsToServer } from "~/composables/storage";
-    import { type ItemID } from "~/model/storage";
-    import { type ApiResponse } from "~/model/api";
+    import { StorageKind, type ItemID } from "~/model/storage";
+    import { SubscriptionEventAction, SubscriptionEventType, type ApiResponse, type StorageSubscriptionEvent, type SubscriptionEvent } from "~/model/api";
 
 
     const i18n = useI18n();
@@ -190,12 +190,13 @@
     // Get clothing if not new
     if (clothingId != "new") {
         await getClothingFromServer(clothingId);
-        storedClothing = getClothingFromCache(clothingId);
 
-        if (editModeEnabled) { // If edit mode is enabled, we need to clone the cache entry to break reactivity
-            localClothing = useCloned(storedClothing.value, { manual: true }).cloned
+        if (editModeEnabled) { // If edit mode is enabled, we need to clone the cache entry to break reactivity and handle updating using manual diffing below
+            storedClothing = useCloned(getClothingFromCache(clothingId), { manual: true }).cloned;
+            localClothing  = useCloned(storedClothing.value, { manual: true }).cloned;
         } else {
-            localClothing = storedClothing;
+            storedClothing = getClothingFromCache(clothingId);
+            localClothing  = storedClothing;
         }
 
         // I think it actually provides a better user experience fetching the image afterwards here
@@ -204,6 +205,30 @@
             thisClothingImgBlob.value = (await getImageFromServer(localClothing.value.document!.imgPath, 512))?.imgBlob || ""; // TODO: Does ref break?
         });
     }
+
+
+    // Attach storage update handler to patch local copy of clothing
+    useNuxtApp().hook("app:subscription:update", (data: SubscriptionEvent) => {
+        if (clothingId != "new" && data.type == SubscriptionEventType.STORAGE) { // Don't care about event when clothing is new (= not in storage yet)
+            let storageData = data as StorageSubscriptionEvent;
+
+            if (storageData.storage == StorageKind.CLOTHES) {
+                let newClothingData = storageData.newData as Clothing;
+
+                if(localClothing.value && newClothingData.id == localClothing.value.document!.id) {
+                    if (storageData.action == SubscriptionEventAction.DELETE) { // Clothing was deleted on server
+                        responseIndicatorSuccess();
+                        useRouter().push("/");
+                        return;
+                    }
+                    if (editModeEnabled) { // Requires patching
+                        const diff = getDiff(storedClothing.value.document!, newClothingData);
+                        localClothing.value.document = applyDiff(localClothing.value.document!, diff);
+                    }
+                }
+            }
+        }
+    });
 
 
     // Adds/Removes a label

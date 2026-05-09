@@ -5,7 +5,7 @@
  * Created Date: 2024-03-23 13:03:16
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 18:58:23
+ * Last Modified: 2026-05-09 21:12:00
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 - 2026 3urobeat <https://github.com/3urobeat>
@@ -87,6 +87,7 @@
     import { getAllClothesFromServer } from "~/composables/storage";
     import type { Clothing } from "~/model/item";
     import { defaultSortMode, SortMode } from "~/model/sort-modes";
+    import type { ItemID } from "~/model/storage";
 
 
     // Set page properties
