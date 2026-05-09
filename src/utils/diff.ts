@@ -4,7 +4,7 @@
  * Created Date: 2026-05-04 18:16:50
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-07 20:33:44
+ * Last Modified: 2026-05-09 22:08:53
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -29,7 +29,7 @@ import type { FullObjectsInArrayDiff, DatabaseItem, Diff } from "~/model/storage
 // This makes it easier for us to query elements (ID is available instead of only index) and inserting diff into the database - https://github.com/benjamine/jsondiffpatch/blob/master/docs/plugins.md
 const fullObjectsInArrayDeltaFilter: Filter<DiffContext> = function (context) {
     // Do we care?
-    if (context.leftType !== "object" || context.leftIsArray) {
+    if (context.leftType !== "object" || context.leftIsArray || !context.parent?.leftIsArray) { // We basically only want to use this handler for diffing our labels page (= array of objects)
         return;
     }
     // Are both objects the same?
