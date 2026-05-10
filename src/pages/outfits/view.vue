@@ -5,7 +5,7 @@
  * Created Date: 2025-09-10 17:37:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-09 23:23:51
+ * Last Modified: 2026-05-09 23:52:12
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -299,7 +299,7 @@
             if (storageData.storage == StorageKind.OUTFITS) {
                 let newOutfitData = storageData.newData as Outfit;
 
-                if(newOutfitData.id == localOutfit.value.document!.id) {
+                if(localOutfit.value && newOutfitData.id == localOutfit.value.document!.id) {
                     if (storageData.action == SubscriptionEventAction.DELETE) { // Outfit was deleted on server
                         responseIndicatorSuccess();
                         useRouter().push("/outfits");
