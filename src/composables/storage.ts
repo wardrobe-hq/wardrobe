@@ -4,7 +4,7 @@
  * Created Date: 2026-03-23 21:34:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-09 20:37:01
+ * Last Modified: 2026-05-10 19:10:42
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -30,6 +30,7 @@ import { State } from "./state";
 
 
 let cachedImages: Ref<StorageKindDataMap<StorageKind.IMAGES>[]>; // Perhaps replaceable by using useFetch() with !immediate?
+const imageCacheVersion: Ref<number> = ref(0); // Incremented on every IMAGES cache invalidation from server subscription
 
 
 /**
@@ -98,7 +99,8 @@ export async function handleStorageSubscriptionEvent(event: StorageSubscriptionE
         case StorageKind.IMAGES:
             newData = event.newData as StorageKindDataMap<StorageKind.IMAGES>;
             cachedImages.value = cachedImages.value.filter((e) => e.id !== newData.id);
-            console.debug(`[DEBUG] handleStorageSubscriptionEvent: Deleting image '${newData.id}' from cache...`);
+            imageCacheVersion.value++;
+            console.debug(`[DEBUG] handleStorageSubscriptionEvent: Deleting image '${newData.id}' from cache (v${imageCacheVersion.value})...`);
             break;
         case StorageKind.CLOTHES:
             newData = event.newData as StorageKindDataMap<StorageKind.CLOTHES>;
@@ -264,14 +266,14 @@ export async function setServerSettingsToServer(data: ServerSettings): Promise<A
     -------------------- IMAGES --------------------
 */
 
-export async function getSSRImageFromServer(imgPath: string, scaleToWidth: number | undefined): Promise<Ref<ApiResponse<CachedImage>>> { // Variant that supports SSR for image loads on page load
+/* export async function getSSRImageFromServer(imgPath: string, scaleToWidth: number | undefined): Promise<Ref<ApiResponse<CachedImage>>> { // Variant that supports SSR for image loads on page load
     const body = {
         filePath: imgPath,
         width: scaleToWidth
     };
 
     return (await useFetch("/api/get-image", { method: "POST", body: body })).data as Ref<ApiResponse<CachedImage>>;
-}
+} */ // Unused atm
 
 export async function getImageFromServer(imgPath: string, scaleToWidth: number | undefined): Promise<CachedImage | null> {
     if (!imgPath) return null;
@@ -296,7 +298,52 @@ export async function getImageFromServer(imgPath: string, scaleToWidth: number |
 
     return cachedImages.value[cachedImages.value.length - 1]!;
 }
-// TODO: SSR?
+
+/**
+ * Reactive image cache ref wrapper for getImageFromServer()
+ * @param imgPath Image ref that triggers refetch on change
+ * @param scaleToWidth Optional width to scale the image to
+ * @returns Returns a reactive imgBlob ref (null if not fetched, undefined if no match) and load function to trigger initial image load
+ */
+export function useImage(imgPath: Ref<string>, scaleToWidth?: number): { cachedImage: Ref<CachedImage | null | undefined>; load: () => Promise<void> } {
+    const cachedImage: Ref<CachedImage | null | undefined> = ref(null);
+    let   hasLoaded = false;
+
+    // Loads image
+    async function load() {
+        const path = unref(imgPath);
+        if (!path) {
+            cachedImage.value = undefined;
+            return;
+        }
+
+        try {
+            cachedImage.value = await getImageFromServer(path, scaleToWidth) ?? undefined;
+            hasLoaded = true;
+        } catch (err) {
+            console.warn(`[WARN] useImage: Failed to load image '${path}': ${err}`);
+            if (!hasLoaded) {
+                cachedImage.value = undefined;
+            }
+        }
+    }
+
+    // Watch cache for update and reload image
+    watch(imageCacheVersion, () => {
+        if (hasLoaded) {
+            load();
+        }
+    });
+
+    // Watch imgPath ref parameter to refetch on update
+    watch(imgPath, () => {
+        cachedImage.value = null;
+        hasLoaded = false;
+        load();
+    });
+
+    return { cachedImage: cachedImage, load };
+}
 
 export async function sendImageToServer(file: File): Promise<ApiResponse<{ filePath: string }>> {
 

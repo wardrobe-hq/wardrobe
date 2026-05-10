@@ -5,7 +5,7 @@
  * Created Date: 2026-03-24 21:17:26
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-26 18:24:13
+ * Last Modified: 2026-05-10 19:12:42
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -24,15 +24,15 @@
         :class="props.conClass"
         v-element-visibility="onVisibility"
     >
-        <div v-if="imgBlob === null" class="absolute self-center loader"></div>
-        <PhImageBroken v-else-if="imgBlob === undefined" class="h-2/3 w-2/3 self-center text-text-secondary-light/50 dark:text-text-secondary-dark/50" />
+        <div v-if="cachedImage?.imgBlob === null" class="absolute self-center loader"></div>
+        <PhImageBroken v-else-if="cachedImage?.imgBlob === undefined" class="h-2/3 w-2/3 self-center text-text-secondary-light/50 dark:text-text-secondary-dark/50" />
 
         <!-- Show image if available -->
         <img
             v-else
             class="max-w-full max-h-full"
             :class="imgClass"
-            :src="'data:image/png;base64,' + imgBlob"
+            :src="'data:image/png;base64,' + cachedImage.imgBlob"
             :alt="$t('imageFallbackText', { name: itemName })"
         >
     </div>
@@ -44,28 +44,6 @@
     import { PhImageBroken } from "@phosphor-icons/vue";
     import { vElementVisibility } from "@vueuse/components";
 
-    // If null, image has not been loaded yet. If undefined, image does not exist
-    const imgBlob: Ref<string | null | undefined> = ref(null);
-
-    // Fetch image upon being visible
-    const isVisible = shallowRef(false)
-
-    function onVisibility(state: boolean) {
-        isVisible.value = state;
-
-        if (isVisible.value && imgBlob.value === null) {
-            console.debug(`[DEBUG] ImgLazy: Image '${props.imgPath}' became visible and is not fetched yet, loading...`);
-
-            getImageFromServer(props.imgPath, props.imgWidth)
-                .then((res) => {
-                    imgBlob.value = res?.imgBlob;
-                })
-                .catch((err) => {
-                    console.warn(`ImgLazy: Failed to load image '${props.imgPath}': ${err}`);
-                    imgBlob.value = undefined;
-                })
-        }
-    }
 
     // Define Props to be accepted by this component
     const props = defineProps({
@@ -93,5 +71,21 @@
 
     // Define stuff that can be accessed by the page
     // defineExpose();
+
+
+    // If null, image has not been loaded yet. If undefined, image does not exist
+    const { cachedImage, load } = useImage(toRef(props, "imgPath"), props.imgWidth); // Get image cache ref
+
+    // Fetch image upon being visible
+    const isVisible = shallowRef(false);
+
+    function onVisibility(state: boolean) {
+        isVisible.value = state;
+
+        if (state && cachedImage.value === null) {
+            console.debug(`[DEBUG] ImgLazy: Image '${props.imgPath}' became visible and is not fetched yet, loading...`);
+            load(); // Trigger load
+        }
+    }
 
 </script>

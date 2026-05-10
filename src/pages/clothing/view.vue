@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-09 23:23:22
+ * Last Modified: 2026-05-10 19:12:09
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -64,10 +64,10 @@
             >
                 <!-- Show image if available -->
                 <img
-                    v-if="thisClothingImgBlob"
+                    v-if="cachedImage?.imgBlob"
                     class="rounded-2xl self-center h-fit max-h-full select-none"
                     :class="editModeEnabled ? 'opacity-50' : ''"
-                    :src="'data:image/png;base64,' + thisClothingImgBlob"
+                    :src="'data:image/png;base64,' + cachedImage.imgBlob"
                     alt=""
                 >
                 <PhImageBroken v-else-if="!editModeEnabled" class="h-2/3 w-2/3 self-center text-text-secondary-light/50 dark:text-text-secondary-dark/50" />
@@ -160,7 +160,7 @@
     import { getNewLastLabelOrderIndex, sortLabelsList, type Label } from "~/model/label";
     import { getLabelsOfCategory, type Category } from "~/model/label-category";
     import { CategorySpecialityMap } from "~/model/label-category";
-    import { getImageFromServer, setCategoriesAndLabelsToServer } from "~/composables/storage";
+    import { useImage, setCategoriesAndLabelsToServer } from "~/composables/storage";
     import { StorageKind, type ItemID } from "~/model/storage";
     import { SubscriptionEventAction, SubscriptionEventType, type ApiResponse, type StorageSubscriptionEvent, type SubscriptionEvent } from "~/model/api";
 
@@ -172,9 +172,11 @@
     const storedCategories = getAllLabelCategoriesFromCache();
 
     // Refs, init for new piece of clothing
-    let   storedClothing:      Ref<ApiResponse<Clothing>> = ref({ success: true, message: null, document: { id: "", title: "", description: "", imgPath: "", labelIDs: [], addedTimestamp: 0, modifiedTimestamp: 0 } });
-    let   localClothing:       Ref<ApiResponse<Clothing>> = storedClothing;
-    const thisClothingImgBlob: Ref<string>                = ref("");
+    let   storedClothing: Ref<ApiResponse<Clothing>> = ref({ success: true, message: null, document: { id: "", title: "", description: "", imgPath: "", labelIDs: [], addedTimestamp: 0, modifiedTimestamp: 0 } });
+    let   localClothing:  Ref<ApiResponse<Clothing>> = storedClothing;
+
+    const currentImgPath = ref("");
+    const { cachedImage, load } = useImage(currentImgPath, 512);
 
 
     // Check if edit mode is enabled based on if name of this route is outfits-view or outfits-edit
@@ -200,10 +202,9 @@
         }
 
         // I think it actually provides a better user experience fetching the image afterwards here
-        // thisClothingImgBlob.value = (await getSSRImageFromServer(thisClothing.value.imgPath, 512))?.value.document?.imgBlob || "";
-        onMounted(async () => {
-            thisClothingImgBlob.value = (await getImageFromServer(localClothing.value.document!.imgPath, 512))?.imgBlob || ""; // TODO: Does ref break?
-        });
+        // cachedImage.value = (await getSSRImageFromServer(thisClothing.value.imgPath, 512))?.value.document?.imgBlob || "";
+        currentImgPath.value = localClothing.value.document!.imgPath;
+        onMounted(() => { load(); });
     }
 
 
@@ -224,6 +225,11 @@
                     if (editModeEnabled) { // Requires patching
                         const diff = getDiff(storedClothing.value.document!, newClothingData);
                         localClothing.value.document = applyDiff(localClothing.value.document!, diff);
+                    }
+
+                    // Sync imgPath so useImage re-fetches new image
+                    if (newClothingData.imgPath !== currentImgPath.value) {
+                        currentImgPath.value = newClothingData.imgPath;
                     }
                 }
             }
@@ -280,13 +286,13 @@
 
 
     // Triggered when new image was uploaded
-    async function updateImage(fileName: string) {
+    function updateImage(fileName: string) {
         if (!fileName) throw("Error: Image was uploaded without file name?");
 
         localClothing.value.document!.imgPath = fileName;
         console.debug("DEBUG - updateImage: Setting imgPath of clothing to " + localClothing.value.document!.imgPath);
 
-        thisClothingImgBlob.value = (await getImageFromServer(fileName, 512))?.imgBlob || "";
+        currentImgPath.value = fileName;
     }
 
 
