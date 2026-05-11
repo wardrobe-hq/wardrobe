@@ -4,7 +4,7 @@
  * Created Date: 2026-04-08 17:59:41
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 16:44:39
+ * Last Modified: 2026-05-11 17:28:36
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -128,4 +128,28 @@ export function closeServerSubscriptionConnection() {
         serverSubscriptionEventStream = undefined;
     }
     useState(State.SERVER_SUBSCRIPTION_CONNECTED).value = false;
+}
+
+
+/**
+ * Initializes server subscription handler. Call once from app.vue
+ */
+export function initServerSubscriptionHandler() {
+    if (getServerSettingsFromCache().value.document?.serverSubscriptionEnabled) {
+        establishServerSubscriptionConnection();
+    }
+
+    useNuxtApp().hook("app:user:settingsSaved", () => {
+        if (getServerSettingsFromCache().value.document?.serverSubscriptionEnabled) {
+            if (!serverSubscriptionEventStream) {
+                console.debug("[DEBUG] Received settingsSaved event, server subscription is now enabled");
+                establishServerSubscriptionConnection();
+            }
+        } else {
+            if (serverSubscriptionEventStream) {
+                console.debug("[DEBUG] Received settingsSaved event, server subscription is now disabled");
+                closeServerSubscriptionConnection();
+            }
+        }
+    });
 }

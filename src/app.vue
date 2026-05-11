@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:54:21
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 16:43:22
+ * Last Modified: 2026-05-11 17:28:27
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -142,9 +142,8 @@
     import type { PageProperties } from "./model/page";
     import TextOverflowAutoScroll from "./components/textOverflowAutoScroll.vue";
     import Notification from './components/notification.vue';
-    import { closeServerSubscriptionConnection, establishServerSubscriptionConnection } from "./composables/subscription";
+    import { closeServerSubscriptionConnection, initServerSubscriptionHandler } from "./composables/subscription";
     import { NotificationLevel } from "./model/notification";
-    import { SubscriptionEventType, type StorageSubscriptionEvent, type SubscriptionEvent } from "./model/api";
     import { initState, State } from "./composables/state";
 
     const route       = useRoute();
@@ -198,10 +197,7 @@
     onMounted(() => { // Client side only
         console.debug("Wardrobe mounted!");
         checkForUpdate();
-
-        if (getServerSettingsFromCache().value.document?.serverSubscriptionEnabled) {
-            establishServerSubscriptionConnection();
-        }
+        initServerSubscriptionHandler();
     });
 
     onUnmounted(() => {
