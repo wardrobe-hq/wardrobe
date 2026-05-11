@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:51:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 16:45:58
+ * Last Modified: 2026-05-11 17:29:42
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -319,7 +319,7 @@
 <script setup lang="ts">
     import { PhArrowClockwise, PhCheck, PhCloud, PhCoatHanger, PhCpu, PhGear, PhHourglassMedium, PhWrench } from "@phosphor-icons/vue";
     import TitleBarBasic from "~/components/titleBarBasic.vue";
-    import { defaultUXSettings, type ServerSettings, type UXSettings } from "~/model/storage";
+    import { defaultUXSettings, StorageKind, type ServerSettings, type UXSettings } from "~/model/storage";
     import { responseIndicatorFailure, responseIndicatorSuccess } from "~/composables/responseIndicator";
     import { CoreJobPendingDummy, type JobInfo } from "~/model/job";
     import { Unit, UnitStrMap, type TemperatureKelvin } from "~/model/unit";
@@ -329,16 +329,17 @@
     import { getServerSettingsFromCache, setServerSettingsToServer } from "~/composables/storage";
     import { SubscriptionEventType, type ApiResponse, type StorageSubscriptionEvent, type SubscriptionEvent } from "~/model/api";
     import { NotificationLevel } from "~/model/notification";
+    import * as jsondiffpatch from "jsondiffpatch";
 
     const i18n = useI18n();
 
     // Refs
-    const storedServerSettings: ServerSettings      = getServerSettingsFromCache().value.document!;
-    let   localServerSettings:  Ref<ServerSettings> = useCloned(storedServerSettings, { manual: true }).cloned; // I'm not using useCloned's sync() as it just wouldn't work :shrug:
-    const jobs:                 Ref<JobInfo[]>      = ref([]);
+    let   storedServerSettings: Ref<ApiResponse<ServerSettings>> = useCloned(getServerSettingsFromCache(), { manual: true }).cloned;         // Clone the original to be able to create diff when storage updates
+    let   localServerSettings:  Ref<ServerSettings>              = useCloned(storedServerSettings.value.document!, { manual: true }).cloned; // I'm not using useCloned's sync() as it just wouldn't work :shrug:
+    const jobs:                 Ref<JobInfo[]>                   = ref([]);
 
-    let   storedUxSettings:     UXSettings          = defaultUXSettings;
-    let   selectedLanguage:     string              = i18n.locale.value; // Separated from UXSettings because nuxt i18n module handles it
+    let   storedUxSettings:     UXSettings = defaultUXSettings;
+    let   selectedLanguage:     string     = i18n.locale.value; // Separated from UXSettings because nuxt i18n module handles it
 
     let   serverStatistics:     Ref<ServerStatistics | undefined> = ref();
 
@@ -348,9 +349,22 @@
     jobs.value = jobRes.data.value?.document!;
 
     useNuxtApp().hook("app:subscription:update", async (data: SubscriptionEvent) => {
+        // Update jobs listing
         if (data.type == SubscriptionEventType.JOB) {
             await jobRes.execute();
             jobs.value = jobRes.data.value?.document!
+        }
+        // Patch local copy of settings
+        else if (data.type == SubscriptionEventType.STORAGE) {
+            let storageData = data as StorageSubscriptionEvent;
+
+            if (storageData.storage == StorageKind.SERVER_SETTINGS) {
+                const newSettings = getServerSettingsFromCache();
+                const diff        = jsondiffpatch.diff(storedServerSettings.value.document!, newSettings.value.document!);
+
+                localServerSettings.value  = jsondiffpatch.patch(localServerSettings.value, diff) as ServerSettings;
+                storedServerSettings.value = newSettings.value;
+            }
         }
     });
 
@@ -401,7 +415,7 @@
             emitChangesMadeEvent(false);
 
             // Manually sync local clones to global cache, useCloned's sync() didn't work. Refresh clone of localServerSettings to avoid it gaining reactivity
-            localServerSettings = useCloned(storedServerSettings, { manual: true }).cloned;
+            storedServerSettings.value.document = localServerSettings.value;
 
             emitSettingsSavedEvent(); // Notify listeners to e.g. refresh weather in globalTitleBar
         } else {
