@@ -5,7 +5,7 @@
  * Created Date: 2026-04-02 22:24:30
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-09 21:18:11
+ * Last Modified: 2026-05-11 18:41:13
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -147,8 +147,8 @@
 
     // Handle action button press
     function handleAction() {
+        emitNotificationActionEvent(notificationData.value);
         close();
-        useNuxtApp().callHook("app:notification:action", notificationData.value);
     }
 
 

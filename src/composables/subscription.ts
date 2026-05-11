@@ -4,7 +4,7 @@
  * Created Date: 2026-04-08 17:59:41
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-11 17:28:36
+ * Last Modified: 2026-05-11 18:41:11
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -88,13 +88,6 @@ function handleServerSubscriptionError(err: unknown) {
         customDuration: 0,                                // Do not expire
         type: NotificationType.SERVER_SUBSCRIPTION_RELOAD
     });
-
-    useNuxtApp().hook("app:notification:action", (data: NotificationData) => {
-        if (data.type == NotificationType.SERVER_SUBSCRIPTION_RELOAD) {
-            console.debug("[DEBUG] Got 'SERVER_SUBSCRIPTION_RECONN' event, reloading page...");
-            reloadNuxtApp();
-        }
-    });
 }
 
 
@@ -150,6 +143,13 @@ export function initServerSubscriptionHandler() {
                 console.debug("[DEBUG] Received settingsSaved event, server subscription is now disabled");
                 closeServerSubscriptionConnection();
             }
+        }
+    });
+
+    useNuxtApp().hook("app:notification:action", (data: NotificationData) => {
+        if (data.type == NotificationType.SERVER_SUBSCRIPTION_RELOAD) {
+            console.debug("[DEBUG] Got 'SERVER_SUBSCRIPTION_RECONN' event, reloading page...");
+            reloadNuxtApp();
         }
     });
 }

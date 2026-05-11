@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:51:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-11 17:29:42
+ * Last Modified: 2026-05-11 18:41:09
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -302,7 +302,7 @@
                         <div class="grid grid-cols-2 gap-x-2 gap-y-0.5 mx-1">
 
                             <ClientOnly>
-                                <button class="custom-button-primary" @click="useNuxtApp().callHook('app:notification:show', { level: NotificationLevel.INFO, title: 'Test!', message: 'Hello!', actionLabel: 'No, thanks' })">Show Notification</button>
+                                <button class="custom-button-primary" @click="emitNotificationShowEvent({ level: NotificationLevel.INFO, title: 'Test!', message: 'Hello!', actionLabel: 'No, thanks' })">Show Notification</button>
                             </ClientOnly>
 
                         </div>
