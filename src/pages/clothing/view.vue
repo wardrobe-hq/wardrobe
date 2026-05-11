@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-10 19:12:09
+ * Last Modified: 2026-05-11 17:30:49
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -216,8 +216,9 @@
             if (storageData.storage == StorageKind.CLOTHES) {
                 let newClothingData = storageData.newData as Clothing;
 
-                if(localClothing.value && newClothingData.id == localClothing.value.document!.id) {
+                if(localClothing.value && newClothingData.id == clothingId) {
                     if (storageData.action == SubscriptionEventAction.DELETE) { // Clothing was deleted on server
+                        console.debug("DEBUG: Current clothing was deleted, redirecting to '/'...");
                         responseIndicatorSuccess();
                         useRouter().push("/");
                         return;
@@ -337,7 +338,7 @@
         emitChangesMadeEvent(false);
 
         // Redirect back on success, no need to update thisClothing
-        useRouter().push("/clothing/view?id=" + localClothing.value.document!.id);
+        useRouter().push("/clothing/view?id=" + resBody.document!.id);
 
     }
 

@@ -5,7 +5,7 @@
  * Created Date: 2025-09-10 17:37:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-09 23:52:12
+ * Last Modified: 2026-05-11 17:30:52
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -299,8 +299,9 @@
             if (storageData.storage == StorageKind.OUTFITS) {
                 let newOutfitData = storageData.newData as Outfit;
 
-                if(localOutfit.value && newOutfitData.id == localOutfit.value.document!.id) {
+                if(localOutfit.value && newOutfitData.id == outfitId) {
                     if (storageData.action == SubscriptionEventAction.DELETE) { // Outfit was deleted on server
+                        console.debug("DEBUG: Current outfit was deleted, redirecting to '/'...");
                         responseIndicatorSuccess();
                         useRouter().push("/outfits");
                         return;
@@ -409,7 +410,7 @@
         emitChangesMadeEvent(false);
 
         // Redirect back on success
-        useRouter().push("/outfits/view?id=" + localOutfit.value.document!.id);
+        useRouter().push("/outfits/view?id=" + resBody.document!.id);
 
     }
 
