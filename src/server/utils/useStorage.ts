@@ -4,7 +4,7 @@
  * Created Date: 2026-03-22 12:21:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 19:05:18
+ * Last Modified: 2026-05-12 19:49:24
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -19,7 +19,7 @@ import path from "path";
 import { readdir, stat } from "fs/promises";
 import util from "node:util";
 import childProcess from "node:child_process";
-import { type StorageSubscriptionEvent, SubscriptionEventType } from "~/model/api";
+import { type StorageUpdateEvent, SubscriptionEventType } from "~/model/api";
 import { SubscriptionUpdateObserver } from "../updateObserver";
 
 const exec = util.promisify(childProcess.exec);
@@ -79,6 +79,6 @@ export async function getStorageMount(): Promise<string> {
  * Notifies registered clients about storage update - Storage specific SubscriptionUpdateObserver wrapper function for type safety
  * @param event Event to send
  */
-export async function sendStorageSubscriptionEvent(event: Omit<StorageSubscriptionEvent, "type">) {
+export async function sendStorageSubscriptionEvent(event: Omit<StorageUpdateEvent, "type">) {
     SubscriptionUpdateObserver.getInstance().callSubscribers({ type: SubscriptionEventType.STORAGE, ...event });
 }

@@ -5,7 +5,7 @@
  * Created Date: 2025-09-09 17:13:32
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 19:08:58
+ * Last Modified: 2026-05-12 19:49:24
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -167,7 +167,7 @@
     import { UnitType } from "~/model/unit";
     import DayMonthInput from "~/components/dayMonthInput.vue";
     import { setCategoriesAndLabelsToServer } from "~/composables/storage";
-    import { SubscriptionEventType, type ApiResponse, type StorageSubscriptionEvent, type SubscriptionEvent } from "~/model/api";
+    import { SubscriptionEventType, type ApiResponse, type StorageUpdateEvent, type SubscriptionEvent } from "~/model/api";
     import { StorageKind, type Diff, type FullObjectsInArrayDiff } from "~/model/storage";
     import type { ItemID } from "../../model/storage";
 
@@ -204,7 +204,7 @@
     // Attach storage update handler to patch local copy of labels & categories
     useNuxtApp().hook("app:subscription:update", (data: SubscriptionEvent) => {
         if (data.type == SubscriptionEventType.STORAGE) {
-            let storageData = data as StorageSubscriptionEvent;
+            let storageData = data as StorageUpdateEvent;
 
             if (storageData.storage == StorageKind.LABELS) {
                 const newLabels    = getAllLabelsFromCache();

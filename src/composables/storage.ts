@@ -4,7 +4,7 @@
  * Created Date: 2026-03-23 21:34:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-10 19:10:42
+ * Last Modified: 2026-05-12 22:02:50
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -15,7 +15,7 @@
  */
 
 
-import { type ApiResponse, type StorageSubscriptionEvent } from "~/model/api";
+import { SubscriptionEventAction, SubscriptionEventType, type ApiResponse, type StorageUpdateEvent } from "~/model/api";
 import type { Clothing, Outfit } from "~/model/item";
 import type { Label } from "~/model/label";
 import type { Category } from "~/model/label-category";
@@ -88,45 +88,45 @@ async function sendApiRequest(route: string, data?: object): Promise<any> { // e
 
 
 /**
- * Handles incoming server storage update events
+ * Handles storage update requests (e.g. due to save or server subscription event)
  * @param event
  * @returns Returns Promise resolving when data has been refreshed
  */
-export async function handleStorageSubscriptionEvent(event: StorageSubscriptionEvent): Promise<void> {
-    let newData;
+export async function handleStorageUpdate(event: StorageUpdateEvent): Promise<void> {
+    let newData: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     switch (event.storage) {
         case StorageKind.IMAGES:
             newData = event.newData as StorageKindDataMap<StorageKind.IMAGES>;
             cachedImages.value = cachedImages.value.filter((e) => e.id !== newData.id);
             imageCacheVersion.value++;
-            console.debug(`[DEBUG] handleStorageSubscriptionEvent: Deleting image '${newData.id}' from cache (v${imageCacheVersion.value})...`);
+            console.debug(`[DEBUG] handleStorageUpdate: Deleting image '${newData.id}' from cache (v${imageCacheVersion.value})...`);
             break;
         case StorageKind.CLOTHES:
             newData = event.newData as StorageKindDataMap<StorageKind.CLOTHES>;
-            console.debug(`[DEBUG] handleStorageSubscriptionEvent: Refreshing data of API route '/api/get-all-clothes' & '/api/get-clothing/${newData.id}'...`);
+            console.debug(`[DEBUG] handleStorageUpdate: Refreshing data of API route '/api/get-all-clothes' & '/api/get-clothing/${newData.id}'...`);
             await Promise.all([ refreshNuxtData("/api/get-all-clothes"), refreshNuxtData("/api/get-clothing/" + newData.id) ]);
             break;
         case StorageKind.OUTFITS:
             newData = event.newData as StorageKindDataMap<StorageKind.OUTFITS>;
-            console.debug(`[DEBUG] handleStorageSubscriptionEvent: Refreshing data of API route '/api/get-all-outfits' & '/api/get-outfit/${newData.id}'...`);
+            console.debug(`[DEBUG] handleStorageUpdate: Refreshing data of API route '/api/get-all-outfits' & '/api/get-outfit/${newData.id}'...`);
             await Promise.all([ refreshNuxtData("/api/get-all-outfits"), refreshNuxtData("/api/get-outfit/" + newData.id) ]);
             break;
         case StorageKind.LABELS:
             await refreshNuxtData("/api/get-all-labels");
-            console.debug("[DEBUG] handleStorageSubscriptionEvent: Refreshing data of API route '/api/get-all-labels'...");
+            console.debug("[DEBUG] handleStorageUpdate: Refreshing data of API route '/api/get-all-labels'...");
             break;
         case StorageKind.LABEL_CATEGORIES:
             await refreshNuxtData("/api/get-all-label-categories");
-            console.debug("[DEBUG] handleStorageSubscriptionEvent: Refreshing data of API route '/api/get-all-label-categories'...");
+            console.debug("[DEBUG] handleStorageUpdate: Refreshing data of API route '/api/get-all-label-categories'...");
             break;
         case StorageKind.SERVER_SETTINGS:
             await refreshNuxtData("/api/get-settings");
             emitSettingsSavedEvent();
-            console.debug("[DEBUG] handleStorageSubscriptionEvent: Refreshing data of API route '/api/get-settings'...");
+            console.debug("[DEBUG] handleStorageUpdate: Refreshing data of API route '/api/get-settings'...");
             return;
         default:
-            throw("handleStorageSubscriptionEvent: Unsupported storage kind " + event.storage);
+            throw("handleStorageUpdate: Unsupported storage kind " + event.storage);
     }
 }
 
@@ -153,10 +153,10 @@ export function getClothingFromCache(id: ItemID): Ref<ApiResponse<Clothing>> {
 }
 
 export async function setClothingToServer(data: Clothing): Promise<ApiResponse<Clothing>> {
-    const resBody = await sendApiRequest("set-clothing", { clothing: data });
+    const resBody = await sendApiRequest("set-clothing", { clothing: data }) as ApiResponse<Clothing>;
 
-    if (resBody.success) {
-        await refreshNuxtData("/api/get-all-clothes");
+    if (resBody.success) { // Update local cache
+        await handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.CLOTHES, action: SubscriptionEventAction.UPSERT, newData: resBody.document! });
     }
 
     return resBody;
@@ -165,8 +165,8 @@ export async function setClothingToServer(data: Clothing): Promise<ApiResponse<C
 export async function rmClothingToServer(id: ItemID): Promise<ApiResponse<never>> {
     const resBody = await sendApiRequest("rm-clothing", { id: id });
 
-    if (resBody.success) {
-        await refreshNuxtData("/api/get-all-clothes");
+    if (resBody.success) { // Update local cache
+        await handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.CLOTHES, action: SubscriptionEventAction.DELETE, newData: { id: id } });
     }
 
     return resBody;
@@ -194,10 +194,10 @@ export function getOutfitFromCache(id: ItemID): Ref<ApiResponse<Outfit>> {
 }
 
 export async function setOutfitToServer(data: Outfit): Promise<ApiResponse<Outfit>> {
-    const resBody = await sendApiRequest("set-outfit", { outfit: data });
+    const resBody = await sendApiRequest("set-outfit", { outfit: data }) as ApiResponse<Outfit>;
 
-    if (resBody.success) {
-        await refreshNuxtData("/api/get-all-outfits");
+    if (resBody.success) { // Update local cache
+        await handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.OUTFITS, action: SubscriptionEventAction.UPSERT, newData: resBody.document! });
     }
 
     return resBody;
@@ -206,8 +206,8 @@ export async function setOutfitToServer(data: Outfit): Promise<ApiResponse<Outfi
 export async function rmOutfitToServer(id: ItemID): Promise<ApiResponse<never>> {
     const resBody = await sendApiRequest("rm-outfit", { id: id });
 
-    if (resBody.success) {
-        await refreshNuxtData("/api/get-all-outfits");
+    if (resBody.success) { // Update local cache
+        await handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.OUTFITS, action: SubscriptionEventAction.DELETE, newData: { id: id } });
     }
 
     return resBody;
@@ -234,7 +234,11 @@ export async function setCategoriesAndLabelsToServer(updatedCategories: Category
         deletedLabels: deletedLabels
     });
 
-    if (resBody.success) {
+    if (resBody.success) { // Update local cache
+        await Promise.all([
+            handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.LABELS,           action: SubscriptionEventAction.UPSERT, newData: undefined }),
+            handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.LABEL_CATEGORIES, action: SubscriptionEventAction.UPSERT, newData: undefined })
+        ]);
         await refreshNuxtData("/api/get-all-label-categories"); // storedCategories.value.push(...categoryData);
         await refreshNuxtData("/api/get-all-labels"); // storedLabels.value.push(...labelsData);
     }
@@ -251,11 +255,11 @@ export function getServerSettingsFromCache(): Ref<ApiResponse<ServerSettings>> {
     return useNuxtData("/api/get-settings").data; // Return values fetched in initGlobalCache()
 }
 
-export async function setServerSettingsToServer(data: ServerSettings): Promise<ApiResponse<never>> {
-    const resBody = await sendApiRequest("set-settings", data);
+export async function setServerSettingsToServer(data: ServerSettings): Promise<ApiResponse<ServerSettings>> {
+    const resBody = await sendApiRequest("set-settings", data) as ApiResponse<ServerSettings>;
 
-    if (resBody.success) {
-        await refreshNuxtData("/api/get-settings");
+    if (resBody.success) { // Update local cache
+        await handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.SERVER_SETTINGS, action: SubscriptionEventAction.DELETE, newData: resBody.document! });
     }
 
     return resBody;
@@ -360,12 +364,11 @@ export async function sendImageToServer(file: File): Promise<ApiResponse<{ fileP
     }
 
     // Get file name from response
-    const resBody = await res.json();
+    const resBody = await res.json() as ApiResponse<{ filePath: string }>;
 
-    // Remove all references of image from cache to fetch next usage from server again
-    // TODO: Return imgBlob from API route and replace every matching imgPath using map() instead of deleting them
-    cachedImages.value = cachedImages.value.filter((e) => e.id !== resBody.filePath);
-    console.debug(`[DEBUG] sendImageToServer: Removed '${resBody.filePath}' from image cache...`);
+    if (resBody.success) { // Update local cache
+        await handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.IMAGES, action: SubscriptionEventAction.DELETE, newData: { id: resBody.document!.filePath } }); // TODO: filePath & id changeup sucks
+    }
 
     return resBody;
 

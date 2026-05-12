@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-12 18:57:56
+ * Last Modified: 2026-05-12 19:49:24
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -162,7 +162,7 @@
     import { CategorySpecialityMap } from "~/model/label-category";
     import { useImage, setCategoriesAndLabelsToServer } from "~/composables/storage";
     import { StorageKind, type ItemID } from "~/model/storage";
-    import { SubscriptionEventAction, SubscriptionEventType, type ApiResponse, type StorageSubscriptionEvent, type SubscriptionEvent } from "~/model/api";
+    import { SubscriptionEventAction, SubscriptionEventType, type ApiResponse, type StorageUpdateEvent, type SubscriptionEvent } from "~/model/api";
 
 
     const i18n = useI18n();
@@ -217,7 +217,7 @@
     // Attach storage update handler to patch local copy of clothing
     useNuxtApp().hook("app:subscription:update", (data: SubscriptionEvent) => {
         if (clothingId != "new" && data.type == SubscriptionEventType.STORAGE) { // Don't care about event when clothing is new (= not in storage yet)
-            let storageData = data as StorageSubscriptionEvent;
+            let storageData = data as StorageUpdateEvent;
 
             if (storageData.storage == StorageKind.CLOTHES) {
                 let newClothingData = storageData.newData as Clothing;

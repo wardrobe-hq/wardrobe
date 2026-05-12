@@ -4,7 +4,7 @@
  * Created Date: 2026-04-08 17:59:41
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-11 18:41:11
+ * Last Modified: 2026-05-12 19:49:24
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -15,11 +15,11 @@
  */
 
 
-import { SubscriptionEventAction, SubscriptionEventType, type StorageSubscriptionEvent, type SubscriptionEvent } from "../model/api";
+import { SubscriptionEventAction, SubscriptionEventType, type StorageUpdateEvent, type SubscriptionEvent } from "../model/api";
 import { NotificationLevel, NotificationType, type NotificationData } from "../model/notification";
 import { emitSubscriptionEvent } from "./events";
 import { State } from "./state";
-import { handleStorageSubscriptionEvent } from "./storage";
+import { handleStorageUpdate } from "./storage";
 
 let serverSubscriptionEventStream: EventSource | undefined;
 
@@ -59,7 +59,7 @@ async function handleServerSubscriptionEvent(msg: MessageEvent<any>) { // eslint
         });
 
         if (data.type == SubscriptionEventType.STORAGE) {
-            await handleStorageSubscriptionEvent(data as StorageSubscriptionEvent);
+            await handleStorageUpdate(data as StorageUpdateEvent);
         }
 
         // Re-emit event for frontend when data was re-fetched

@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:51:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-11 18:41:09
+ * Last Modified: 2026-05-12 19:49:24
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -327,7 +327,7 @@
     import type { ServerStatistics } from "~/model/statistics";
     import packageJson from "~/../package.json";
     import { getServerSettingsFromCache, setServerSettingsToServer } from "~/composables/storage";
-    import { SubscriptionEventType, type ApiResponse, type StorageSubscriptionEvent, type SubscriptionEvent } from "~/model/api";
+    import { SubscriptionEventType, type ApiResponse, type StorageUpdateEvent, type SubscriptionEvent } from "~/model/api";
     import { NotificationLevel } from "~/model/notification";
     import * as jsondiffpatch from "jsondiffpatch";
 
@@ -356,7 +356,7 @@
         }
         // Patch local copy of settings
         else if (data.type == SubscriptionEventType.STORAGE) {
-            let storageData = data as StorageSubscriptionEvent;
+            let storageData = data as StorageUpdateEvent;
 
             if (storageData.storage == StorageKind.SERVER_SETTINGS) {
                 const newSettings = getServerSettingsFromCache();
