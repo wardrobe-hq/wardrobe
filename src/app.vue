@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:54:21
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-11 17:28:27
+ * Last Modified: 2026-05-12 19:24:26
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -125,7 +125,7 @@
             class="fixed left-0 lg:left-52 top-15 bottom-0 right-0 border-8 border-transparent rounded-2xl duration-500 overflow-auto"
         >
             <!-- Global notification component -->
-            <Notification class="fixed top-25 right-10" />
+            <Notification class="fixed top-18 md:top-25 right-2 md:right-10" />
 
             <div id="page-content" class="p-1 md:px-5">
                 <NuxtPage></NuxtPage> <!-- Links to index.vue -->
