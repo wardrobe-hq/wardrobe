@@ -5,7 +5,7 @@
  * Created Date: 2026-05-11 18:45:27
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-12 19:01:56
+ * Last Modified: 2026-05-12 22:12:35
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -31,7 +31,7 @@
         </span>
 
         <h1 class="text-3xl font-bold">
-            {{ error.statusCode == 404 ? $t("errorPageTitle") : error.statusMessage }}
+            {{ error.statusCode == 404 ? $t("errorNotFound") : (error.statusMessage ? error.statusMessage : $t('unknownError')) }}
         </h1>
 
         <!-- Go Back/Home Button Group -->

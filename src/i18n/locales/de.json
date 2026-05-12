@@ -13,7 +13,9 @@
     "weather": "Wetter",
     "temperature": "Temperatur",
     "language": "Sprache",
+
     "unknownError": "Unbekannter Fehler",
+    "errorNotFound": "Seite nicht gefunden",
 
     "browse": "Stöbern",
     "outfits": "Outfits",
@@ -94,7 +96,6 @@
     "serverSubscriptionConnectionLost": "Serververbindung verloren!",
     "reloadPage": "Seite neu laden",
 
-    "errorPageTitle": "Seite nicht gefunden",
     "errorPageGoHome": "Zur Startseite",
     "goBack": "Zurück",
 
