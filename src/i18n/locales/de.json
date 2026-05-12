@@ -94,6 +94,10 @@
     "serverSubscriptionConnectionLost": "Serververbindung verloren!",
     "reloadPage": "Seite neu laden",
 
+    "errorPageTitle": "Seite nicht gefunden",
+    "errorPageGoHome": "Zur Startseite",
+    "goBack": "Zurück",
+
 
     "_dummy4": "-------------- Specific Pages Text --------------",
     "clothingPageEmpty": "Es ist leer hier. Möchtest du ein Kleidungsstück hinzufügen?",

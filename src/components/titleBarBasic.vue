@@ -5,7 +5,7 @@
  * Created Date: 2025-09-17 17:25:36
  * Author: 3urobeat
  *
- * Last Modified: 2026-02-02 21:32:26
+ * Last Modified: 2026-05-12 18:28:52
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -21,7 +21,7 @@
 
     <div id="title" class="absolute right-0 flex w-full pt-4 px-1 md:px-5 select-none">
         <div class="flex justify-start" v-if="backRedirectTo">
-            <NuxtLink :to="backRedirectTo" class="custom-button-primary">
+            <NuxtLink :to="backRedirectTo" class="custom-button-primary" :title="$t('goBack')">
                 <PhCaretLeft class="size-5 text-text-light dark:text-text-dark"></PhCaretLeft>
             </NuxtLink>
         </div>

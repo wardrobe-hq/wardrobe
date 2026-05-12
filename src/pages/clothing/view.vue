@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-11 17:30:49
+ * Last Modified: 2026-05-12 18:57:56
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -192,12 +192,18 @@
     // Get clothing if not new
     if (clothingId != "new") {
         await getClothingFromServer(clothingId);
+        const clothingCacheData = getClothingFromCache(clothingId);
+
+        // Handle clothing not found
+        if (!clothingCacheData.value.document) {
+            throw createError({ status: 404 });
+        }
 
         if (editModeEnabled) { // If edit mode is enabled, we need to clone the cache entry to break reactivity and handle updating using manual diffing below
-            storedClothing = useCloned(getClothingFromCache(clothingId), { manual: true }).cloned;
+            storedClothing = useCloned(clothingCacheData, { manual: true }).cloned;
             localClothing  = useCloned(storedClothing.value, { manual: true }).cloned;
         } else {
-            storedClothing = getClothingFromCache(clothingId);
+            storedClothing = clothingCacheData;
             localClothing  = storedClothing;
         }
 
