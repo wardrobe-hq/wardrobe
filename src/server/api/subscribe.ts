@@ -4,7 +4,7 @@
  * Created Date: 2026-03-26 18:49:20
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-04 17:14:33
+ * Last Modified: 2026-05-14 14:26:08
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-
+import { randomUUID } from "crypto";
 import { SubscriptionUpdateObserver } from "../updateObserver";
 
 
@@ -30,6 +30,15 @@ export default defineEventHandler(async (event) => {
 
     console.debug(getApiLogPrefix(event), "Received request...");
 
+    // Generate a client identifier and set it as a cookie
+    const clientUUID = randomUUID();
+    try {
+        setCookie(event, "wardrobe_clientId", clientUUID);
+        console.debug(getApiLogPrefix(event), "Set cookie 'wardrobe_clientId': " + clientUUID);
+    } catch(err) {
+        console.error(getApiLogPrefix(event), "Failed to set 'wardrobe_clientId' cookie!", err);
+    }
+
     // Make this a stream
     const res = event.node.res;
 
@@ -40,8 +49,8 @@ export default defineEventHandler(async (event) => {
 
     event.node.res.flushHeaders();
 
-    // Register client
-    await SubscriptionUpdateObserver.createSubscriber(event.node.req, res);
+    // Register client with clientUUID
+    await SubscriptionUpdateObserver.createSubscriber(event.node.req, res, clientUUID);
 
     event._handled = true;
 

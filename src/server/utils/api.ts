@@ -4,7 +4,7 @@
  * Created Date: 2026-03-27 16:50:16
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 19:05:13
+ * Last Modified: 2026-05-14 13:57:11
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -36,7 +36,7 @@ export function getIpFromRequest(req: IncomingMessage) {
  * @returns String to be used as log message prefix
  */
 export function getApiLogPrefix(event: H3Event<globalThis.EventHandlerRequest>) {
-    return `[API] ${event.node.req.method} '${event.node.req.url}' from ${getIpFromRequest(event.node.req)}:`;
+    return `[API] ${event.node.req.method} '${event.node.req.url}' from '${getCookie(event, "wardrobe_clientId")}' (${getIpFromRequest(event.node.req)}):`;
 }
 
 

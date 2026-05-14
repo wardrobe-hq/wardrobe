@@ -4,7 +4,7 @@
  * Created Date: 2026-03-26 18:53:29
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-04 17:15:30
+ * Last Modified: 2026-05-14 14:29:36
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -23,7 +23,8 @@ type UpdateFunction<UpdateData> = (arg0: UpdateData) => void;
 
 type Subscriber<UpdateFunction> = {
     id: number,
-    func: UpdateFunction
+    func: UpdateFunction,
+    clientUUID?: string
 }
 
 
@@ -54,14 +55,15 @@ function UpdateObserver<UpdateData>() {
 
         /**
          * Adds a subscriber to the subscription list
-         * @param subscriber
+         * @param subscriberFunc Subscriber's function to call
+         * @param clientUUID Optional: Assign subscriber a client UUID
          * @returns ID of this subscriber in the subscribers collection
          */
-        addSubscriber(subscriber: UpdateFunction<UpdateData>) {
+        addSubscriber(subscriberFunc: UpdateFunction<UpdateData>, clientUUID?: string) {
             const lastSub = this.subscribers[this.subscribers.length - 1] || { id: -1 };
-            const length  = this.subscribers.push({ id: lastSub.id + 1, func: subscriber });
+            const length  = this.subscribers.push({ id: lastSub.id + 1, func: subscriberFunc, clientUUID: clientUUID });
 
-            console.debug(`[DEBUG] UpdateObserver: New subscription request, adding sub with id ${lastSub.id + 1}. There are/is now ${length} subscriber(s)`);
+            console.debug(`[DEBUG] UpdateObserver: New subscription request, adding sub${clientUUID ? " " + clientUUID : ""} with id ${lastSub.id + 1}. There are/is now ${length} subscriber(s)`);
 
             return lastSub.id + 1;
         }
@@ -107,8 +109,9 @@ export class SubscriptionUpdateObserver extends UpdateObserver<SubscriptionEvent
      * Creates a new subscriber from an API response stream and registers it
      * @param request
      * @param responseStream
+     * @param clientUUID Optional: Assign subscriber an ID
      */
-    static async createSubscriber(request: IncomingMessage, responseStream: ServerResponse<IncomingMessage>) {
+    static async createSubscriber(request: IncomingMessage, responseStream: ServerResponse<IncomingMessage>, clientUUID?: string) {
 
         // Create update function and register it
         const updateClient: UpdateFunction<SubscriptionEvent> = async (newData: SubscriptionEvent) => {
@@ -126,7 +129,7 @@ export class SubscriptionUpdateObserver extends UpdateObserver<SubscriptionEvent
         console.debug("[DEBUG] SubscriptionUpdateObserver: Attempting to call new subscriber...");
         await updateClient({ type: SubscriptionEventType.SUBSCRIPTION, action: SubscriptionEventAction.ANY });
 
-        const id = SubscriptionUpdateObserver.getInstance().addSubscriber(updateClient);
+        const id = SubscriptionUpdateObserver.getInstance().addSubscriber(updateClient, clientUUID);
 
         // Listen for connection close and clean up
         request.on("close", () => {
