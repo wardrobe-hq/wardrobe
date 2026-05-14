@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 19:05:02
+ * Last Modified: 2026-05-14 14:54:26
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -40,9 +40,10 @@ const outfitsDb = new nedb({ filename: "data/database/outfits.db", autoload: tru
  * Inserts a new outfit or updates an existing one
  * @throws Throws Exception on failure
  * @param outfit Outfit data to set. Leave id field empty to insert new outfit
+ * @param originClientId Optional: ID of client making request
  * @returns
  */
-export async function upsertOutfit(outfit: Outfit): Promise<Outfit | null> {
+export async function upsertOutfit(outfit: Outfit, originClientId?: string): Promise<Outfit | null> {
 
     // Generate identifier for new outfit
     if (!outfit.id) {
@@ -50,7 +51,7 @@ export async function upsertOutfit(outfit: Outfit): Promise<Outfit | null> {
     }
 
     // Re-generate preview image // TODO: ...when previewImgPath == null or imgPath of referenced clothing has changed
-    const newPreviewImg = await generateOutfitPreviewImage(outfit);
+    const newPreviewImg = await generateOutfitPreviewImage(outfit, originClientId);
 
     if (newPreviewImg != undefined) {          // Explicitly match against undefined to accept empty string (e.g. when all clothes were removed)
         outfit.previewImgPath = newPreviewImg; // Unused image will be deleted by periodic database cleanup job
@@ -67,7 +68,7 @@ export async function upsertOutfit(outfit: Outfit): Promise<Outfit | null> {
             action: SubscriptionEventAction.UPSERT,
             storage: StorageKind.OUTFITS,
             newData: affected
-        });
+        }, originClientId);
     }
 
     return affected;
@@ -78,9 +79,10 @@ export async function upsertOutfit(outfit: Outfit): Promise<Outfit | null> {
  * Deletes an outfit
  * @throws Throws Exception on failure
  * @param outfitID ID of the outfit to remove
+ * @param originClientId Optional: ID of client making request
  * @returns
  */
-export async function deleteOutfit(outfitID: ItemID): Promise<void> {
+export async function deleteOutfit(outfitID: ItemID, originClientId?: string): Promise<void> {
     // Unused image will be deleted by periodic database cleanup job
 
     await outfitsDb.removeAsync({ id: outfitID }, {});
@@ -89,7 +91,7 @@ export async function deleteOutfit(outfitID: ItemID): Promise<void> {
         action: SubscriptionEventAction.DELETE,
         storage: StorageKind.OUTFITS,
         newData: { id: outfitID }
-    });
+    }, originClientId);
 }
 
 /**

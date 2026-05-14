@@ -4,7 +4,7 @@
  * Created Date: 2025-12-07 18:39:22
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:41:15
+ * Last Modified: 2026-05-14 14:51:14
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -43,6 +43,9 @@ export default defineEventHandler(async (event): Promise<ApiResponse<Clothing>> 
     console.debug(getApiLogPrefix(event), "Received request for: ", params.clothing);
 
     // Ask db helper to upsert entry
-    return await getApiResponse<Clothing>(() => upsertClothing(params.clothing));
+    return await getApiResponse<Clothing>(() => {
+        const clientUUID = getCookie(event, "wardrobe_clientId");
+        return upsertClothing(params.clothing, clientUUID);
+    });
 
 });

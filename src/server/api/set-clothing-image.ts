@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:23:26
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:40:15
+ * Last Modified: 2026-05-14 14:43:05
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -75,7 +75,8 @@ export default defineEventHandler(async (event): Promise<ApiResponse<{ filePath:
 
     // Save image
     return await getApiResponse<{ filePath: string }>(async () => {
-        const filePath = await saveImage(imgCategory.clothing, file.data); // Type clothing is hard coded since this route is (currently) exclusively meant for clothes
+        const clientUUID = getCookie(event, "wardrobe_clientId");
+        const filePath   = await saveImage(imgCategory.clothing, file.data, clientUUID); // Type clothing is hard coded since this route is (currently) exclusively meant for clothes
 
         return {
             filePath: filePath

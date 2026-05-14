@@ -4,7 +4,7 @@
  * Created Date: 2026-03-26 18:53:29
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-14 14:29:36
+ * Last Modified: 2026-05-14 14:42:12
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -87,9 +87,16 @@ function UpdateObserver<UpdateData>() {
         /**
          * Updates every subscriber
          * @param data
+         * @param exemptClientId Optional: clientUUID to exempt from the update
          */
-        callSubscribers(data: UpdateData) {
-            this.subscribers.forEach((e) => e.func(data)); // TODO: Catch error and log
+        callSubscribers(data: UpdateData, exemptClientId?: string) {
+            console.log(`[DEBUG] UpdateObserver: Calling all ${this.subscribers.length} subscribers${exemptClientId ? " except '" + exemptClientId + "'" : ""}...`);
+
+            this.subscribers.forEach((e) => {
+                if (exemptClientId && e.clientUUID === exemptClientId) return;
+
+                e.func(data); // TODO: Catch error and log
+            });
         }
     };
 

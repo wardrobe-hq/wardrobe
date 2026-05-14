@@ -4,7 +4,7 @@
  * Created Date: 2025-12-27 10:07:47
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 18:56:02
+ * Last Modified: 2026-05-14 14:48:57
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -42,6 +42,9 @@ export default defineEventHandler(async (event): Promise<ApiResponse<void>> => {
     console.debug(getApiLogPrefix(event), "Received request for: ", params.id);
 
     // Ask db helper to delete entry
-    return await getApiResponse<void>(() => deleteClothing(params.id));
+    return await getApiResponse<void>(() => {
+        const clientUUID = getCookie(event, "wardrobe_clientId");
+        return deleteClothing(params.id, clientUUID);
+    });
 
 });

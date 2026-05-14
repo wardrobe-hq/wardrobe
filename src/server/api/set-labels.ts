@@ -4,7 +4,7 @@
  * Created Date: 2025-12-08 17:43:05
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 19:05:39
+ * Last Modified: 2026-05-14 14:50:28
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -50,10 +50,12 @@ export default defineEventHandler(async (event): Promise<ApiResponse<void>> => {
 
     // Write to DB
     return await getApiResponse<void>(async () => {
-        if (updatedCategories) await upsertLabelCategories(updatedCategories);
-        if (updatedLabels)     await upsertLabels(updatedLabels);
-        if (deletedLabels)     await deleteLabels(deletedLabels.flatMap((e) => e.id));
-        if (deletedCategories) await deleteLabelCategories(deletedCategories.flatMap((e) => e.id));
+        const clientUUID = getCookie(event, "wardrobe_clientId");
+
+        if (updatedCategories) await upsertLabelCategories(updatedCategories, clientUUID);
+        if (updatedLabels)     await upsertLabels(updatedLabels, clientUUID);
+        if (deletedLabels)     await deleteLabels(deletedLabels.flatMap((e) => e.id), clientUUID);
+        if (deletedCategories) await deleteLabelCategories(deletedCategories.flatMap((e) => e.id), clientUUID);
     });
 
 });

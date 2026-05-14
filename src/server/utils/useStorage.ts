@@ -4,7 +4,7 @@
  * Created Date: 2026-03-22 12:21:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-12 19:49:24
+ * Last Modified: 2026-05-14 14:53:08
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -78,7 +78,8 @@ export async function getStorageMount(): Promise<string> {
 /**
  * Notifies registered clients about storage update - Storage specific SubscriptionUpdateObserver wrapper function for type safety
  * @param event Event to send
+ * @param originClientId Optional: ID of client making request
  */
-export async function sendStorageSubscriptionEvent(event: Omit<StorageUpdateEvent, "type">) {
-    SubscriptionUpdateObserver.getInstance().callSubscribers({ type: SubscriptionEventType.STORAGE, ...event });
+export async function sendStorageSubscriptionEvent(event: Omit<StorageUpdateEvent, "type">, originClientId?: string) {
+    SubscriptionUpdateObserver.getInstance().callSubscribers({ type: SubscriptionEventType.STORAGE, ...event }, originClientId);
 }

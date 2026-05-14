@@ -80,7 +80,7 @@ async function generateImageCollage(images: Buffer<ArrayBufferLike>[], collageWi
  * @param outfit Outfit to generate new preview image for
  * @returns Path of image in storage
  */
-export async function generateOutfitPreviewImage(outfit: Outfit): Promise<string> {
+export async function generateOutfitPreviewImage(outfit: Outfit, originClientId?: string): Promise<string> {
 
     if (outfit.clothes.length == 0) {
         return "";
@@ -109,7 +109,7 @@ export async function generateOutfitPreviewImage(outfit: Outfit): Promise<string
 
 
     // Save image & return path
-    const imgPath = await saveImage(imgCategory.outfit, collage);
+    const imgPath = await saveImage(imgCategory.outfit, collage, originClientId);
 
     console.log("Finished generating outfit preview image " + imgPath);
     return imgPath;
@@ -121,14 +121,14 @@ export async function generateOutfitPreviewImage(outfit: Outfit): Promise<string
  * Asynchronously re-generates preview images of outfits containing a piece of clothing
  * @param clothingID
  */
-export function updateImagesOfAffectedOutfits(clothingID: ItemID) {
+export function updateImagesOfAffectedOutfits(clothingID: ItemID, originClientId?: string) {
 
     // Get all outfits containing this piece of clothing
     getOutfitsContainingClothing(clothingID)
         .then((outfits) => {
             console.log(`Re-generating ${outfits.length} preview images which contain clothing '${clothingID}'...`);
 
-            outfits.forEach(async (e) => upsertOutfit(e)); // UpsertOutfit handles preview generation
+            outfits.forEach(async (e) => upsertOutfit(e, originClientId)); // UpsertOutfit handles preview generation
         });
 
 }

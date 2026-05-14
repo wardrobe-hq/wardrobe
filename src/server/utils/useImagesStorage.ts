@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:32:46
+ * Last Modified: 2026-05-14 14:53:46
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -82,9 +82,10 @@ export async function scaleImage(img: Buffer<ArrayBufferLike>, width: number, on
  * @throws Throws Exception on failure
  * @param category Type of image, used as directory name in storage
  * @param fileBuffer File buffer to save
+ * @param originClientId Optional: ID of client making request
  * @returns Path of image in storage
  */
-export async function saveImage(category: imgCategory, fileBuffer: Buffer<ArrayBufferLike>): Promise<string> {
+export async function saveImage(category: imgCategory, fileBuffer: Buffer<ArrayBufferLike>, originClientId?: string): Promise<string> {
     if (!fileBuffer) throw("File parameter is required");
 
     // Calculate hash from buffer
@@ -101,7 +102,7 @@ export async function saveImage(category: imgCategory, fileBuffer: Buffer<ArrayB
         action: SubscriptionEventAction.NEW,
         storage: StorageKind.IMAGES,
         newData: { id: path, imgBlob: null, imgWidth: undefined }   // Images are lazy loaded due to their size, won't broadcast it here
-    });
+    }, originClientId);
 
     return path;
 
@@ -111,8 +112,9 @@ export async function saveImage(category: imgCategory, fileBuffer: Buffer<ArrayB
 /**
  * Deletes an image from the image storage
  * @param filePath File path of image to delete
+ * @param originClientId Optional: ID of client making request
  */
-export function deleteImage(filePath: string) {
+export function deleteImage(filePath: string, originClientId?: string) {
     imagesStorage.del(filePath);
 
     // Notify registered clients
@@ -120,5 +122,5 @@ export function deleteImage(filePath: string) {
         action: SubscriptionEventAction.DELETE,
         storage: StorageKind.IMAGES,
         newData: { id: filePath, imgBlob: null, imgWidth: undefined }   // Images are lazy loaded due to their size, won't broadcast it here
-    });
+    }, originClientId);
 }

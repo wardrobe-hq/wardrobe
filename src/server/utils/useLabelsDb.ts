@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 19:05:08
+ * Last Modified: 2026-05-14 14:54:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -40,9 +40,10 @@ const labelCategoriesDb = new nedb({ filename: "data/database/label-categories.d
  * Inserts new or updates existing label
  * @throws Throws Exception on failure
  * @param label Label to upsert. Leave id field empty to insert new label
+ * @param originClientId Optional: ID of client making request
  * @returns
  */
-async function upsertLabel(label: Label): Promise<Label | null> {
+async function upsertLabel(label: Label, originClientId?: string): Promise<Label | null> {
 
     // Generate identifier for new label
     if (!label.id) {
@@ -60,7 +61,7 @@ async function upsertLabel(label: Label): Promise<Label | null> {
             action: SubscriptionEventAction.UPSERT,
             storage: StorageKind.LABELS,
             newData: affected
-        });
+        }, originClientId);
     }
 
     return affected;
@@ -71,12 +72,13 @@ async function upsertLabel(label: Label): Promise<Label | null> {
  * Inserts new or updates existing labels
  * @throws Throws Exception on failure
  * @param labels Labels to upsert. Leave id field of new labels empty
+ * @param originClientId Optional: ID of client making request
  * @returns
  */
-export async function upsertLabels(labels: Label[]): Promise<void> {
+export async function upsertLabels(labels: Label[], originClientId?: string): Promise<void> {
 
     // Call upsertLabel for every label and await all resulting promises
-    await Promise.all(labels.map((e) => upsertLabel(e)));
+    await Promise.all(labels.map((e) => upsertLabel(e, originClientId)));
 
 }
 
@@ -84,9 +86,10 @@ export async function upsertLabels(labels: Label[]): Promise<void> {
  * Removes label
  * @throws Throws Exception on failure
  * @param labelID Label ID to remove
+ * @param originClientId Optional: ID of client making request
  * @returns
  */
-async function deleteLabel(labelID: ItemID): Promise<void> {
+async function deleteLabel(labelID: ItemID, originClientId?: string): Promise<void> {
 
     await labelsDb.removeAsync({ id: labelID }, {});
 
@@ -94,7 +97,7 @@ async function deleteLabel(labelID: ItemID): Promise<void> {
         action: SubscriptionEventAction.DELETE,
         storage: StorageKind.LABELS,
         newData: { id: labelID }
-    });
+    }, originClientId);
 
 }
 
@@ -102,12 +105,13 @@ async function deleteLabel(labelID: ItemID): Promise<void> {
  * Removes list of labels
  * @throws Throws Exception on failure
  * @param labelIDs Labels to remove
+ * @param originClientId Optional: ID of client making request
  * @returns
  */
-export async function deleteLabels(labelIDs: ItemID[]): Promise<void> {
+export async function deleteLabels(labelIDs: ItemID[], originClientId?: string): Promise<void> {
 
     // Call deleteLabel for every label and await all resulting promises
-    await Promise.all(labelIDs.map((e) => deleteLabel(e)));
+    await Promise.all(labelIDs.map((e) => deleteLabel(e, originClientId)));
 
 }
 
@@ -125,9 +129,10 @@ export async function getAllLabels(): Promise<Label[]> {
  * Inserts new or updates existing category
  * @throws Throws Exception on failure
  * @param category Category to upsert. Leave id field empty to insert new category
+ * @param originClientId Optional: ID of client making request
  * @returns
  */
-async function upsertLabelCategory(category: Category): Promise<Category | null> {
+async function upsertLabelCategory(category: Category, originClientId?: string): Promise<Category | null> {
 
     // Generate identifier for new category
     if (!category.id) {
@@ -145,7 +150,7 @@ async function upsertLabelCategory(category: Category): Promise<Category | null>
             action: SubscriptionEventAction.UPSERT,
             storage: StorageKind.LABEL_CATEGORIES,
             newData: affected
-        });
+        }, originClientId);
     }
 
     return affected;
@@ -156,12 +161,13 @@ async function upsertLabelCategory(category: Category): Promise<Category | null>
  * Inserts new or updates existing categories
  * @throws Throws Exception on failure
  * @param categories Categories to upsert. Leave id field of new categories empty
+ * @param originClientId Optional: ID of client making request
  * @returns
  */
-export async function upsertLabelCategories(categories: Category[]): Promise<void> {
+export async function upsertLabelCategories(categories: Category[], originClientId?: string): Promise<void> {
 
     // Call upsertLabelCategory for every category and await all resulting promises
-    await Promise.all(categories.map((e) => upsertLabelCategory(e)));
+    await Promise.all(categories.map((e) => upsertLabelCategory(e, originClientId)));
 
 }
 
@@ -169,9 +175,10 @@ export async function upsertLabelCategories(categories: Category[]): Promise<voi
  * Removes category
  * @throws Throws Exception on failure
  * @param categoryID Category ID to remove
+ * @param originClientId Optional: ID of client making request
  * @returns
  */
-async function deleteLabelCategory(categoryID: ItemID): Promise<void> {
+async function deleteLabelCategory(categoryID: ItemID, originClientId?: string): Promise<void> {
 
     await labelCategoriesDb.removeAsync({ id: categoryID }, {});
 
@@ -179,7 +186,7 @@ async function deleteLabelCategory(categoryID: ItemID): Promise<void> {
         action: SubscriptionEventAction.DELETE,
         storage: StorageKind.LABEL_CATEGORIES,
         newData: { id: categoryID }
-    });
+    }, originClientId);
 
     // TODO: Delete labels referencing this category, currently only done by dataCleanup, right?
 
@@ -189,12 +196,13 @@ async function deleteLabelCategory(categoryID: ItemID): Promise<void> {
  * Removes list of categories
  * @throws Throws Exception on failure
  * @param categoryIDs Labels to remove
+ * @param originClientId Optional: ID of client making request
  * @returns
  */
-export async function deleteLabelCategories(categoryIDs: ItemID[]): Promise<void> {
+export async function deleteLabelCategories(categoryIDs: ItemID[], originClientId?: string): Promise<void> {
 
     // Call deleteLabelCategory for every category and await all resulting promises
-    await Promise.all(categoryIDs.map((e) => deleteLabelCategory(e)));
+    await Promise.all(categoryIDs.map((e) => deleteLabelCategory(e, originClientId)));
 
 }
 
