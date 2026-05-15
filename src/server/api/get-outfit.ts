@@ -4,7 +4,7 @@
  * Created Date: 2025-09-10 18:51:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 18:56:05
+ * Last Modified: 2026-05-15 14:57:13
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -47,6 +47,6 @@ export default defineEventHandler(async (event): Promise<ApiResponse<Outfit>> =>
         const outfit = await getOutfit(params.id);
 
         return outfit && outfit[0] ? outfit[0] : null;
-    });
+    }, event);
 
 });

@@ -4,7 +4,7 @@
  * Created Date: 2026-01-23 21:48:30
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 19:05:49
+ * Last Modified: 2026-05-15 14:44:25
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -28,8 +28,8 @@ import type { ItemID } from "~/model/storage";
 
 
 // This function is executed when this API route is called
-export default defineEventHandler(async (): Promise<ApiResponse<ItemID>> => {
+export default defineEventHandler(async (event): Promise<ApiResponse<ItemID>> => {
 
-    return await getApiResponse<ItemID>(async () => randomUUID());
+    return await getApiResponse<ItemID>(async () => randomUUID(), event);
 
 });

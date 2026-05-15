@@ -4,7 +4,7 @@
  * Created Date: 2026-03-21 23:35:30
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:42:10
+ * Last Modified: 2026-05-15 14:57:25
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -32,6 +32,6 @@ export default defineEventHandler(async (event): Promise<ApiResponse<ServerStati
 
     console.debug(getApiLogPrefix(event), "Received request...");
 
-    return await getApiResponse<ServerStatistics>(getServerStatistics);
+    return await getApiResponse<ServerStatistics>(getServerStatistics, event);
 
 });

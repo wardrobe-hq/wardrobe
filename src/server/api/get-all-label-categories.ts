@@ -4,7 +4,7 @@
  * Created Date: 2025-09-09 22:04:46
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:42:35
+ * Last Modified: 2026-05-15 14:44:46
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -33,6 +33,6 @@ export default defineEventHandler(async (event): Promise<ApiResponse<Category[]>
     console.debug(getApiLogPrefix(event), "Received request");
 
     // Ask db helper to retrieve categories
-    return await getApiResponse<Category[]>(getAllLabelCategories);
+    return await getApiResponse<Category[]>(getAllLabelCategories, event);
 
 });

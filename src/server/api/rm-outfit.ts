@@ -4,7 +4,7 @@
  * Created Date: 2025-12-27 11:53:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-14 14:48:32
+ * Last Modified: 2026-05-15 14:57:47
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -45,6 +45,6 @@ export default defineEventHandler(async (event): Promise<ApiResponse<void>> => {
     return await getApiResponse<void>(() => {
         const clientUUID = getCookie(event, "wardrobe_clientId");
         return deleteOutfit(params.id, clientUUID);
-    });
+    }, event);
 
 });

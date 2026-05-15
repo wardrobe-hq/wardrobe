@@ -4,7 +4,7 @@
  * Created Date: 2025-12-08 17:43:05
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-14 14:50:28
+ * Last Modified: 2026-05-15 14:58:53
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -56,6 +56,6 @@ export default defineEventHandler(async (event): Promise<ApiResponse<void>> => {
         if (updatedLabels)     await upsertLabels(updatedLabels, clientUUID);
         if (deletedLabels)     await deleteLabels(deletedLabels.flatMap((e) => e.id), clientUUID);
         if (deletedCategories) await deleteLabelCategories(deletedCategories.flatMap((e) => e.id), clientUUID);
-    });
+    }, event);
 
 });

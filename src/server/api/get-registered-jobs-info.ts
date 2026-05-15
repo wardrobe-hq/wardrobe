@@ -4,7 +4,7 @@
  * Created Date: 2025-12-31 13:03:12
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:42:14
+ * Last Modified: 2026-05-15 14:57:20
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -33,6 +33,6 @@ export default defineEventHandler(async (event): Promise<ApiResponse<JobInfo[]>>
     console.debug(getApiLogPrefix(event), "Received request...");
 
     // Ask job manager what's going on and remove functions from result as they can't be passed anyway
-    return await getApiResponse<JobInfo[]>(async () => getRegisteredJobs().map((e) => e.info));
+    return await getApiResponse<JobInfo[]>(async () => getRegisteredJobs().map((e) => e.info), event);
 
 });

@@ -4,7 +4,7 @@
  * Created Date: 2025-09-09 16:43:11
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 18:42:31
+ * Last Modified: 2026-05-15 14:44:52
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -33,6 +33,6 @@ export default defineEventHandler(async (event): Promise<ApiResponse<Label[]>> =
     console.debug(getApiLogPrefix(event), "Received request");
 
     // Ask db helper to retrieve items
-    return await getApiResponse<Label[]>(getAllLabels);
+    return await getApiResponse<Label[]>(getAllLabels, event);
 
 });

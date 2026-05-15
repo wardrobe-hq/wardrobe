@@ -4,7 +4,7 @@
  * Created Date: 2026-03-27 16:50:16
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-14 13:57:11
+ * Last Modified: 2026-05-15 14:44:01
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -43,9 +43,10 @@ export function getApiLogPrefix(event: H3Event<globalThis.EventHandlerRequest>) 
 /**
  * Constructs an API response with generic document content of type T on success or error message on failure
  * @param cb Async function that returns data of type T to send
+ * @param event H3Event instance of API request
  * @returns Formatted ApiResponse
  */
-export async function getApiResponse<T>(cb: () => Promise<T | null>): Promise<ApiResponse<T>> {
+export async function getApiResponse<T>(cb: () => Promise<T | null>, event: H3Event): Promise<ApiResponse<T>> {
 
     const res: ApiResponse<T> = {
         success: false,

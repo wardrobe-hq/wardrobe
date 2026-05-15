@@ -4,7 +4,7 @@
  * Created Date: 2025-12-09 21:00:14
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-14 14:50:00
+ * Last Modified: 2026-05-15 14:59:23
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -46,6 +46,6 @@ export default defineEventHandler(async (event): Promise<ApiResponse<Outfit>> =>
     return await getApiResponse<Outfit>(async () => {
         const clientUUID = getCookie(event, "wardrobe_clientId");
         return upsertOutfit(params.outfit, clientUUID);
-    });
+    }, event);
 
 });

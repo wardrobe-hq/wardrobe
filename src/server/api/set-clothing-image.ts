@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:23:26
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-14 14:43:05
+ * Last Modified: 2026-05-15 14:58:56
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -81,6 +81,6 @@ export default defineEventHandler(async (event): Promise<ApiResponse<{ filePath:
         return {
             filePath: filePath
         };
-    });
+    }, event);
 
 });
