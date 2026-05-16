@@ -4,7 +4,7 @@
  * Created Date: 2026-03-23 21:34:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-16 17:52:12
+ * Last Modified: 2026-05-16 23:54:19
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -69,16 +69,25 @@ async function sendApiRequestRaw(route: string, headers?: HeadersInit, body?: an
     });
 
     // Handle conflict response and show notification
-    if (res.status === 409) {
+    if (Math.floor(res.status / 100) !== 2) { // Is this a non-ok (!2xx) status code?
         const i18n = useNuxtApp().$i18n;
-        emitNotificationShowEvent({
-            level: NotificationLevel.ERROR,
-            title: i18n.t("saveConflictTitle"),
-            message: i18n.t("saveConflictMessage"),
-            actionLabel: i18n.t("reloadPage"),
-            customDuration: 0,                                // Do not expire
-            type: NotificationType.RELOAD_PAGE
-        });
+
+        if (res.status === 409) {
+            emitNotificationShowEvent({
+                level: NotificationLevel.ERROR,
+                title: i18n.t("saveConflictTitle"),
+                message: i18n.t("saveConflictMessage"),
+                actionLabel: i18n.t("reloadPage"),
+                customDuration: 0,                                // Do not expire
+                type: NotificationType.RELOAD_PAGE
+            });
+        } else {
+            emitNotificationShowEvent({
+                level: NotificationLevel.ERROR,
+                title: useNuxtApp().$i18n.t("saveErrorTitle"),
+                message: res.statusText || useNuxtApp().$i18n.t("unknownError"),
+            });
+        }
     }
 
     return res;

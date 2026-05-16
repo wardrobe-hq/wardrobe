@@ -93,6 +93,7 @@
     "navbarSourceCodeLink": "Source Code",
     "navbarLicensedUnder": "Licensed under",
 
+    "saveErrorTitle": "Speicherfehler",
     "serverSubscriptionConnectionLost": "Server Connection lost!",
     "saveConflictTitle": "Save Conflict",
     "saveConflictMessage": "The data has been modified in the meantime. Please refresh the page and apply your changes again.",
