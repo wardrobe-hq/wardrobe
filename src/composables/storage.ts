@@ -4,7 +4,7 @@
  * Created Date: 2026-03-23 21:34:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-12 22:02:50
+ * Last Modified: 2026-05-16 17:52:12
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -22,6 +22,7 @@ import type { Category } from "~/model/label-category";
 import { StorageKind, type CachedImage, type ItemID, type ServerSettings, type StorageKindDataMap } from "~/model/storage";
 import { emitSettingsSavedEvent } from "~/composables/events";
 import { State } from "./state";
+import { NotificationLevel, NotificationType } from "~/model/notification";
 
 
 /**
@@ -61,11 +62,26 @@ export async function initGlobalCache()  {
  * @returns Promise resolving with response
  */
 async function sendApiRequestRaw(route: string, headers?: HeadersInit, body?: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
-    return await fetch("/api/" + route, {
+    const res = await fetch("/api/" + route, {
         method: "POST",
         headers: headers,
         body: body
     });
+
+    // Handle conflict response and show notification
+    if (res.status === 409) {
+        const i18n = useNuxtApp().$i18n;
+        emitNotificationShowEvent({
+            level: NotificationLevel.ERROR,
+            title: i18n.t("saveConflictTitle"),
+            message: i18n.t("saveConflictMessage"),
+            actionLabel: i18n.t("reloadPage"),
+            customDuration: 0,                                // Do not expire
+            type: NotificationType.RELOAD_PAGE
+        });
+    }
+
+    return res;
 }
 
 /**

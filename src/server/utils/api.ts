@@ -4,7 +4,7 @@
  * Created Date: 2026-03-27 16:50:16
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-16 15:33:30
+ * Last Modified: 2026-05-16 17:55:08
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -61,7 +61,7 @@ export async function getApiResponse<T>(cb: () => Promise<T | null>, event: H3Ev
         const msg = String(err);
 
         // Check for checkStorageLockMatch() failure response and set response code
-        if (event && msg.startsWith("CONFLICT:")) {
+        if (event && msg.startsWith("Error: CONFLICT")) {
             setResponseStatus(event, 409);
         }
 

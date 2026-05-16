@@ -94,6 +94,8 @@
     "navbarLicensedUnder": "Licensed under",
 
     "serverSubscriptionConnectionLost": "Server Connection lost!",
+    "saveConflictTitle": "Save Conflict",
+    "saveConflictMessage": "The data has been modified in the meantime. Please refresh the page and apply your changes again.",
     "reloadPage": "Reload Page",
 
     "errorPageGoHome": "Go Home",

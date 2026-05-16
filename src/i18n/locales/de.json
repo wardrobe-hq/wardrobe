@@ -94,6 +94,8 @@
     "navbarLicensedUnder": "Lizensiert unter",
 
     "serverSubscriptionConnectionLost": "Serververbindung verloren!",
+    "saveConflictTitle": "Speicherkonflikt",
+    "saveConflictMessage": "Die Daten wurden in der Zwischenzeit aktualisiert. Bitte aktualisiere die Seite und wende deine Änderungen erneut an.",
     "reloadPage": "Seite neu laden",
 
     "errorPageGoHome": "Zur Startseite",
