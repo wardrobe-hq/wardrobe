@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-14 14:53:29
+ * Last Modified: 2026-05-16 15:55:12
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -21,6 +21,7 @@ import { SubscriptionEventAction } from "~/model/api";
 import type { Clothing } from "~/model/item";
 import { type ItemID, StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
 import { updateImagesOfAffectedOutfits } from "~/server/utils/outfitPreviewImage";
+import { checkStorageLockMatch } from "./useStorage";
 
 
 // Load database
@@ -45,9 +46,11 @@ const clothesDb = new nedb({ filename: "data/database/clothes.db", autoload: tru
  */
 export async function upsertClothing(clothing: Clothing, originClientId?: string): Promise<Clothing | null> {
 
-    // Generate identifier for new piece of clothing
+    // Generate identifier for new piece of clothing, otherwise run conflict check
     if (!clothing.id) {
         clothing.id = crypto.randomUUID();
+    } else {
+        await checkStorageLockMatch(clothing, clothesDb);
     }
 
     // Update metadata

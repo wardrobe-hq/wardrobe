@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-14 14:54:22
+ * Last Modified: 2026-05-16 15:55:09
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -20,6 +20,7 @@ import { SubscriptionEventAction } from "~/model/api";
 import type { Label } from "~/model/label";
 import type { Category } from "~/model/label-category";
 import { type ItemID, StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
+import { checkStorageLockMatch } from "./useStorage";
 
 
 // Load database
@@ -45,9 +46,11 @@ const labelCategoriesDb = new nedb({ filename: "data/database/label-categories.d
  */
 async function upsertLabel(label: Label, originClientId?: string): Promise<Label | null> {
 
-    // Generate identifier for new label
+    // Generate identifier for new label, otherwise run conflict check
     if (!label.id) {
         label.id = crypto.randomUUID();
+    } else {
+        await checkStorageLockMatch(label, labelsDb);
     }
 
     // Update metadata
@@ -134,9 +137,11 @@ export async function getAllLabels(): Promise<Label[]> {
  */
 async function upsertLabelCategory(category: Category, originClientId?: string): Promise<Category | null> {
 
-    // Generate identifier for new category
+    // Generate identifier for new category, otherwise run conflict check
     if (!category.id) {
         category.id = crypto.randomUUID();
+    } else {
+        await checkStorageLockMatch(category, labelCategoriesDb);
     }
 
     // Update metadata

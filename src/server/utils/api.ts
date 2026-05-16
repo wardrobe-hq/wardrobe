@@ -4,7 +4,7 @@
  * Created Date: 2026-03-27 16:50:16
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-15 14:44:01
+ * Last Modified: 2026-05-16 15:33:30
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -58,7 +58,14 @@ export async function getApiResponse<T>(cb: () => Promise<T | null>, event: H3Ev
         res.document = await cb();
         res.success  = true;
     } catch (err) {
-        res.message = String(err);          // TODO: Abstract error message to avoid potential security risk by client getting some kind of server environment information?
+        const msg = String(err);
+
+        // Check for checkStorageLockMatch() failure response and set response code
+        if (event && msg.startsWith("CONFLICT:")) {
+            setResponseStatus(event, 409);
+        }
+
+        res.message = msg;          // TODO: Abstract error message to avoid potential security risk by client getting some kind of server environment information?
         res.success = false;
 
         //  TODO

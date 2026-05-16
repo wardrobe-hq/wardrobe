@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 15:21:35
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 18:27:54
+ * Last Modified: 2026-05-16 15:10:18
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -33,7 +33,8 @@ export type ItemID = string;
 export interface DatabaseItem {
     id: ItemID,
     addedTimestamp: number,
-    modifiedTimestamp: number
+    modifiedTimestamp: number,
+    _lockVersion: number // Used for storage lock mechanism to detect accidental overwrite due to cache desync
 }
 
 /**
@@ -45,6 +46,7 @@ export function updateDatabaseItemMetadata(item: DatabaseItem) {
         item.addedTimestamp = Date.now();
     }
     item.modifiedTimestamp = Date.now();
+    item._lockVersion      = item._lockVersion + 1 || 1;
 }
 
 
