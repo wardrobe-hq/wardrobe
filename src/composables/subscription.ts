@@ -4,7 +4,7 @@
  * Created Date: 2026-04-08 17:59:41
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-12 19:49:24
+ * Last Modified: 2026-05-16 17:51:42
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -16,7 +16,7 @@
 
 
 import { SubscriptionEventAction, SubscriptionEventType, type StorageUpdateEvent, type SubscriptionEvent } from "../model/api";
-import { NotificationLevel, NotificationType, type NotificationData } from "../model/notification";
+import { NotificationLevel, NotificationType } from "../model/notification";
 import { emitSubscriptionEvent } from "./events";
 import { State } from "./state";
 import { handleStorageUpdate } from "./storage";
@@ -86,7 +86,7 @@ function handleServerSubscriptionError(err: unknown) {
         message: "",
         actionLabel: i18n.t("reloadPage"),
         customDuration: 0,                                // Do not expire
-        type: NotificationType.SERVER_SUBSCRIPTION_RELOAD
+        type: NotificationType.RELOAD_PAGE
     });
 }
 
@@ -143,13 +143,6 @@ export function initServerSubscriptionHandler() {
                 console.debug("[DEBUG] Received settingsSaved event, server subscription is now disabled");
                 closeServerSubscriptionConnection();
             }
-        }
-    });
-
-    useNuxtApp().hook("app:notification:action", (data: NotificationData) => {
-        if (data.type == NotificationType.SERVER_SUBSCRIPTION_RELOAD) {
-            console.debug("[DEBUG] Got 'SERVER_SUBSCRIPTION_RECONN' event, reloading page...");
-            reloadNuxtApp();
         }
     });
 }

@@ -4,7 +4,7 @@
  * Created Date: 2026-04-03 13:31:37
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-08 21:15:23
+ * Last Modified: 2026-05-16 17:33:53
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -19,7 +19,7 @@
 export enum NotificationType {
     UNKNOWN,                // Any, potential custom, notification
     SERVER_SUBSCRIPTION,
-    SERVER_SUBSCRIPTION_RELOAD
+    RELOAD_PAGE
 }
 
 

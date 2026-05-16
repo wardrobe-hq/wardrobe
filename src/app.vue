@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:54:21
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-12 19:24:26
+ * Last Modified: 2026-05-16 17:58:13
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -143,7 +143,7 @@
     import TextOverflowAutoScroll from "./components/textOverflowAutoScroll.vue";
     import Notification from './components/notification.vue';
     import { closeServerSubscriptionConnection, initServerSubscriptionHandler } from "./composables/subscription";
-    import { NotificationLevel } from "./model/notification";
+    import { NotificationLevel, NotificationType, type NotificationData } from "./model/notification";
     import { initState, State } from "./composables/state";
 
     const route       = useRoute();
@@ -159,10 +159,17 @@
     await initGlobalCache();
 
 
-    // Handle changesMade event from pages
+    // Handle global events
     useNuxtApp().hook("app:user:changesMade", (val: boolean = true) => {
         console.debug(`[DEBUG] Received changesMade = '${val}' event!`)
         changesMade = val;
+    });
+
+    useNuxtApp().hook("app:notification:action", (data: NotificationData) => {
+        if (data.type == NotificationType.RELOAD_PAGE) {
+            console.debug("[DEBUG] Got 'RELOAD_PAGE' event, reloading page...");
+            reloadNuxtApp();
+        }
     });
 
     // Handle page switch
