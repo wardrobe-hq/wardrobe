@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-16 15:55:09
+ * Last Modified: 2026-05-17 16:16:13
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -63,7 +63,7 @@ async function upsertLabel(label: Label, originClientId?: string): Promise<Label
         sendStorageSubscriptionEvent({              // Notify registered clients
             action: SubscriptionEventAction.UPSERT,
             storage: StorageKind.LABELS,
-            newData: affected
+            newData: [affected]
         }, originClientId);
     }
 
@@ -99,7 +99,7 @@ async function deleteLabel(labelID: ItemID, originClientId?: string): Promise<vo
     sendStorageSubscriptionEvent({              // Notify registered clients
         action: SubscriptionEventAction.DELETE,
         storage: StorageKind.LABELS,
-        newData: { id: labelID }
+        newData: [{ id: labelID }]
     }, originClientId);
 
 }
@@ -154,7 +154,7 @@ async function upsertLabelCategory(category: Category, originClientId?: string):
         sendStorageSubscriptionEvent({              // Notify registered clients
             action: SubscriptionEventAction.UPSERT,
             storage: StorageKind.LABEL_CATEGORIES,
-            newData: affected
+            newData: [affected]
         }, originClientId);
     }
 
@@ -190,7 +190,7 @@ async function deleteLabelCategory(categoryID: ItemID, originClientId?: string):
     sendStorageSubscriptionEvent({              // Notify registered clients
         action: SubscriptionEventAction.DELETE,
         storage: StorageKind.LABEL_CATEGORIES,
-        newData: { id: categoryID }
+        newData: [{ id: categoryID }]
     }, originClientId);
 
     // TODO: Delete labels referencing this category, currently only done by dataCleanup, right?

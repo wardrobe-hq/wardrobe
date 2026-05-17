@@ -4,7 +4,7 @@
  * Created Date: 2026-03-23 21:34:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-16 23:54:19
+ * Last Modified: 2026-05-17 20:19:38
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -122,18 +122,18 @@ export async function handleStorageUpdate(event: StorageUpdateEvent): Promise<vo
 
     switch (event.storage) {
         case StorageKind.IMAGES:
-            newData = event.newData as StorageKindDataMap<StorageKind.IMAGES>;
+            newData = event.newData[0] as StorageKindDataMap<StorageKind.IMAGES>;
             cachedImages.value = cachedImages.value.filter((e) => e.id !== newData.id);
             imageCacheVersion.value++;
             console.debug(`[DEBUG] handleStorageUpdate: Deleting image '${newData.id}' from cache (v${imageCacheVersion.value})...`);
             break;
         case StorageKind.CLOTHES:
-            newData = event.newData as StorageKindDataMap<StorageKind.CLOTHES>;
+            newData = event.newData[0] as StorageKindDataMap<StorageKind.CLOTHES>;
             console.debug(`[DEBUG] handleStorageUpdate: Refreshing data of API route '/api/get-all-clothes' & '/api/get-clothing/${newData.id}'...`);
             await Promise.all([ refreshNuxtData("/api/get-all-clothes"), refreshNuxtData("/api/get-clothing/" + newData.id) ]);
             break;
         case StorageKind.OUTFITS:
-            newData = event.newData as StorageKindDataMap<StorageKind.OUTFITS>;
+            newData = event.newData[0] as StorageKindDataMap<StorageKind.OUTFITS>;
             console.debug(`[DEBUG] handleStorageUpdate: Refreshing data of API route '/api/get-all-outfits' & '/api/get-outfit/${newData.id}'...`);
             await Promise.all([ refreshNuxtData("/api/get-all-outfits"), refreshNuxtData("/api/get-outfit/" + newData.id) ]);
             break;
@@ -181,7 +181,7 @@ export async function setClothingToServer(data: Clothing): Promise<ApiResponse<C
     const resBody = await sendApiRequest("set-clothing", { clothing: data }) as ApiResponse<Clothing>;
 
     if (resBody.success) { // Update local cache
-        await handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.CLOTHES, action: SubscriptionEventAction.UPSERT, newData: resBody.document! });
+        await handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.CLOTHES, action: SubscriptionEventAction.UPSERT, newData: [resBody.document!] });
     }
 
     return resBody;
@@ -191,7 +191,7 @@ export async function rmClothingToServer(id: ItemID): Promise<ApiResponse<never>
     const resBody = await sendApiRequest("rm-clothing", { id: id });
 
     if (resBody.success) { // Update local cache
-        await handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.CLOTHES, action: SubscriptionEventAction.DELETE, newData: { id: id } });
+        await handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.CLOTHES, action: SubscriptionEventAction.DELETE, newData: [{ id: id }] });
     }
 
     return resBody;
@@ -222,7 +222,7 @@ export async function setOutfitToServer(data: Outfit): Promise<ApiResponse<Outfi
     const resBody = await sendApiRequest("set-outfit", { outfit: data }) as ApiResponse<Outfit>;
 
     if (resBody.success) { // Update local cache
-        await handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.OUTFITS, action: SubscriptionEventAction.UPSERT, newData: resBody.document! });
+        await handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.OUTFITS, action: SubscriptionEventAction.UPSERT, newData: [resBody.document!] });
     }
 
     return resBody;
@@ -232,7 +232,7 @@ export async function rmOutfitToServer(id: ItemID): Promise<ApiResponse<never>> 
     const resBody = await sendApiRequest("rm-outfit", { id: id });
 
     if (resBody.success) { // Update local cache
-        await handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.OUTFITS, action: SubscriptionEventAction.DELETE, newData: { id: id } });
+        await handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.OUTFITS, action: SubscriptionEventAction.DELETE, newData: [{ id: id }] });
     }
 
     return resBody;
@@ -284,7 +284,7 @@ export async function setServerSettingsToServer(data: ServerSettings): Promise<A
     const resBody = await sendApiRequest("set-settings", data) as ApiResponse<ServerSettings>;
 
     if (resBody.success) { // Update local cache
-        await handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.SERVER_SETTINGS, action: SubscriptionEventAction.DELETE, newData: resBody.document! });
+        await handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.SERVER_SETTINGS, action: SubscriptionEventAction.DELETE, newData: [resBody.document!] });
     }
 
     return resBody;
@@ -392,7 +392,7 @@ export async function sendImageToServer(file: File): Promise<ApiResponse<{ fileP
     const resBody = await res.json() as ApiResponse<{ filePath: string }>;
 
     if (resBody.success) { // Update local cache
-        await handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.IMAGES, action: SubscriptionEventAction.DELETE, newData: { id: resBody.document!.filePath } }); // TODO: filePath & id changeup sucks
+        await handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.IMAGES, action: SubscriptionEventAction.DELETE, newData: [{ id: resBody.document!.filePath }] }); // TODO: filePath & id changeup sucks
     }
 
     return resBody;

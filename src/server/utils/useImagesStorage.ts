@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-14 14:53:46
+ * Last Modified: 2026-05-17 16:13:45
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -101,7 +101,7 @@ export async function saveImage(category: imgCategory, fileBuffer: Buffer<ArrayB
     sendStorageSubscriptionEvent({
         action: SubscriptionEventAction.NEW,
         storage: StorageKind.IMAGES,
-        newData: { id: path, imgBlob: null, imgWidth: undefined }   // Images are lazy loaded due to their size, won't broadcast it here
+        newData: [{ id: path, imgBlob: null, imgWidth: undefined }]   // Images are lazy loaded due to their size, won't broadcast it here
     }, originClientId);
 
     return path;
@@ -121,6 +121,6 @@ export function deleteImage(filePath: string, originClientId?: string) {
     sendStorageSubscriptionEvent({
         action: SubscriptionEventAction.DELETE,
         storage: StorageKind.IMAGES,
-        newData: { id: filePath, imgBlob: null, imgWidth: undefined }   // Images are lazy loaded due to their size, won't broadcast it here
+        newData: [{ id: filePath, imgBlob: null, imgWidth: undefined }]   // Images are lazy loaded due to their size, won't broadcast it here
     }, originClientId);
 }

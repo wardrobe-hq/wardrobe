@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-16 15:54:53
+ * Last Modified: 2026-05-17 16:16:24
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -70,7 +70,7 @@ export async function upsertOutfit(outfit: Outfit, originClientId?: string): Pro
         sendStorageSubscriptionEvent({              // Notify registered clients
             action: SubscriptionEventAction.UPSERT,
             storage: StorageKind.OUTFITS,
-            newData: affected
+            newData: [affected]
         }, originClientId);
     }
 
@@ -93,7 +93,7 @@ export async function deleteOutfit(outfitID: ItemID, originClientId?: string): P
     sendStorageSubscriptionEvent({              // Notify registered clients
         action: SubscriptionEventAction.DELETE,
         storage: StorageKind.OUTFITS,
-        newData: { id: outfitID }
+        newData: [{ id: outfitID }]
     }, originClientId);
 }
 

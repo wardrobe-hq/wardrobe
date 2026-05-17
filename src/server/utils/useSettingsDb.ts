@@ -4,7 +4,7 @@
  * Created Date: 2026-02-14 19:44:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-14 14:53:02
+ * Last Modified: 2026-05-17 16:16:30
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -47,7 +47,7 @@ export async function setServerSettings(settings: ServerSettings, originClientId
         sendStorageSubscriptionEvent({              // Notify registered clients
             action: SubscriptionEventAction.UPSERT,
             storage: StorageKind.SERVER_SETTINGS,
-            newData: affected
+            newData: [affected]
         }, originClientId);
     }
 
