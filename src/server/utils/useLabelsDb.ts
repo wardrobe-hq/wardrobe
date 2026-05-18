@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-17 16:16:13
+ * Last Modified: 2026-05-18 19:29:28
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -16,7 +16,7 @@
 
 
 import nedb from "@seald-io/nedb";
-import { SubscriptionEventAction } from "~/model/api";
+import { DeletedItem, SubscriptionEventAction } from "~/model/api";
 import type { Label } from "~/model/label";
 import type { Category } from "~/model/label-category";
 import { type ItemID, StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
@@ -42,9 +42,10 @@ const labelCategoriesDb = new nedb({ filename: "data/database/label-categories.d
  * @throws Throws Exception on failure
  * @param label Label to upsert. Leave id field empty to insert new label
  * @param originClientId Optional: ID of client making request
- * @returns
+ * @param dontEmitStorageEvent Optional: Bypass emitting storage subscription event, for example when doing mass upserts
+ * @returns Returns affected document
  */
-async function upsertLabel(label: Label, originClientId?: string): Promise<Label | null> {
+async function upsertLabel(label: Label, originClientId?: string, dontEmitStorageEvent?: boolean): Promise<Label | null> {
 
     // Generate identifier for new label, otherwise run conflict check
     if (!label.id) {
@@ -59,7 +60,7 @@ async function upsertLabel(label: Label, originClientId?: string): Promise<Label
     const res      = await labelsDb.updateAsync({ id: label.id }, { $set: label }, { upsert: true, returnUpdatedDocs: true });
     const affected = res.affectedDocuments ? res.affectedDocuments as unknown as Label : null;
 
-    if (affected) {
+    if (!dontEmitStorageEvent && affected) {
         sendStorageSubscriptionEvent({              // Notify registered clients
             action: SubscriptionEventAction.UPSERT,
             storage: StorageKind.LABELS,
@@ -76,12 +77,23 @@ async function upsertLabel(label: Label, originClientId?: string): Promise<Label
  * @throws Throws Exception on failure
  * @param labels Labels to upsert. Leave id field of new labels empty
  * @param originClientId Optional: ID of client making request
- * @returns
+ * @returns Returns affected documents
  */
-export async function upsertLabels(labels: Label[], originClientId?: string): Promise<void> {
+export async function upsertLabels(labels: Label[], originClientId?: string): Promise<Label[]> {
 
     // Call upsertLabel for every label and await all resulting promises
-    await Promise.all(labels.map((e) => upsertLabel(e, originClientId)));
+    const affected = (await Promise.all(labels.map((e) => upsertLabel(e, originClientId, true))))
+        .filter((e) => e != null);
+
+    if (affected.length > 0) {
+        sendStorageSubscriptionEvent({              // Notify registered clients
+            action: SubscriptionEventAction.UPSERT,
+            storage: StorageKind.LABELS,
+            newData: affected
+        }, originClientId);
+    }
+
+    return affected;
 
 }
 
@@ -90,17 +102,22 @@ export async function upsertLabels(labels: Label[], originClientId?: string): Pr
  * @throws Throws Exception on failure
  * @param labelID Label ID to remove
  * @param originClientId Optional: ID of client making request
- * @returns
+ * @param dontEmitStorageEvent Optional: Bypass emitting storage subscription event, for example when doing mass upserts
+ * @returns Returns affected document
  */
-async function deleteLabel(labelID: ItemID, originClientId?: string): Promise<void> {
+async function deleteLabel(labelID: ItemID, originClientId?: string, dontEmitStorageEvent?: boolean): Promise<DeletedItem> {
 
     await labelsDb.removeAsync({ id: labelID }, {});
 
-    sendStorageSubscriptionEvent({              // Notify registered clients
-        action: SubscriptionEventAction.DELETE,
-        storage: StorageKind.LABELS,
-        newData: [{ id: labelID }]
-    }, originClientId);
+    if (!dontEmitStorageEvent) {
+        sendStorageSubscriptionEvent({              // Notify registered clients
+            action: SubscriptionEventAction.DELETE,
+            storage: StorageKind.LABELS,
+            newData: [{ id: labelID }]
+        }, originClientId);
+    }
+
+    return { id: labelID };
 
 }
 
@@ -109,12 +126,22 @@ async function deleteLabel(labelID: ItemID, originClientId?: string): Promise<vo
  * @throws Throws Exception on failure
  * @param labelIDs Labels to remove
  * @param originClientId Optional: ID of client making request
- * @returns
+ * @returns Returns affected documents
  */
-export async function deleteLabels(labelIDs: ItemID[], originClientId?: string): Promise<void> {
+export async function deleteLabels(labelIDs: ItemID[], originClientId?: string): Promise<DeletedItem[]> {
 
     // Call deleteLabel for every label and await all resulting promises
-    await Promise.all(labelIDs.map((e) => deleteLabel(e, originClientId)));
+    const affected = await Promise.all(labelIDs.map((e) => deleteLabel(e, originClientId, true)));
+
+    if (affected.length > 0) {
+        sendStorageSubscriptionEvent({              // Notify registered clients
+            action: SubscriptionEventAction.DELETE,
+            storage: StorageKind.LABELS,
+            newData: affected
+        }, originClientId);
+    }
+
+    return affected;
 
 }
 
@@ -133,9 +160,10 @@ export async function getAllLabels(): Promise<Label[]> {
  * @throws Throws Exception on failure
  * @param category Category to upsert. Leave id field empty to insert new category
  * @param originClientId Optional: ID of client making request
- * @returns
+ * @param dontEmitStorageEvent Optional: Bypass emitting storage subscription event, for example when doing mass upserts
+ * @returns Returns affected document
  */
-async function upsertLabelCategory(category: Category, originClientId?: string): Promise<Category | null> {
+async function upsertLabelCategory(category: Category, originClientId?: string, dontEmitStorageEvent?: boolean): Promise<Category | null> {
 
     // Generate identifier for new category, otherwise run conflict check
     if (!category.id) {
@@ -150,7 +178,7 @@ async function upsertLabelCategory(category: Category, originClientId?: string):
     const res      = await labelCategoriesDb.updateAsync({ id: category.id }, { $set: category }, { upsert: true, returnUpdatedDocs: true });
     const affected = res.affectedDocuments ? res.affectedDocuments as unknown as Category : null;
 
-    if (affected) {
+    if (!dontEmitStorageEvent && affected) {
         sendStorageSubscriptionEvent({              // Notify registered clients
             action: SubscriptionEventAction.UPSERT,
             storage: StorageKind.LABEL_CATEGORIES,
@@ -167,12 +195,23 @@ async function upsertLabelCategory(category: Category, originClientId?: string):
  * @throws Throws Exception on failure
  * @param categories Categories to upsert. Leave id field of new categories empty
  * @param originClientId Optional: ID of client making request
- * @returns
+ * @returns Returns affected documents
  */
-export async function upsertLabelCategories(categories: Category[], originClientId?: string): Promise<void> {
+export async function upsertLabelCategories(categories: Category[], originClientId?: string): Promise<Category[]> {
 
     // Call upsertLabelCategory for every category and await all resulting promises
-    await Promise.all(categories.map((e) => upsertLabelCategory(e, originClientId)));
+    const affected = (await Promise.all(categories.map((e) => upsertLabelCategory(e, originClientId, true))))
+        .filter((e) => e != null);
+
+    if (affected.length > 0) {
+        sendStorageSubscriptionEvent({              // Notify registered clients
+            action: SubscriptionEventAction.UPSERT,
+            storage: StorageKind.LABEL_CATEGORIES,
+            newData: affected
+        }, originClientId);
+    }
+
+    return affected;
 
 }
 
@@ -181,19 +220,24 @@ export async function upsertLabelCategories(categories: Category[], originClient
  * @throws Throws Exception on failure
  * @param categoryID Category ID to remove
  * @param originClientId Optional: ID of client making request
- * @returns
+ * @param dontEmitStorageEvent Optional: Bypass emitting storage subscription event, for example when doing mass upserts
+ * @returns Returns affected document
  */
-async function deleteLabelCategory(categoryID: ItemID, originClientId?: string): Promise<void> {
+async function deleteLabelCategory(categoryID: ItemID, originClientId?: string, dontEmitStorageEvent?: boolean): Promise<DeletedItem> {
 
     await labelCategoriesDb.removeAsync({ id: categoryID }, {});
 
-    sendStorageSubscriptionEvent({              // Notify registered clients
-        action: SubscriptionEventAction.DELETE,
-        storage: StorageKind.LABEL_CATEGORIES,
-        newData: [{ id: categoryID }]
-    }, originClientId);
+    if (!dontEmitStorageEvent) {
+        sendStorageSubscriptionEvent({              // Notify registered clients
+            action: SubscriptionEventAction.DELETE,
+            storage: StorageKind.LABEL_CATEGORIES,
+            newData: [{ id: categoryID }]
+        }, originClientId);
+    }
 
     // TODO: Delete labels referencing this category, currently only done by dataCleanup, right?
+
+    return { id: categoryID };
 
 }
 
@@ -202,12 +246,23 @@ async function deleteLabelCategory(categoryID: ItemID, originClientId?: string):
  * @throws Throws Exception on failure
  * @param categoryIDs Labels to remove
  * @param originClientId Optional: ID of client making request
- * @returns
+ * @returns Returns affected documents
  */
-export async function deleteLabelCategories(categoryIDs: ItemID[], originClientId?: string): Promise<void> {
+export async function deleteLabelCategories(categoryIDs: ItemID[], originClientId?: string): Promise<DeletedItem[]> {
 
     // Call deleteLabelCategory for every category and await all resulting promises
-    await Promise.all(categoryIDs.map((e) => deleteLabelCategory(e, originClientId)));
+    const affected = (await Promise.all(categoryIDs.map((e) => deleteLabelCategory(e, originClientId, true))))
+        .filter((e) => e != null);
+
+    if (affected.length > 0) {
+        sendStorageSubscriptionEvent({              // Notify registered clients
+            action: SubscriptionEventAction.DELETE,
+            storage: StorageKind.LABEL_CATEGORIES,
+            newData: affected
+        }, originClientId);
+    }
+
+    return affected;
 
 }
 

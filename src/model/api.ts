@@ -4,7 +4,7 @@
  * Created Date: 2026-03-26 18:57:42
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-17 20:00:00
+ * Last Modified: 2026-05-18 19:29:31
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -24,6 +24,9 @@ export interface ApiResponse<T> {
     message: string | null,
     document: T | null      // This allowing null for all T's requires ! nearly everywhere where success was already checked
 }
+
+
+export type DeletedItem = { id: ItemID };
 
 
 // Event types broadcasted by the 'subscribe' API Route
@@ -52,7 +55,7 @@ export interface StorageUpdateEvent extends SubscriptionEvent {
     type: SubscriptionEventType.STORAGE,
     action: SubscriptionEventAction.NEW | SubscriptionEventAction.UPSERT | SubscriptionEventAction.DELETE,
     storage: StorageKind, // Omit<StorageKind, StorageKind.LOCAL_STORAGE>,
-    newData?: [StorageKindDataMap<StorageKind>, ...StorageKindDataMap<StorageKind>[]] | [{ id: ItemID }, ...{ id: ItemID }[]] // This might contain ONLY the prop id on action DELETE btw. // Spread syntax specifies that array contains 1+ elements // TODO: Also this constraint doesn't seem to work correctly, perhaps the entire interface must be generic?
+    newData: [StorageKindDataMap<StorageKind>, ...StorageKindDataMap<StorageKind>[]] | [DeletedItem, ...DeletedItem[]] // Spread syntax specifies that array contains 1+ elements // TODO: Also this constraint doesn't seem to work correctly, perhaps the entire interface must be generic?
 }
 
 // Specific SubscriptionEvent type for job events
