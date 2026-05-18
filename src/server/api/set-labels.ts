@@ -4,7 +4,7 @@
  * Created Date: 2025-12-08 17:43:05
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-15 14:58:53
+ * Last Modified: 2026-05-18 20:44:30
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,21 +15,23 @@
  */
 
 
-import type { ApiResponse } from "~/model/api";
+import type { ApiResponse, DeletedItem } from "~/model/api";
 import type { Label } from "~/model/label";
 import type { Category } from "~/model/label-category";
 import { upsertLabelCategories, upsertLabels } from "~/server/utils/useLabelsDb";
 
 
+export type SET_LABELS_API_RETURN = { updatedLabels: Label[], deletedLabels: DeletedItem[], updatedCategories: Category[], deletedCategories: DeletedItem[] };
+
 /**
  * This API route upserts/removes labels and label categories
  * Params: { updatedLabels?: Label[], deletedLabels?: Label[], updatedCategories?: Category[], deletedCategories?: Category[] }
- * Returns:
+ * Returns: { updatedLabels: Label[], deletedLabels: DeletedItem[], updatedCategories: Category[], deletedCategories: DeletedItem[] }
  */
 
 
 // This function is executed when this API route is called
-export default defineEventHandler(async (event): Promise<ApiResponse<void>> => {
+export default defineEventHandler(async (event): Promise<ApiResponse<SET_LABELS_API_RETURN>> => {
 
     // Read body of the request we received
     const params = await readBody(event);
@@ -49,13 +51,16 @@ export default defineEventHandler(async (event): Promise<ApiResponse<void>> => {
     console.debug(getApiLogPrefix(event), "Received request for:", "\n updatedCategories:\n", updatedCategories, "\n deletedLabels:\n", deletedLabels, "\n updatedLabels:\n", updatedLabels, "\n deletedCategories:\n", deletedCategories);
 
     // Write to DB
-    return await getApiResponse<void>(async () => {
+    return await getApiResponse<SET_LABELS_API_RETURN>(async () => {
         const clientUUID = getCookie(event, "wardrobe_clientId");
+        const response: SET_LABELS_API_RETURN = { updatedLabels: [], deletedLabels: [], updatedCategories: [], deletedCategories: [] };
 
-        if (updatedCategories) await upsertLabelCategories(updatedCategories, clientUUID);
-        if (updatedLabels)     await upsertLabels(updatedLabels, clientUUID);
-        if (deletedLabels)     await deleteLabels(deletedLabels.flatMap((e) => e.id), clientUUID);
-        if (deletedCategories) await deleteLabelCategories(deletedCategories.flatMap((e) => e.id), clientUUID);
+        if (updatedCategories) response.updatedCategories = await upsertLabelCategories(updatedCategories, clientUUID);
+        if (updatedLabels)     response.updatedLabels     = await upsertLabels(updatedLabels, clientUUID);
+        if (deletedLabels)     response.deletedLabels     = await deleteLabels(deletedLabels.flatMap((e) => e.id), clientUUID);
+        if (deletedCategories) response.deletedCategories = await deleteLabelCategories(deletedCategories.flatMap((e) => e.id), clientUUID);
+
+        return response;
     }, event);
 
 });
