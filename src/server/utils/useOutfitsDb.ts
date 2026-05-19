@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-17 16:16:24
+ * Last Modified: 2026-05-19 18:56:14
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -103,7 +103,7 @@ export async function deleteOutfit(outfitID: ItemID, originClientId?: string): P
  * @returns Returns an array of all matching outfits
  */
 export async function getOutfit(id: ItemID|null): Promise<Outfit[]> {
-    return await outfitsDb.findAsync(id ? { id: id } : {});
+    return await outfitsDb.findAsync((id) ? { id: id } : { id: NEDB_META_ITEM_FILTER });
 }
 
 /**

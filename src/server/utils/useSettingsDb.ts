@@ -4,7 +4,7 @@
  * Created Date: 2026-02-14 19:44:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-17 16:16:30
+ * Last Modified: 2026-05-19 18:56:09
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -29,7 +29,7 @@ const serverSettingsDb = new nedb({ filename: "data/database/serverSettings.db",
  * @returns Returns currently saved server settings
  */
 export async function getServerSettings(): Promise<ServerSettings> {
-    return (await serverSettingsDb.findOneAsync({})) || defaultServerSettings;
+    return (await serverSettingsDb.findOneAsync({ id: defaultServerSettings.id })) || defaultServerSettings;
 }
 
 
@@ -40,7 +40,7 @@ export async function getServerSettings(): Promise<ServerSettings> {
  * @param originClientId Optional: ID of client making request
  */
 export async function setServerSettings(settings: ServerSettings, originClientId?: string): Promise<ServerSettings | null> {
-    const res      = await serverSettingsDb.updateAsync({}, { $set: settings }, { upsert: true, returnUpdatedDocs: true });
+    const res      = await serverSettingsDb.updateAsync({ id: defaultServerSettings.id }, { $set: settings }, { upsert: true, returnUpdatedDocs: true });
     const affected = res.affectedDocuments ? res.affectedDocuments as unknown as ServerSettings : null;
 
     if (affected) {

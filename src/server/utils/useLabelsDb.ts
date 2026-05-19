@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-18 19:29:28
+ * Last Modified: 2026-05-19 18:56:12
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -150,7 +150,7 @@ export async function deleteLabels(labelIDs: ItemID[], originClientId?: string):
  * @returns Returns an array of all matching labels
  */
 export async function getAllLabels(): Promise<Label[]> {
-    return await labelsDb.findAsync({});
+    return await labelsDb.findAsync({ id: NEDB_META_ITEM_FILTER });
 }
 
 
@@ -271,5 +271,5 @@ export async function deleteLabelCategories(categoryIDs: ItemID[], originClientI
  * @returns Returns an array of all matching labels
  */
 export async function getAllLabelCategories(): Promise<Category[]> {
-    return await labelCategoriesDb.findAsync({});
+    return await labelCategoriesDb.findAsync({ id: NEDB_META_ITEM_FILTER });
 }

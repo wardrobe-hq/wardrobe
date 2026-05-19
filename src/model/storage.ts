@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 15:21:35
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-16 15:10:18
+ * Last Modified: 2026-05-19 18:56:04
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -37,6 +37,14 @@ export interface DatabaseItem {
     _lockVersion: number // Used for storage lock mechanism to detect accidental overwrite due to cache desync
 }
 
+export const defaultDatabaseItem: DatabaseItem = {
+    id: "",
+    addedTimestamp: 0,
+    modifiedTimestamp: 0,
+    _lockVersion: 0
+};
+
+
 /**
  * Updates metadata fields of a database item
  * @param item Item to update
@@ -48,6 +56,24 @@ export function updateDatabaseItemMetadata(item: DatabaseItem) {
     item.modifiedTimestamp = Date.now();
     item._lockVersion      = item._lockVersion + 1 || 1;
 }
+
+
+// Metadata record which every database contains
+export interface DatabaseMetaItem extends DatabaseItem {
+    readonly id: "DB_META_ITEM",
+    dbCreatedVersion: string,   // Wardrobe Version Database was created in
+    dbVersion: string           // Wardrobe Version Database was last loaded in
+}
+
+export const defaultDatabaseMetaItem: DatabaseMetaItem = {
+    ...defaultDatabaseItem,
+    id: "DB_META_ITEM",
+    dbCreatedVersion: "",
+    dbVersion: ""
+};
+
+// Filter to use in Nedb database queries ({ id: NEDB_META_ITEM_FILTER } or { id: { ...NEDB_META_ITEM_FILTER } }) to exclude DatabaseMetaItem from result - https://github.com/seald/nedb#operators-lt-lte-gt-gte-in-nin-ne-exists-regex
+export const NEDB_META_ITEM_FILTER = { $ne: defaultDatabaseMetaItem.id };
 
 
 // Storage kinds used by Wardrobe
@@ -110,7 +136,8 @@ export const defaultUXSettings: UXSettings = {
  * Server Settings - Stored in database
  */
 
-export type ServerSettings = {
+export interface ServerSettings extends DatabaseItem {
+    readonly id: "SERVER_SETTINGS",
 
     // Location settings, used for weather integration
     location: {
@@ -124,10 +151,11 @@ export type ServerSettings = {
     weatherApiKey: string,
     temperatureUnit: Unit,
     serverSubscriptionEnabled: boolean
-
 }
 
 export const defaultServerSettings: ServerSettings = {
+    ...defaultDatabaseItem,
+    id: "SERVER_SETTINGS",
     location: {
         useGeolocation: true,
         lat: null,

@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-17 16:13:56
+ * Last Modified: 2026-05-19 18:56:16
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -100,5 +100,5 @@ export async function deleteClothing(clothingID: ItemID, originClientId?: string
  * @returns Returns an array of all matching clothes
  */
 export async function getClothes(id?: ItemID[]): Promise<Clothing[]> {
-    return await clothesDb.findAsync(id && id.length > 0 ? { id: { $in: id } } : {});
+    return await clothesDb.findAsync((id && id.length > 0) ? { id: { $in: id, ...NEDB_META_ITEM_FILTER }, } : { id: NEDB_META_ITEM_FILTER });
 }
