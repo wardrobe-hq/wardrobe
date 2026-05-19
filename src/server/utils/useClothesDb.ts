@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-19 18:56:16
+ * Last Modified: 2026-05-19 18:56:50
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -19,7 +19,7 @@ import nedb from "@seald-io/nedb";
 import crypto from "node:crypto";
 import { SubscriptionEventAction } from "~/model/api";
 import type { Clothing } from "~/model/item";
-import { type ItemID, StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
+import { DatabaseMetaItem, defaultDatabaseMetaItem, type ItemID, NEDB_META_ITEM_FILTER, StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
 import { updateImagesOfAffectedOutfits } from "~/server/utils/outfitPreviewImage";
 import { checkStorageLockMatch } from "./useStorage";
 
@@ -27,14 +27,34 @@ import { checkStorageLockMatch } from "./useStorage";
 // Load database
 const clothesDb = new nedb({ filename: "data/database/clothes.db", autoload: true });
 
+// Internal: Access Database instance directly
+// export const _useClothesDb = () => clothesDb;
+
 
 /**
- * Provide function to access Database instance from API
- * @returns Nedb database instance
+ * Internal: Migrates DB if necessary and updates DatabaseMetaItem
+ * @param toVersion Wardrobe Version to migrate to
  */
-/* export function useClothesDb() {
-    return clothesDb;
-} */
+export async function _migrateClothingDb(toVersion: string) {
+
+    // Get current record
+    const curItem = await clothesDb.findOneAsync({ id: defaultDatabaseMetaItem.id }) as unknown as DatabaseMetaItem | null;
+    console.debug(`[DEBUG] Clothes Database Meta - Created in '${curItem?.dbCreatedVersion}', last loaded in '${curItem?.dbVersion}'. Updating version to '${toVersion}'...`);
+
+    // Apply any necessary dbCreatedVersion -> toVersion migration
+    // ...
+
+    // Update (or create) record
+    const newItem: DatabaseMetaItem = curItem || defaultDatabaseMetaItem;
+    if (!newItem.dbCreatedVersion) {
+        newItem.dbCreatedVersion = toVersion;
+    }
+    newItem.dbVersion = toVersion;
+    updateDatabaseItemMetadata(newItem);
+
+    await clothesDb.updateAsync({ id: defaultDatabaseMetaItem.id }, { $set: newItem }, { upsert: true });
+
+}
 
 
 /**

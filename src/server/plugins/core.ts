@@ -4,7 +4,7 @@
  * Created Date: 2026-03-22 10:43:46
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-01 19:05:05
+ * Last Modified: 2026-05-19 18:56:57
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -16,6 +16,10 @@
 
 
 import packageJson from "~/../package.json";
+import { _migrateClothingDb } from "../utils/useClothesDb";
+import { _migrateServerSettingsDb } from "../utils/useSettingsDb";
+import { _migrateOutfitsDb } from "../utils/useOutfitsDb";
+import { _migrateLabelCategoriesDb, _migrateLabelsDb } from "../utils/useLabelsDb";
 
 
 /*
@@ -26,8 +30,21 @@ import packageJson from "~/../package.json";
 // This function is executed when the server starts up
 export default defineNitroPlugin(() => {
 
+    // Hello World
+    const curVersion = packageJson.version;
+    console.log(`Wardrobe Server v${curVersion} starting up...`);
+
     // Sets terminal title (thanks: https://stackoverflow.com/a/30360821/12934162) and process name (readable in task manager etc.)
-    process.stdout.write(`${String.fromCharCode(27)}]0;Wardrobe Server v${packageJson.version}`);
+    process.stdout.write(`${String.fromCharCode(27)}]0;Wardrobe Server v${curVersion}`);
     process.title = "wardrobe-server";
+
+    // Load databases and migrate if necessary
+    console.log("Loading databases...");
+
+    _migrateClothingDb(curVersion);
+    _migrateLabelsDb(curVersion);
+    _migrateLabelCategoriesDb(curVersion);
+    _migrateOutfitsDb(curVersion);
+    _migrateServerSettingsDb(curVersion);
 
 });

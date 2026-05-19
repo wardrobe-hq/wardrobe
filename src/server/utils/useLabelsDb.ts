@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-19 18:56:12
+ * Last Modified: 2026-05-19 18:56:54
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -19,7 +19,7 @@ import nedb from "@seald-io/nedb";
 import { DeletedItem, SubscriptionEventAction } from "~/model/api";
 import type { Label } from "~/model/label";
 import type { Category } from "~/model/label-category";
-import { type ItemID, StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
+import { DatabaseMetaItem, defaultDatabaseMetaItem, type ItemID, NEDB_META_ITEM_FILTER, StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
 import { checkStorageLockMatch } from "./useStorage";
 
 
@@ -27,14 +27,60 @@ import { checkStorageLockMatch } from "./useStorage";
 const labelsDb          = new nedb({ filename: "data/database/labels.db", autoload: true });
 const labelCategoriesDb = new nedb({ filename: "data/database/label-categories.db", autoload: true });
 
+// Internal: Access Database instance directly
+// export const _useLabelsDb = () => labelsDb;
+// Internal: Access Database instance directly
+// export const _useLabelCategoriesDb = () => labelCategoriesDb;
 
 /**
- * Provide function to access Database instance from API
- * @returns Nedb database instance
+ * Internal: Migrates DB if necessary and updates DatabaseMetaItem
+ * @param toVersion Wardrobe Version to migrate to
  */
-/* export function useLabelsDb() {
-    return labelsDb;
-} */
+export async function _migrateLabelsDb(toVersion: string) {
+
+    // Get current record
+    const curItem = await labelsDb.findOneAsync({ id: defaultDatabaseMetaItem.id }) as unknown as DatabaseMetaItem | null;
+    console.debug(`[DEBUG] Labels Database Meta - Created in '${curItem?.dbCreatedVersion}', last loaded in '${curItem?.dbVersion}'. Updating version to '${toVersion}'...`);
+
+    // Apply any necessary dbCreatedVersion -> toVersion migration
+    // ...
+
+    // Update (or create) record
+    const newItem: DatabaseMetaItem = curItem || defaultDatabaseMetaItem;
+    if (!newItem.dbCreatedVersion) {
+        newItem.dbCreatedVersion = toVersion;
+    }
+    newItem.dbVersion = toVersion;
+    updateDatabaseItemMetadata(newItem);
+
+    await labelsDb.updateAsync({ id: defaultDatabaseMetaItem.id }, { $set: newItem }, { upsert: true });
+
+}
+
+/**
+ * Internal: Migrates DB if necessary and updates DatabaseMetaItem
+ * @param toVersion Wardrobe Version to migrate to
+ */
+export async function _migrateLabelCategoriesDb(toVersion: string) {
+
+    // Get current record
+    const curItem = await labelCategoriesDb.findOneAsync({ id: defaultDatabaseMetaItem.id }) as unknown as DatabaseMetaItem | null;
+    console.debug(`[DEBUG] Label Categories Database Meta - Created in '${curItem?.dbCreatedVersion}', last loaded in '${curItem?.dbVersion}'. Updating version to '${toVersion}'...`);
+
+    // Apply any necessary dbCreatedVersion -> toVersion migration
+    // ...
+
+    // Update (or create) record
+    const newItem: DatabaseMetaItem = curItem || defaultDatabaseMetaItem;
+    if (!newItem.dbCreatedVersion) {
+        newItem.dbCreatedVersion = toVersion;
+    }
+    newItem.dbVersion = toVersion;
+    updateDatabaseItemMetadata(newItem);
+
+    await labelCategoriesDb.updateAsync({ id: defaultDatabaseMetaItem.id }, { $set: newItem }, { upsert: true });
+
+}
 
 
 /**
