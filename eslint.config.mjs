@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 15:19:23
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-10 16:39:51
+ * Last Modified: 2026-04-30 17:20:53
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -56,7 +56,7 @@ export default [
 
             // Styling
             "camelcase": "warn",
-            "capitalized-comments": ["warn", "always", { "ignoreConsecutiveComments": true }],
+            // "capitalized-comments": ["warn", "always", { "ignoreConsecutiveComments": true }], // Gets a little annoying
             "comma-spacing": ["warn", { "before": false, "after": true }],
             "func-call-spacing": ["error", "never"],
             "indent": ["error", 4, { "ignoredNodes": ["IfStatement"], "SwitchCase": 1 }], // TODO: This also ignores if statements with wrong indentation but I couldn't get it to only ignore else in if-else one-liner

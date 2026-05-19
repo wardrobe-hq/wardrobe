@@ -4,7 +4,7 @@
  * Created Date: 2025-12-28 21:38:23
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 19:05:17
+ * Last Modified: 2026-05-17 16:18:00
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -78,6 +78,7 @@ async function generateImageCollage(images: Buffer<ArrayBufferLike>[], collageWi
  * Generates a preview image for an outfit
  * @throws Throws Exception on failure
  * @param outfit Outfit to generate new preview image for
+ * @param originClientId Optional: ID of client making request
  * @returns Path of image in storage
  */
 export async function generateOutfitPreviewImage(outfit: Outfit, originClientId?: string): Promise<string> {
@@ -119,6 +120,7 @@ export async function generateOutfitPreviewImage(outfit: Outfit, originClientId?
 
 /**
  * Asynchronously re-generates preview images of outfits containing a piece of clothing
+ * @param originClientId Optional: ID of client making request
  * @param clothingID
  */
 export function updateImagesOfAffectedOutfits(clothingID: ItemID, originClientId?: string) {

@@ -4,7 +4,7 @@
  * Created Date: 2026-03-23 21:34:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-17 20:19:38
+ * Last Modified: 2026-05-19 18:57:36
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -264,8 +264,6 @@ export async function setCategoriesAndLabelsToServer(updatedCategories: Category
             handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.LABELS,           action: SubscriptionEventAction.UPSERT, newData: undefined }),
             handleStorageUpdate({ type: SubscriptionEventType.STORAGE, storage: StorageKind.LABEL_CATEGORIES, action: SubscriptionEventAction.UPSERT, newData: undefined })
         ]);
-        await refreshNuxtData("/api/get-all-label-categories"); // storedCategories.value.push(...categoryData);
-        await refreshNuxtData("/api/get-all-labels"); // storedLabels.value.push(...labelsData);
     }
 
     return resBody;
