@@ -1,7 +1,7 @@
 # Contributing to the project
 
 You would like to contribute to the project?  
-Great! No matter if it's fixing a few typos or adding a whole feature - every contribution is welcome.  
+Great! No matter if it's fixing a few typos or adding a whole feature - every contribution, as long as it is not vibe-coded, is welcome.  
 
 You can see a list of all features that still need to be worked on, are in progress or are finished in the repo's [projects](https://github.com/wardrobe-hq/wardrobe/projects) section.  
 
@@ -80,5 +80,14 @@ Access wardrobe at `localhost:3000` in your browser.
 The webserver will automatically reload when you make changes.
 
 &nbsp;
+
+## Attribution
+When having made changes to a file, please update the file header to:
+- contain your name in the list of authors
+- have your name set at last modified
+- display the current date at last modified
+
+If you've added a new file, please copy, paste and adapt the file header from another file.  
+When commiting your changes, you'll automatically be listed as a contributor to this Git project.
 
 Thanks for taking your time!
