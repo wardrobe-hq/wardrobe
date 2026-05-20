@@ -1,10 +1,10 @@
 /*
- * File: core.ts
+ * File: main.ts
  * Project: wardrobe
- * Created Date: 2026-03-22 10:43:46
+ * Created Date: 2026-05-20 18:34:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-19 18:56:57
+ * Last Modified: 2026-05-20 21:55:37
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -16,19 +16,17 @@
 
 
 import packageJson from "~/../package.json";
-import { _migrateClothingDb } from "../utils/useClothesDb";
-import { _migrateServerSettingsDb } from "../utils/useSettingsDb";
-import { _migrateOutfitsDb } from "../utils/useOutfitsDb";
-import { _migrateLabelCategoriesDb, _migrateLabelsDb } from "../utils/useLabelsDb";
+import { _migrateClothingDb } from "./utils/useClothesDb";
+import { _migrateServerSettingsDb } from "./utils/useSettingsDb";
+import { _migrateOutfitsDb } from "./utils/useOutfitsDb";
+import { _migrateLabelCategoriesDb, _migrateLabelsDb } from "./utils/useLabelsDb";
+import { SERVER_STATE, setServerState } from "./utils/useState";
 
 
-/*
-    Contains server core code that should get executed on startup
-*/
-
-
-// This function is executed when the server starts up
-export default defineNitroPlugin(() => {
+/**
+ * Initializes server - Executed once on startup by plugin 01-main
+ */
+export async function run() {
 
     // Hello World
     const curVersion = packageJson.version;
@@ -41,10 +39,19 @@ export default defineNitroPlugin(() => {
     // Load databases and migrate if necessary
     console.log("Loading databases...");
 
-    _migrateClothingDb(curVersion);
-    _migrateLabelsDb(curVersion);
-    _migrateLabelCategoriesDb(curVersion);
-    _migrateOutfitsDb(curVersion);
-    _migrateServerSettingsDb(curVersion);
+    await Promise.all([
+        _migrateClothingDb(curVersion),
+        _migrateLabelsDb(curVersion),
+        _migrateLabelCategoriesDb(curVersion),
+        _migrateOutfitsDb(curVersion),
+        _migrateServerSettingsDb(curVersion)
+    ]);
 
-});
+    // Load server modules
+    initJobManager();
+
+    // Done!
+    setServerState(SERVER_STATE.SERVER_READY, true);
+    console.log("Startup complete!");
+
+}

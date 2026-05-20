@@ -4,7 +4,7 @@
  * Created Date: 2025-12-29 14:47:41
  * Author: 3urobeat
  *
- * Last Modified: 2026-04-26 19:42:03
+ * Last Modified: 2026-05-20 22:00:07
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -19,7 +19,7 @@ import { CoreJobPendingDummy, type Job } from "~/model/job";
 import { formatTime } from "~/utils/utils";
 
 // Import core jobs
-import dataCleanupJob from "../utils/jobs/dataCleanup";
+import dataCleanupJob from "./jobs/dataCleanup";
 import { SubscriptionUpdateObserver } from "../updateObserver";
 import { SubscriptionEventAction, SubscriptionEventType } from "~/model/api";
 
@@ -149,8 +149,10 @@ export function getRegisteredJobs(): Job[] {
 }
 
 
-// This function is executed when the server starts up
-export default defineNitroPlugin(() => {
+/**
+ * Initializes job manager, call on startup
+ */
+export function initJobManager() {
 
     // Register interval for checking for due jobs
     _jobInterval = setInterval(() => {
@@ -160,4 +162,4 @@ export default defineNitroPlugin(() => {
     // Call register for internal jobs after 30 seconds
     _registerCoreJobs();
 
-});
+}
