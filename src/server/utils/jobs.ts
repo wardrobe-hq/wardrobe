@@ -4,7 +4,7 @@
  * Created Date: 2025-12-29 14:47:41
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-20 22:00:07
+ * Last Modified: 2026-05-20 23:13:07
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,16 +15,14 @@
  */
 
 
-import { CoreJobPendingDummy, type Job } from "~/model/job";
+import { JobRunnerPendingDummy, type Job } from "~/model/job";
 import { formatTime } from "~/utils/utils";
 
-// Import core jobs
-import dataCleanupJob from "./jobs/dataCleanup";
-import { SubscriptionUpdateObserver } from "../updateObserver";
+import { SubscriptionUpdateObserver } from "./updateObserver";
 import { SubscriptionEventAction, SubscriptionEventType } from "~/model/api";
 
 
-let _jobInterval; // eslint-disable-line @typescript-eslint/no-unused-vars
+let   _jobInterval; // eslint-disable-line @typescript-eslint/no-unused-vars
 const _registeredJobs: Job[] = [];
 
 
@@ -53,8 +51,8 @@ export function registerJob(job: Job) {
 
     console.log(`Jobs Plugin: Registering job '${job.info.name}' which executes ${job.info.runOnRegistration ? "now and then " : ""}${job.info.interval > 0 ? "every " + formatTime(job.info.interval) : "only manually"}`);
 
-    // Check if job shall run on registration
-    if (job.info.runOnRegistration) {
+    // Check if job shall run on registration. Ignore if server is not fully started yet, it will be processed asap
+    if (job.info.runOnRegistration && getServerState(SERVER_STATE.SERVER_READY)) {
         job.run();
         job.info._lastExecTimestamp = Date.now();
     } else {
@@ -94,35 +92,12 @@ export function unregisterJob(jobName: string) {
 
 
 /**
- * Internal: Registers core jobs which are shipped by default after 30 seconds
- */
-function _registerCoreJobs() {
-    console.log("Jobs Plugin: Registering core jobs in 30 seconds...");
-
-    // Register dummy job to explain pending registration
-    registerJob({
-        info: {
-            name: CoreJobPendingDummy,
-            interval: 0,
-            runOnRegistration: false
-        },
-        run: () => { return {}; }
-    });
-
-    // Register core jobs after 30 seconds
-    setTimeout(() => {
-        // Remove dummy
-        unregisterJob(CoreJobPendingDummy);
-
-        registerJob(dataCleanupJob);
-    }, 30000);
-}
-
-
-/**
  * Internal: Runs all due jobs
  */
 function _runDueJobs() {
+
+    // Ignore request if server is not ready yet
+    if (!getServerState(SERVER_STATE.SERVER_READY)) throw("Server not ready");
 
     _registeredJobs.forEach((job) => {
         if (job.info.interval !== 0
@@ -154,12 +129,24 @@ export function getRegisteredJobs(): Job[] {
  */
 export function initJobManager() {
 
-    // Register interval for checking for due jobs
-    _jobInterval = setInterval(() => {
-        _runDueJobs();
-    }, 1000);
+    // Register dummy job to explain pending registration
+    registerJob({
+        info: {
+            name: JobRunnerPendingDummy,
+            interval: 0,
+            runOnRegistration: false
+        },
+        run: () => { return {}; }
+    });
 
-    // Call register for internal jobs after 30 seconds
-    _registerCoreJobs();
+    // Register job runner after 30 seconds
+    setTimeout(() => {
+        // Remove dummy
+        unregisterJob(JobRunnerPendingDummy);
+
+        _jobInterval = setInterval(() => {
+            _runDueJobs();
+        }, 1000);
+    }, 30000);
 
 }

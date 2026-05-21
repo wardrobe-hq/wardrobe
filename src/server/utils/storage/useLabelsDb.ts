@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-19 18:56:54
+ * Last Modified: 2026-05-20 23:14:03
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -20,7 +20,7 @@ import { DeletedItem, SubscriptionEventAction } from "~/model/api";
 import type { Label } from "~/model/label";
 import type { Category } from "~/model/label-category";
 import { DatabaseMetaItem, defaultDatabaseMetaItem, type ItemID, NEDB_META_ITEM_FILTER, StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
-import { checkStorageLockMatch } from "./useStorage";
+import { checkStorageLockMatch, sendStorageSubscriptionEvent } from "./useStorage";
 
 
 // Load database

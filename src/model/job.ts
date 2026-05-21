@@ -15,7 +15,7 @@
  */
 
 
-export const CoreJobPendingDummy = "CORE_JOBS_PENDING";
+export const JobRunnerPendingDummy = "JOB_RUNNER_PENDING";
 
 export type JobInfo = {
     name: string,

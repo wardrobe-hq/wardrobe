@@ -4,7 +4,7 @@
  * Created Date: 2026-05-20 18:34:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-20 21:55:37
+ * Last Modified: 2026-05-20 22:51:38
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -16,10 +16,10 @@
 
 
 import packageJson from "~/../package.json";
-import { _migrateClothingDb } from "./utils/useClothesDb";
-import { _migrateServerSettingsDb } from "./utils/useSettingsDb";
-import { _migrateOutfitsDb } from "./utils/useOutfitsDb";
-import { _migrateLabelCategoriesDb, _migrateLabelsDb } from "./utils/useLabelsDb";
+import { _migrateClothingDb } from "./utils/storage/useClothesDb";
+import { _migrateServerSettingsDb } from "./utils/storage/useSettingsDb";
+import { _migrateOutfitsDb } from "./utils/storage/useOutfitsDb";
+import { _migrateLabelCategoriesDb, _migrateLabelsDb } from "./utils/storage/useLabelsDb";
 import { SERVER_STATE, setServerState } from "./utils/useState";
 
 

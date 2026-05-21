@@ -16,7 +16,7 @@
 
 
 import type { ApiResponse } from "~/model/api";
-import { deleteOutfit } from "~/server/utils/useOutfitsDb";
+import { deleteOutfit } from "~/server/utils/storage/useOutfitsDb";
 
 
 /**

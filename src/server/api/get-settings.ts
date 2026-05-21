@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 15:44:09
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-15 14:57:30
+ * Last Modified: 2026-05-20 22:51:30
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -16,7 +16,7 @@
 
 
 import type { ApiResponse } from "~/model/api";
-import { getServerSettings } from "../utils/useSettingsDb";
+import { getServerSettings } from "../utils/storage/useSettingsDb";
 import type { ServerSettings } from "~/model/storage";
 
 

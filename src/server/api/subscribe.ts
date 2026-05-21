@@ -4,7 +4,7 @@
  * Created Date: 2026-03-26 18:49:20
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-14 14:26:08
+ * Last Modified: 2026-05-20 22:46:25
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -15,7 +15,7 @@
  */
 
 import { randomUUID } from "crypto";
-import { SubscriptionUpdateObserver } from "../updateObserver";
+import { SubscriptionUpdateObserver } from "../utils/updateObserver";
 
 
 /**

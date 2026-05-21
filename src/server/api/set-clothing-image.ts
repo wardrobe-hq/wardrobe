@@ -16,7 +16,7 @@
 
 
 import type { ApiResponse } from "~/model/api";
-import { saveImage, imgCategory } from "~/server/utils/useImagesStorage";
+import { saveImage, imgCategory } from "~/server/utils/storage/useImagesStorage";
 
 
 /**

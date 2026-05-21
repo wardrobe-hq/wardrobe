@@ -133,8 +133,8 @@
                     v-for="thisJobInfo in jobs"
                     :key="thisJobInfo.name"
                 >
-                    <!-- Check if server is waiting to register core jobs -->
-                    <div class="flex-col m-2" v-if="thisJobInfo.name == CoreJobPendingDummy">
+                    <!-- Check if server was just started and job runner is pending -->
+                    <div class="flex-col m-2" v-if="thisJobInfo.name == JobRunnerPendingDummy">
                         <div class="custom-label-icon-only w-6 mb-3"> <!-- This extra div just for the icon to scale correctly is stupid -->
                             <PhHourglassMedium class="text-text-light dark:text-text-dark"></PhHourglassMedium>
                         </div>
@@ -158,7 +158,7 @@
 
                                 <label v-if=     "key == 'interval'">{{ formatTimeLocalized(value as number) }}</label>
                                 <input v-else-if="key == 'runOnRegistration'" type="checkbox" class="size-4 self-center" :checked="value as boolean" disabled>
-                                <label v-else-if="key == '_lastExecTimestamp' || key == '_registeredAt'">{{ $t("timeAgo", { time: formatTimestamp(value as number) }) }}</label>
+                                <label v-else-if="key == '_lastExecTimestamp' || key == '_registeredAt'">{{ (value as number > 0) ? $t("timeAgo", { time: formatTimestamp(value as number) }) : $t("never") }}</label>
                             </div>
                         </ClientOnly>
                     </div>
@@ -321,7 +321,7 @@
     import TitleBarBasic from "~/components/titleBarBasic.vue";
     import { defaultUXSettings, StorageKind, type ServerSettings, type UXSettings } from "~/model/storage";
     import { responseIndicatorFailure, responseIndicatorSuccess } from "~/composables/responseIndicator";
-    import { CoreJobPendingDummy, type JobInfo } from "~/model/job";
+    import { JobRunnerPendingDummy, type JobInfo } from "~/model/job";
     import { Unit, UnitStrMap, type TemperatureKelvin } from "~/model/unit";
     import { formatTimeLocalized } from "~/composables/unitConversion";
     import type { ServerStatistics } from "~/model/statistics";

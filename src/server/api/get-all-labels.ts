@@ -17,7 +17,7 @@
 
 import type { ApiResponse } from "~/model/api";
 import type { Label } from "~/model/label";
-import { getAllLabels } from "~/server/utils/useLabelsDb";
+import { getAllLabels } from "~/server/utils/storage/useLabelsDb";
 
 
 /**

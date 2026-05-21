@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-19 18:56:50
+ * Last Modified: 2026-05-20 23:16:19
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -20,7 +20,7 @@ import crypto from "node:crypto";
 import { SubscriptionEventAction } from "~/model/api";
 import type { Clothing } from "~/model/item";
 import { DatabaseMetaItem, defaultDatabaseMetaItem, type ItemID, NEDB_META_ITEM_FILTER, StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
-import { updateImagesOfAffectedOutfits } from "~/server/utils/outfitPreviewImage";
+import { updateImagesOfAffectedOutfits } from "../outfitPreviewImage";
 import { checkStorageLockMatch } from "./useStorage";
 
 

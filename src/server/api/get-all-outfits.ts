@@ -17,7 +17,7 @@
 
 import type { ApiResponse } from "~/model/api";
 import type { Outfit } from "~/model/item";
-import { getOutfit } from "~/server/utils/useOutfitsDb";
+import { getOutfit } from "~/server/utils/storage/useOutfitsDb";
 
 
 /**

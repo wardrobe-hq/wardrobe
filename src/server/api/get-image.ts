@@ -17,7 +17,7 @@
 
 import type { ApiResponse } from "~/model/api";
 import type { CachedImage } from "~/model/storage";
-import { getImage, scaleImage } from "~/server/utils/useImagesStorage";
+import { getImage, scaleImage } from "~/server/utils/storage/useImagesStorage";
 
 
 /**

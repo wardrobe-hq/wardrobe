@@ -16,7 +16,7 @@
 
 
 /**
- * Saves server state, initialized by core plugin which runs at startup
+ * Provides a small server state store implementation
  */
 
 

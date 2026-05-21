@@ -1,10 +1,10 @@
 /*
- * File: dataCleanup.ts
+ * File: dataCleanupJob.ts
  * Project: wardrobe
  * Created Date: 2025-12-30 22:18:23
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 19:05:26
+ * Last Modified: 2026-05-20 22:53:25
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -15,17 +15,18 @@
  */
 
 
-import { getClothes, upsertClothing } from "~/server/utils/useClothesDb";
-import { deleteImage, getAllImagePaths, imgCategory } from "~/server/utils/useImagesStorage";
-import { getAllLabelCategories, getAllLabels, deleteLabels } from "~/server/utils/useLabelsDb";
-import { getOutfit, upsertOutfit } from "~/server/utils/useOutfitsDb";
+import { getClothes, upsertClothing } from "../utils/storage/useClothesDb";
+import { deleteImage, getAllImagePaths, imgCategory } from "../utils/storage/useImagesStorage";
+import { getAllLabelCategories, getAllLabels, deleteLabels } from "../utils/storage/useLabelsDb";
+import { getOutfit, upsertOutfit } from "../utils/storage/useOutfitsDb";
 import type { Clothing } from "~/model/item";
 import type { Outfit } from "~/model/item";
 import type { ItemID } from "~/model/storage";
+import { Job } from "~/model/job";
 
 
 /*
-    This core job is registered directly by the job manager on startup
+    Job for cleaning data storage, registers at job manager on startup
 */
 
 
@@ -62,7 +63,7 @@ async function deleteUnusedImages(clothes: Clothing[], outfits: Outfit[]): Promi
 /**
  * Cleans databases & image storage in data directory
  */
-export default {
+const job: Job = {
     info: {
         name: "dataCleanup",
         interval: 4.32e+7, // 12 hours
@@ -172,3 +173,9 @@ export default {
     }
 
 };
+
+
+// This function is executed when the Nitro server starts up
+export default defineNitroPlugin(() => {
+    registerJob(job);
+});
