@@ -4,7 +4,7 @@
  * Created Date: 2026-03-22 12:21:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-20 23:15:23
+ * Last Modified: 2026-05-21 18:02:18
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -15,35 +15,11 @@
  */
 
 
-import path from "path";
-import { readdir, stat } from "fs/promises";
 import util from "node:util";
 import childProcess from "node:child_process";
 import type Nedb from "@seald-io/nedb";
 
 const exec = util.promisify(childProcess.exec);
-
-
-/**
- * Gets size of all files in directory - Thanks: https://stackoverflow.com/a/69418940
- * @param dir Directory path
- * @returns Size in Bytes
- */
-async function getDirSize(dir: string): Promise<number> {
-    let files;
-
-    try {
-        files = await readdir(dir);
-    } catch (err) {
-        console.error(`getDirSize: Failed to access dir '${dir}': ${err}`);
-        return 0;
-    }
-
-    const stats = files.map((file) => stat(path.join(dir, file)));
-
-    return (await Promise.all(stats)).reduce((accumulator, { size }) => accumulator + size, 0);
-}
-// TODO: Not recursive
 
 
 /**
