@@ -17,9 +17,6 @@
 
 import crypto from "node:crypto";
 import sharp from "sharp";
-import { sendStorageSubscriptionEvent } from "./useStorage";
-import { SubscriptionEventAction } from "~/model/api";
-import { StorageKind } from "~/model/storage";
 
 
 // Use images storage - storage bucket is defined in nuxt.config.ts

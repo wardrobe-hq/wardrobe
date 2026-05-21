@@ -15,12 +15,6 @@
  */
 
 
-import type { ApiResponse, DeletedItem } from "~/model/api";
-import type { Label } from "~/model/label";
-import type { Category } from "~/model/label-category";
-import { upsertLabelCategories, upsertLabels } from "~/server/utils/storage/useLabelsDb";
-
-
 export type SET_LABELS_API_RETURN = { updatedLabels: Label[], deletedLabels: DeletedItem[], updatedCategories: Category[], deletedCategories: DeletedItem[] };
 
 /**

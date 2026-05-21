@@ -15,11 +15,6 @@
  */
 
 
-import type { ApiResponse } from "~/model/api";
-import type { Clothing } from "~/model/item";
-import { getClothes } from "~/server/utils/storage/useClothesDb";
-
-
 /**
  * This API route gets details for a stored clothing and returns them
  * Params: { id: ItemID }

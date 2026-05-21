@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 import { randomUUID } from "crypto";
-import { SubscriptionUpdateObserver } from "../utils/updateObserver";
 
 
 /**

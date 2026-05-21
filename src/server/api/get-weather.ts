@@ -15,11 +15,6 @@
  */
 
 
-import type { WeatherData } from "~/model/weather";
-import { getWeather } from "../utils/weather";
-import type { ApiResponse } from "~/model/api";
-
-
 /**
  * This API route gets cached or current weather data
  * Params: { lat: number, lon: number }

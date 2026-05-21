@@ -15,11 +15,7 @@
  */
 
 
-import { JobRunnerPendingDummy, type Job } from "~/model/job";
-import { formatTime } from "~/utils/utils";
-
-import { SubscriptionUpdateObserver } from "./updateObserver";
-import { SubscriptionEventAction, SubscriptionEventType } from "~/model/api";
+import { formatTime } from "~/../shared/utils/utils";
 
 
 let   _jobInterval; // eslint-disable-line @typescript-eslint/no-unused-vars

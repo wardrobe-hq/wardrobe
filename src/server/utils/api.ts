@@ -17,7 +17,6 @@
 
 import { H3Event } from "h3";
 import { IncomingMessage } from "http";
-import type { ApiResponse } from "~/model/api";
 
 
 /**

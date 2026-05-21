@@ -15,9 +15,6 @@
  */
 
 
-import type { WeatherData } from "~/model/weather";
-
-
 let weatherCache: WeatherData[] = [];
 
 

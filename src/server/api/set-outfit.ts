@@ -15,11 +15,6 @@
  */
 
 
-import type { ApiResponse } from "~/model/api";
-import type { Outfit } from "~/model/item";
-import { upsertOutfit } from "~/server/utils/storage/useOutfitsDb";
-
-
 /**
  * This API route inserts/updates an outfit
  * Params: { outfit: Outfit }

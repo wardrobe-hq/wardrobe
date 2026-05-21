@@ -15,16 +15,6 @@
  */
 
 
-import { getClothes, upsertClothing } from "../utils/storage/useClothesDb";
-import { deleteImage, getAllImagePaths, imgCategory } from "../utils/storage/useImagesStorage";
-import { getAllLabelCategories, getAllLabels, deleteLabels } from "../utils/storage/useLabelsDb";
-import { getOutfit, upsertOutfit } from "../utils/storage/useOutfitsDb";
-import type { Clothing } from "~/model/item";
-import type { Outfit } from "~/model/item";
-import type { ItemID } from "~/model/storage";
-import { Job } from "~/model/job";
-
-
 /*
     Job for cleaning data storage, registers at job manager on startup
 */

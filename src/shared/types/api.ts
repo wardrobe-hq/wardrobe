@@ -1,0 +1,62 @@
+/*
+ * File: api.ts
+ * Project: wardrobe
+ * Created Date: 2026-03-26 18:57:42
+ * Author: 3urobeat
+ *
+ * Last Modified: 2026-05-18 19:29:31
+ * Modified By: 3urobeat
+ *
+ * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+
+// Data Format returned by API Routes
+export interface ApiResponse<T> {
+    success: boolean,
+    message: string | null,
+    document: T | null      // This allowing null for all T's requires ! nearly everywhere where success was already checked
+}
+
+
+export type DeletedItem = { id: ItemID };
+
+
+// Event types broadcasted by the 'subscribe' API Route
+export enum SubscriptionEventType {
+    SUBSCRIPTION, // Subscription meta stuff, e.g. successful registration
+    STORAGE,      // Database updates
+    JOB           // Job (un)register/run events
+}
+
+// Event actions
+export enum SubscriptionEventAction {
+    ANY,
+    NEW,    // Is this even used?
+    UPSERT,
+    DELETE
+}
+
+// Generic SubscriptionEvent type broadcasted by 'subscribe' API Route to client
+export interface SubscriptionEvent {
+    type: SubscriptionEventType,
+    action: SubscriptionEventAction | null
+}
+
+// Specific SubscriptionEvent type for storage updates
+export interface StorageUpdateEvent extends SubscriptionEvent {
+    type: SubscriptionEventType.STORAGE,
+    action: SubscriptionEventAction.NEW | SubscriptionEventAction.UPSERT | SubscriptionEventAction.DELETE,
+    storage: StorageKind, // Omit<StorageKind, StorageKind.LOCAL_STORAGE>,
+    newData: [StorageKindDataMap<StorageKind>, ...StorageKindDataMap<StorageKind>[]] | [DeletedItem, ...DeletedItem[]] // Spread syntax specifies that array contains 1+ elements // TODO: Also this constraint doesn't seem to work correctly, perhaps the entire interface must be generic?
+}
+
+// Specific SubscriptionEvent type for job events
+export interface JobSubscriptionEvent extends SubscriptionEvent {
+    type: SubscriptionEventType.JOB,
+    action: SubscriptionEventAction.ANY
+}

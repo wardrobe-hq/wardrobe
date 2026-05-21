@@ -15,11 +15,6 @@
  */
 
 
-import type { ServerStatistics } from "~/model/statistics";
-import { getServerStatistics } from "../utils/statistics";
-import type { ApiResponse } from "~/model/api";
-
-
 /**
  * This API route gets server statistics
  * Params:

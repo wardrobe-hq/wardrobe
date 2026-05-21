@@ -20,10 +20,6 @@ import os from "os";
 import util from "node:util";
 import childProcess from "node:child_process";
 
-import type { ServerStatistics } from "~/model/statistics";
-import { tempToKelvin, Unit } from "~/model/unit";
-import { getDBStorageSize, getImageStorageSize, getStorageMount } from "./storage/useStorage";
-
 const exec = util.promisify(childProcess.exec);
 
 

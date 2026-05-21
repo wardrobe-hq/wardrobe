@@ -1,0 +1,142 @@
+/*
+ * File: subscription.ts
+ * Project: wardrobe
+ * Created Date: 2026-04-08 17:59:41
+ * Author: 3urobeat
+ *
+ * Last Modified: 2026-05-16 17:51:42
+ * Modified By: 3urobeat
+ *
+ * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+
+let serverSubscriptionEventStream: EventSource | undefined;
+
+
+/**
+ * Handles server subscription connected event
+ * @param event
+ */
+function handleServerSubscriptionConnected(event: unknown) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    console.debug("[DEBUG] Server Subscription: Connected!");
+
+    useState(State.SERVER_SUBSCRIPTION_CONNECTED).value = true;
+
+    emitNotificationShowEvent({
+        level: NotificationLevel.DEBUG,
+        title: "Server Subscription",
+        message: "Connected!",
+        type: NotificationType.SERVER_SUBSCRIPTION
+    });
+}
+
+
+/**
+ * Handles incoming messages from server's 'subscribe' API route
+ * @param msg
+ */
+async function handleServerSubscriptionEvent(msg: MessageEvent<any>) { // eslint-disable-line @typescript-eslint/no-explicit-any
+    try {
+        const data = JSON.parse(msg.data) as SubscriptionEvent;
+        console.debug("[DEBUG] Incoming server subscription message:", data);
+
+        emitNotificationShowEvent({
+            level: NotificationLevel.DEBUG,
+            title: "Server Subscription",
+            message: `Message: ${data.action != null ? SubscriptionEventAction[data.action] : null} @ ${SubscriptionEventType[data.type]}`,
+            type: NotificationType.SERVER_SUBSCRIPTION
+        });
+
+        if (data.type == SubscriptionEventType.STORAGE) {
+            await handleStorageUpdate(data as StorageUpdateEvent);
+        }
+
+        // Re-emit event for frontend when data was re-fetched
+        emitSubscriptionEvent(data);
+    } catch(err) {
+        console.error("Failed to parse incoming message from server!", err);
+    }
+}
+
+
+/**
+ * Handles server subscription event stream error event
+ * @param err
+ */
+function handleServerSubscriptionError(err: unknown) {
+    const i18n = useNuxtApp().$i18n;
+    console.error("Server Subscription Event Stream Error!", err);
+
+    useState(State.SERVER_SUBSCRIPTION_CONNECTED).value = false;
+
+    emitNotificationShowEvent({
+        level: NotificationLevel.ERROR,
+        title: i18n.t("serverSubscriptionConnectionLost"),
+        message: "",
+        actionLabel: i18n.t("reloadPage"),
+        customDuration: 0,                                // Do not expire
+        type: NotificationType.RELOAD_PAGE
+    });
+}
+
+
+/**
+ * Attempts to establish server subscription connection if enabled in settings
+ */
+export function establishServerSubscriptionConnection() {
+    if (serverSubscriptionEventStream) throw("EventStream is not null, close it first");
+
+    useState(State.SERVER_SUBSCRIPTION_CONNECTED).value = false;
+
+    if (getServerSettingsFromCache().value.document!.serverSubscriptionEnabled) {
+        console.debug("[DEBUG] establishServerSubscriptionConnection: Attempting to connect...");
+
+        serverSubscriptionEventStream = new EventSource("/api/subscribe");
+        serverSubscriptionEventStream.addEventListener("open",    handleServerSubscriptionConnected);
+        serverSubscriptionEventStream.addEventListener("message", handleServerSubscriptionEvent);
+        serverSubscriptionEventStream.addEventListener("error",   handleServerSubscriptionError);
+    } else {
+        console.debug("[DEBUG] establishServerSubscriptionConnection: Server Subscription is disabled");
+    }
+}
+
+
+/**
+ * Closes server subscription event stream if open
+ */
+export function closeServerSubscriptionConnection() {
+    if (serverSubscriptionEventStream) {
+        serverSubscriptionEventStream.close();
+        serverSubscriptionEventStream = undefined;
+    }
+    useState(State.SERVER_SUBSCRIPTION_CONNECTED).value = false;
+}
+
+
+/**
+ * Initializes server subscription handler. Call once from app.vue
+ */
+export function initServerSubscriptionHandler() {
+    if (getServerSettingsFromCache().value.document?.serverSubscriptionEnabled) {
+        establishServerSubscriptionConnection();
+    }
+
+    useNuxtApp().hook("app:user:settingsSaved", () => {
+        if (getServerSettingsFromCache().value.document?.serverSubscriptionEnabled) {
+            if (!serverSubscriptionEventStream) {
+                console.debug("[DEBUG] Received settingsSaved event, server subscription is now enabled");
+                establishServerSubscriptionConnection();
+            }
+        } else {
+            if (serverSubscriptionEventStream) {
+                console.debug("[DEBUG] Received settingsSaved event, server subscription is now disabled");
+                closeServerSubscriptionConnection();
+            }
+        }
+    });
+}

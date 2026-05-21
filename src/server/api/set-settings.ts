@@ -15,11 +15,6 @@
  */
 
 
-import type { ApiResponse } from "~/model/api";
-import { setServerSettings } from "../utils/storage/useSettingsDb";
-import type { ServerSettings } from "~/model/storage";
-
-
 /**
  * This API route saves all transmitted settings
  * Params: ServerSettings

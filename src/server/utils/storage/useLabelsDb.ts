@@ -16,11 +16,6 @@
 
 
 import nedb from "@seald-io/nedb";
-import { DeletedItem, SubscriptionEventAction } from "~/model/api";
-import type { Label } from "~/model/label";
-import type { Category } from "~/model/label-category";
-import { DatabaseMetaItem, defaultDatabaseMetaItem, type ItemID, NEDB_META_ITEM_FILTER, StorageKind, updateDatabaseItemMetadata } from "~/model/storage";
-import { checkStorageLockMatch, sendStorageSubscriptionEvent } from "./useStorage";
 
 
 // Load database

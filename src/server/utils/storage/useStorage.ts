@@ -19,9 +19,6 @@ import path from "path";
 import { readdir, stat } from "fs/promises";
 import util from "node:util";
 import childProcess from "node:child_process";
-import { type StorageUpdateEvent, SubscriptionEventType } from "~/model/api";
-import { SubscriptionUpdateObserver } from "../updateObserver";
-import type { DatabaseItem } from "~/model/storage";
 import type Nedb from "@seald-io/nedb";
 
 const exec = util.promisify(childProcess.exec);

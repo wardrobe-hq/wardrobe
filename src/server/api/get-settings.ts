@@ -15,11 +15,6 @@
  */
 
 
-import type { ApiResponse } from "~/model/api";
-import { getServerSettings } from "../utils/storage/useSettingsDb";
-import type { ServerSettings } from "~/model/storage";
-
-
 /**
  * This API route gets all stored settings and returns them
  * Params:

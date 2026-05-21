@@ -40,8 +40,8 @@ export default defineNuxtConfig({
         }
     },
 
-    srcDir: "src/",
-    serverDir: "src/server",
+    srcDir: "src/app/",
+    serverDir: "src/server/",
 
     dir: {
         public: "src/public",
@@ -100,7 +100,7 @@ export default defineNuxtConfig({
         // When enabled, this adds a lang prefix to every route name. This causes errors due to the re-route above and breaks my route detection though, so we disable it.
         strategy: "no_prefix",
         defaultLocale: "en",
-        restructureDir: "src/i18n"
+        restructureDir: "src/app/i18n"
     }
 
 });

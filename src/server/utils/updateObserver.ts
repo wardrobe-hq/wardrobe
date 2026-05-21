@@ -16,7 +16,6 @@
 
 
 import { IncomingMessage, ServerResponse } from "http";
-import { SubscriptionEventAction, SubscriptionEventType, type SubscriptionEvent } from "../../model/api";
 
 
 type UpdateFunction<UpdateData> = (arg0: UpdateData) => void;

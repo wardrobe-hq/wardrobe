@@ -15,11 +15,6 @@
  */
 
 
-import type { ApiResponse } from "~/model/api";
-import { getRegisteredJobs } from "../utils/jobs";
-import type { JobInfo } from "~/model/job";
-
-
 /**
  * This API route gets metadata of all registered jobs
  * Params:

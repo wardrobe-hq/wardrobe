@@ -15,11 +15,6 @@
  */
 
 
-import type { ApiResponse } from "~/model/api";
-import type { CachedImage } from "~/model/storage";
-import { getImage, scaleImage } from "~/server/utils/storage/useImagesStorage";
-
-
 /**
  * This API route retrieves an image by file path from storage, optionally scales it and serves it as base64 encoded blob
  * Params: { filePath: string, width?: number }

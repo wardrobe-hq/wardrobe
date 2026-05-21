@@ -14,8 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getServerState, SERVER_STATE } from "../utils/useState";
-
 
 /**
  * This middleware rejects any API request when the server is not ready yet

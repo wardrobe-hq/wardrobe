@@ -15,10 +15,6 @@
  */
 
 
-import type { ApiResponse } from "~/model/api";
-import { deleteOutfit } from "~/server/utils/storage/useOutfitsDb";
-
-
 /**
  * This API route deletes an outfit
  * Params: { id: ItemID }

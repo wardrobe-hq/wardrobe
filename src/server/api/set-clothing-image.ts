@@ -15,10 +15,6 @@
  */
 
 
-import type { ApiResponse } from "~/model/api";
-import { saveImage, imgCategory } from "~/server/utils/storage/useImagesStorage";
-
-
 /**
  * This API route accepts an image upload for a piece of clothing and returns a file path
  * Params: { type: string, file: MultiPartData }

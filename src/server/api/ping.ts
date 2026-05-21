@@ -15,9 +15,6 @@
  */
 
 
-import { ApiResponse } from "~/model/api";
-
-
 /**
  * This API route may be used as a server alive check
  * Params:

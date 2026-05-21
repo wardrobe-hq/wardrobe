@@ -16,11 +16,6 @@
 
 
 import { createCanvas, loadImage } from "canvas";
-import type { Outfit } from "~/model/item";
-import { getClothes } from "./storage/useClothesDb";
-import { upsertOutfit, getOutfitsContainingClothing } from "./storage/useOutfitsDb";
-import { getImage, imgCategory, saveImage } from "./storage/useImagesStorage";
-import type { ItemID } from "~/model/storage";
 
 
 /**

@@ -1,0 +1,175 @@
+/*
+ * File: settings.ts
+ * Project: wardrobe
+ * Created Date: 2025-09-08 15:21:35
+ * Author: 3urobeat
+ *
+ * Last Modified: 2026-05-19 18:56:04
+ * Modified By: 3urobeat
+ *
+ * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+
+import type { ArrayDelta, Delta } from "jsondiffpatch";
+
+
+// Provide jsondiffpatch Delta alias with type annotation and custom FullObjectsInArray ArrayDelta types
+export type Diff<T>                   = Delta;      // eslint-disable-line @typescript-eslint/no-unused-vars
+export type FullObjectsInArrayDiff<T> = ArrayDelta; // eslint-disable-line @typescript-eslint/no-unused-vars
+
+export type ItemID = string;
+
+// Fields every database record is required to have
+export interface DatabaseItem {
+    id: ItemID,
+    addedTimestamp: number,
+    modifiedTimestamp: number,
+    _lockVersion: number // Used for storage lock mechanism to detect accidental overwrite due to cache desync
+}
+
+export const defaultDatabaseItem: DatabaseItem = {
+    id: "",
+    addedTimestamp: 0,
+    modifiedTimestamp: 0,
+    _lockVersion: 0
+};
+
+
+/**
+ * Updates metadata fields of a database item
+ * @param item Item to update
+ */
+export function updateDatabaseItemMetadata(item: DatabaseItem) {
+    if (!item.addedTimestamp) {
+        item.addedTimestamp = Date.now();
+    }
+    item.modifiedTimestamp = Date.now();
+    item._lockVersion      = item._lockVersion + 1 || 1;
+}
+
+
+// Metadata record which every database contains
+export interface DatabaseMetaItem extends DatabaseItem {
+    readonly id: "DB_META_ITEM",
+    dbCreatedVersion: string,   // Wardrobe Version Database was created in
+    dbVersion: string           // Wardrobe Version Database was last loaded in
+}
+
+export const defaultDatabaseMetaItem: DatabaseMetaItem = {
+    ...defaultDatabaseItem,
+    id: "DB_META_ITEM",
+    dbCreatedVersion: "",
+    dbVersion: ""
+};
+
+// Filter to use in Nedb database queries ({ id: NEDB_META_ITEM_FILTER } or { id: { ...NEDB_META_ITEM_FILTER } }) to exclude DatabaseMetaItem from result - https://github.com/seald/nedb#operators-lt-lte-gt-gte-in-nin-ne-exists-regex
+export const NEDB_META_ITEM_FILTER = { $ne: defaultDatabaseMetaItem.id };
+
+
+// Storage kinds used by Wardrobe
+export enum StorageKind {
+    // LOCAL_STORAGE,          // Stored in Browser of user
+    CLOTHES,
+    LABEL_CATEGORIES,
+    LABELS,
+    OUTFITS,
+    SERVER_SETTINGS,
+    IMAGES
+}
+// TODO: Use in more places?
+
+
+// Maps Storage Kind to which data they contain
+export type StorageKindDataMap<T extends StorageKind> = {
+    // [StorageKind.LOCAL_STORAGE]:    UXSettings;
+    [StorageKind.CLOTHES]:          Clothing;
+    [StorageKind.LABEL_CATEGORIES]: Category;
+    [StorageKind.LABELS]:           Label;
+    [StorageKind.OUTFITS]:          Outfit;
+    [StorageKind.SERVER_SETTINGS]:  ServerSettings;
+    [StorageKind.IMAGES]:           CachedImage;    // Not a 100% perfect fit, only used in API & Frontend
+}[T];
+
+
+/*
+ * UX Settings - Stored in localStorage, see utils/storage.ts
+ */
+
+export const UXSettingsName = "uxSettings";
+
+// UX settings stored in user's browser
+export type UXSettings = {
+
+    // Boolean if user changed dark mode, null if automatic
+    darkModeEnabled: boolean | null, // WARN: Used in public/global.js as well
+
+    // Selected scaling and sort mode for item cards in titleBarFull
+    selectedItemCardsScaling: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9,
+    selectedItemSort: SortMode,
+
+    // Whether user enabled if selected filters should be persisted
+    saveSelectedFilters: boolean // TODO
+
+}
+// Selected language is not included here because nuxt i18n plugin handles it
+
+export const defaultUXSettings: UXSettings = {
+    darkModeEnabled: null,
+    selectedItemCardsScaling: 6,
+    selectedItemSort: SortMode.dateDesc,
+    saveSelectedFilters: false
+};
+
+
+
+/**
+ * Server Settings - Stored in database
+ */
+
+export interface ServerSettings extends DatabaseItem {
+    readonly id: "SERVER_SETTINGS",
+
+    // Location settings, used for weather integration
+    location: {
+        // Get user's location from IP address. If true, lat & lon will be ignored
+        useGeolocation: boolean,
+
+        // Latitude & Longitude values to use if useGeolocation is false
+        lat: number | null,
+        lon: number | null
+    },
+    weatherApiKey: string,
+    temperatureUnit: Unit,
+    serverSubscriptionEnabled: boolean
+}
+
+export const defaultServerSettings: ServerSettings = {
+    ...defaultDatabaseItem,
+    id: "SERVER_SETTINGS",
+    location: {
+        useGeolocation: true,
+        lat: null,
+        lon: null
+    },
+    weatherApiKey: "",
+    temperatureUnit: 1, // TODO: Cannot access Unit here, always causes issues with Unit being used as both a type and value in this file
+    serverSubscriptionEnabled: true
+};
+
+
+
+/**
+ * Storage Composable
+ */
+
+// Used in API & frontend, not in storage itself
+export type CachedImage = {
+    id: string,                  // ImgPath is specified as ID here
+    imgBlob: string | null,
+    imgWidth: number | undefined // Only used on client side for scaling, is not the actual width on server
+}

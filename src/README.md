@@ -3,6 +3,7 @@
 TBA
 
 ## Structure
+https://nuxt.com/docs/4.x/directory-structure
 
 - `components/` - Contains all reusable Vue frontend components used by pages
 - `composables/` - Contains all stateful util functions for Vue frontend

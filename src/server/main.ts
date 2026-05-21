@@ -15,12 +15,7 @@
  */
 
 
-import packageJson from "~/../package.json";
-import { _migrateClothingDb } from "./utils/storage/useClothesDb";
-import { _migrateServerSettingsDb } from "./utils/storage/useSettingsDb";
-import { _migrateOutfitsDb } from "./utils/storage/useOutfitsDb";
-import { _migrateLabelCategoriesDb, _migrateLabelsDb } from "./utils/storage/useLabelsDb";
-import { SERVER_STATE, setServerState } from "./utils/useState";
+import packageJson from "../../package.json";
 
 
 /**

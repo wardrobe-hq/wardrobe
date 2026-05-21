@@ -15,11 +15,6 @@
  */
 
 
-import type { ApiResponse } from "~/model/api";
-import type { Label } from "~/model/label";
-import { getAllLabels } from "~/server/utils/storage/useLabelsDb";
-
-
 /**
  * This API route gets all stored labels and returns them
  * Params:
