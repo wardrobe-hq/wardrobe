@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-21 18:03:05
+ * Last Modified: 2026-05-21 22:49:26
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -223,6 +223,7 @@
                     if (editModeEnabled) { // Requires patching
                         const diff = getDiff(storedClothing.value.document!, newClothingData);
                         localClothing.value.document = applyDiff(localClothing.value.document!, diff);
+                        storedClothing.value.document = newClothingData;
                     }
 
                     // Sync imgPath so useImage re-fetches new image

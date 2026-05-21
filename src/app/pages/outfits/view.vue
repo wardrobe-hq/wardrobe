@@ -5,7 +5,7 @@
  * Created Date: 2025-09-10 17:37:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-21 18:03:10
+ * Last Modified: 2026-05-21 22:52:56
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -290,7 +290,7 @@
             let storageData = data as StorageUpdateEvent;
 
             if (storageData.storage == StorageKind.OUTFITS) {
-                let newOutfitData = storageData.newData as Outfit;
+                let newOutfitData = storageData.newData[0] as Outfit;
 
                 if(localOutfit.value && newOutfitData.id == outfitId) {
                     if (storageData.action == SubscriptionEventAction.DELETE) { // Outfit was deleted on server
@@ -301,8 +301,8 @@
                     }
                     if (editModeEnabled) { // Requires patching
                         const diff = getDiff(storedOutfit.value.document!, newOutfitData);
-                        console.log(diff)
-                        //localClothing.value = applyDiff(localClothing.value, diff);
+                        localOutfit.value.document = applyDiff(localOutfit.value.document!, diff);
+                        storedOutfit.value.document = newOutfitData;
                     }
                 }
             }
