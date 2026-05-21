@@ -5,7 +5,7 @@
  * Created Date: 2025-09-09 17:13:32
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-12 19:49:24
+ * Last Modified: 2026-05-21 18:03:07
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -228,13 +228,12 @@
     // Add a new label to a category
     async function addLabel(category: Category) {
         const newLabel: Label = {
+            ...defaultDatabaseItem,
             id: await getUUIDFromServer(),
             name: "",
             orderIndex: getNewLastLabelOrderIndex(labelsPerCategory[category.id]!),
             categoryID: category.id,
-            specialityValue: CategorySpecialityMap[category.specialityID].value, // Init val
-            addedTimestamp: 0,
-            modifiedTimestamp: 0
+            specialityValue: CategorySpecialityMap[category.specialityID].value // Init val
         };
 
         localLabels.value.push(newLabel);
@@ -291,11 +290,10 @@
     // Add a new category
     async function addCategory() {
         const e: Category = {
+            ...defaultDatabaseItem,
             id: await getUUIDFromServer(),
             name: "",
-            specialityID: CategorySpecialityID.No_Speciality,
-            addedTimestamp: 0,
-            modifiedTimestamp: 0
+            specialityID: CategorySpecialityID.No_Speciality
         };
 
         localCategories.value.push(e);

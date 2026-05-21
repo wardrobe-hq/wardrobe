@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-17 20:19:30
+ * Last Modified: 2026-05-21 18:03:05
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -163,7 +163,7 @@
     const storedCategories = getAllLabelCategoriesFromCache();
 
     // Refs, init for new piece of clothing
-    let   storedClothing: Ref<ApiResponse<Clothing>> = ref({ success: true, message: null, document: { id: "", title: "", description: "", imgPath: "", labelIDs: [], addedTimestamp: 0, modifiedTimestamp: 0 } });
+    let   storedClothing: Ref<ApiResponse<Clothing>> = ref({ success: true, message: null, document: { ...defaultDatabaseItem, title: "", description: "", imgPath: "", labelIDs: [] } });
     let   localClothing:  Ref<ApiResponse<Clothing>> = storedClothing;
 
     const currentImgPath = ref("");
@@ -262,13 +262,12 @@
         // If prompt was submitted with content
         if (name) {
             const newLabel: Label = {
+                ...defaultDatabaseItem,
                 id: await getUUIDFromServer(),
                 name: name,
                 orderIndex: getNewLastLabelOrderIndex(getLabelsOfCategory(storedLabels.value.document!, thisCategory.id)),
                 categoryID: thisCategory.id,
-                specialityValue: CategorySpecialityMap[thisCategory.specialityID].value, // Init val
-                addedTimestamp: 0,
-                modifiedTimestamp: 0
+                specialityValue: CategorySpecialityMap[thisCategory.specialityID].value // Init val
             };
 
             // Send new label to server

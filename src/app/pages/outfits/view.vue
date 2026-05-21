@@ -5,7 +5,7 @@
  * Created Date: 2025-09-10 17:37:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-12 19:49:24
+ * Last Modified: 2026-05-21 18:03:10
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -240,7 +240,7 @@
     const storedCategories = getAllLabelCategoriesFromCache();
 
     // Refs, init for new outfit
-    let   storedOutfit:     Ref<ApiResponse<Outfit>> = ref({ success: true, message: null, document: { id: "", title: "", clothes: [], labelIDs: [], previewImgPath: "", addedTimestamp: 0, modifiedTimestamp: 0 } });
+    let   storedOutfit:     Ref<ApiResponse<Outfit>> = ref({ success: true, message: null, document: { ...defaultDatabaseItem, title: "", clothes: [], labelIDs: [], previewImgPath: "" } });
     let   localOutfit:      Ref<ApiResponse<Outfit>> = storedOutfit;
     const bodyPartLabels:   Ref<Label[]>             = ref([]);
     await getAllClothesFromServer();
