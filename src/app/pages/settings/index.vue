@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:51:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-12 19:49:24
+ * Last Modified: 2026-05-22 16:40:14
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -204,6 +204,9 @@
                         <label class="custom-label-secondary text-nowrap py-0! px-2! w-fit">Tailwind:</label>
                         <label>v{{ packageJson.dependencies["@tailwindcss/vite"].replace("\^", "") }}</label>
 
+                        <label class="custom-label-secondary text-nowrap py-0! px-2! w-fit">Debug?</label>
+                        <input type="checkbox" class="size-4 self-center" :checked="isAppInDevMode" disabled>
+
                     </div>
                 </div>
 
@@ -332,6 +335,8 @@
     let   selectedLanguage:     string     = i18n.locale.value; // Separated from UXSettings because nuxt i18n module handles it
 
     let   serverStatistics:     Ref<ServerStatistics | undefined> = ref();
+
+    const isAppInDevMode        = ref(import.meta.env.DEV);
 
 
     // Load data and attach event listener to refresh on subscription event

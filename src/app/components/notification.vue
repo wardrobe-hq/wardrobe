@@ -5,7 +5,7 @@
  * Created Date: 2026-04-02 22:24:30
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-11 18:41:13
+ * Last Modified: 2026-05-22 16:40:17
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -119,6 +119,10 @@
 
         if (!data.title || data.level == undefined) {
             throw new Error("Notification properties title & type are not optional");
+        }
+
+        if (data.level == NotificationLevel.DEBUG && process.env.NODE_ENV !== "development") {
+            return; // Ignore notification if not in dev/debug mode
         }
 
         notificationData.value = data;
