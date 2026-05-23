@@ -169,6 +169,6 @@ The original is licensed under the CC0 license.
 Please see [resources/3d-model/](/resources/3d-model/).
 
 ## AI usage
-OpenCode's free AI model has been sporadically used to write implementation examples and speed up refactoring or debugging.  
 There is no, and never will be, any purely AI written and or unreviewed code in this project.  
-I'm inherently opposed to so called *vibe-coding* and want to build a maintainable application; any slop you may encounter (please open an issue!) is organically grown human slop.
+I've sporadically used a free model to sketch context aware examples or speed up debugging, while doing the actual implementation myself.  
+I'm inherently opposed to *vibe-coding* and want to build a maintainable application; any slop you may encounter (please open an issue!) is organically grown human slop.

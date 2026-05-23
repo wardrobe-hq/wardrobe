@@ -2,6 +2,7 @@
 
 You would like to contribute to the project?  
 Great! No matter if it's fixing a few typos or adding a whole feature - every contribution, as long as it is not vibe-coded, is welcome.  
+All contributions have to be made without major AI assistance in the final submitted code. You sign this off when submitting code via a pull request or similar.
 
 You can see a list of all features that still need to be worked on, are in progress or are finished in the repo's [projects](https://github.com/wardrobe-hq/wardrobe/projects) section.  
 
@@ -51,7 +52,7 @@ Once everything looks good, I will merge your changes and they will be included 
 Please make sure your code is somewhat good looking, is easy to read and is properly documented.  
 Take a look at any of the other source code files in the project to see how I style my code.
 
-The project includes an [eslint config](/.eslint.config.mjs) to enforce the project's styling rules, so please make sure your eslint installation works.  
+The project includes an [eslint config](eslint.config.mjs) to enforce the project's styling rules, so please make sure your eslint installation works.  
 While working on your code, eslint should automatically display warnings or errors for parts of your code if you are using an IDE.  
 To run the linter manually, you can execute the command `npx eslint .` in the project folder.  
 Please make sure to fix all eslint errors and warnings before submitting a pull request.
