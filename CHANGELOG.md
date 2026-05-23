@@ -4,6 +4,7 @@
 - [0.1.0](#0.1.0)
 - [0.2.0](#0.2.0)
 - [0.3.0](#0.3.0)
+- [0.3.1](#0.3.1)
   
 &nbsp;
 
@@ -179,6 +180,38 @@ Commit: [3e22505](https://github.com/wardrobe-hq/wardrobe/commit/3e22505)
 - Various TS type improvements to improve code read- & maintainability
 - Change ServerSettings DB record to use a static ID
 - Updated dependencies
+- Minor other changes
+
+Commit: [af9b9ca](https://github.com/wardrobe-hq/wardrobe/commit/af9b9ca)
+
+&nbsp;
+
+<a id="0.3.1"></a>
+
+## 2026-05-23, Version 0.3.1
+**Additions:**
+- Added ping api route
+- Added a state implementation for the server
+- Added a server middleware and loading splash screen to prevent API access when server is not ready yet
+- Implemented logger abstraction and fixed debug logs showing in prod
+
+&nbsp;
+
+**Reworks:**
+- refactor: Moved weather popout to seperated component
+- Reworked the server's structure to have a main file, group storage handlers together and improve job architecture
+- Migrated the project's directory structure to Nuxt 4
+
+&nbsp;
+
+**Fixes:**
+- Fixed oversight in clothing & outfit patching on subscription event, leading to page not updating correctly or not at all
+
+&nbsp;
+
+**Changes:**
+- Don't show debug notifications in prod mode
+- Updated contributing guidelines and added pull request template
 - Minor other changes
 
 Commit: [](https://github.com/wardrobe-hq/wardrobe/commit/)
