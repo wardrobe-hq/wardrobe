@@ -4,7 +4,7 @@
  * Created Date: 2026-01-23 22:00:18
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 19:04:54
+ * Last Modified: 2026-05-23 13:13:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -149,7 +149,7 @@ export function isNowBetweenDatesIgnoringYear(from: number, to: number): boolean
     // Handle special case where from > to
     fromDate.setUTCFullYear(YEARLESS_DATE_YEAR - (from > to ? 1 : 0));
 
-    // console.debug("[DEBUG] isNowBetweenDatesIgnoringYear: ", fromDate, toDate, nowDate);
+    // logger.debug("isNowBetweenDatesIgnoringYear: ", fromDate, toDate, nowDate);
 
     return (fromDate.getTime() <= nowDate.getTime()) && (toDate.getTime() >= nowDate.getTime());
 

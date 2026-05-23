@@ -5,7 +5,7 @@
  * Created Date: 2026-05-19 20:40:45
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-19 20:54:49
+ * Last Modified: 2026-05-23 13:13:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -155,13 +155,13 @@
 
     // Handle global events
     useNuxtApp().hook("app:user:changesMade", (val: boolean = true) => {
-        console.debug(`[DEBUG] Received changesMade = '${val}' event!`)
+        logger.debug(`Received changesMade = '${val}' event!`)
         changesMade = val;
     });
 
     useNuxtApp().hook("app:notification:action", (data: NotificationData) => {
         if (data.type == NotificationType.RELOAD_PAGE) {
-            console.debug("[DEBUG] Got 'RELOAD_PAGE' event, reloading page...");
+            logger.debug("Got 'RELOAD_PAGE' event, reloading page...");
             reloadNuxtApp();
         }
     });
@@ -183,7 +183,7 @@
     updateGlobalSearchBar(useRoute().meta);
 
     onMounted(() => { // Client side only
-        console.debug("Wardrobe loaded!");
+        logger.debug("Wardrobe loaded!");
 
         checkForUpdate();
         initServerSubscriptionHandler();
@@ -211,7 +211,7 @@
             let output = await fetch("https://raw.githubusercontent.com/wardrobe-hq/wardrobe/main/package.json");
             let parsed = await output.json();
 
-            console.log("Successfully checked for an Update; Local: %s | Online: %s ", packagejson.version, parsed.version);
+            logger.info("Successfully checked for an Update; Local: %s | Online: %s ", packagejson.version, parsed.version);
 
             onlineVersion.value = parsed.version;
 
@@ -224,7 +224,7 @@
             }
         } catch (err) {
 
-            console.error("checkForUpdate: Failed to check GitHub repository for an available update. " + err);
+            logger.error("checkForUpdate: Failed to check GitHub repository for an available update. " + err);
         }
     }
 

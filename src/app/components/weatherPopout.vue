@@ -5,7 +5,7 @@
  * Created Date: 2026-05-18 18:22:12
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-19 19:06:41
+ * Last Modified: 2026-05-23 13:13:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -83,7 +83,7 @@
 
     // Re-fetch weather from server when settings have been changed to react to changed position/api key
     useNuxtApp().hook("app:user:settingsSaved", () => {
-        console.debug(`[DEBUG] Received settingsSaved event, refetching weather'`);
+        logger.debug(`Received settingsSaved event, refetching weather'`);
         getWeather();
     });
 

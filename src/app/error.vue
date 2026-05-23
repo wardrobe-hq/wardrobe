@@ -5,7 +5,7 @@
  * Created Date: 2026-05-11 18:45:27
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-12 22:12:35
+ * Last Modified: 2026-05-23 13:07:15
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -58,7 +58,7 @@
         }
     });
 
-    console.error("Wardrobe encountered an error!", props.error);
+    logger.error("Wardrobe encountered an error!", props.error);
 
 
     useSeoMeta({

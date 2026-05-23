@@ -4,7 +4,7 @@
  * Created Date: 2026-02-14 19:44:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-20 23:15:28
+ * Last Modified: 2026-05-23 13:13:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -32,11 +32,11 @@ export async function _migrateServerSettingsDb(toVersion: string) {
 
     // Get current record
     const curItem = await serverSettingsDb.findOneAsync({ id: defaultDatabaseMetaItem.id }) as unknown as DatabaseMetaItem | null;
-    console.debug(`[DEBUG] Clothing Database Meta - Created in '${curItem?.dbCreatedVersion}', last loaded in '${curItem?.dbVersion}'. Updating version to '${toVersion}'...`);
+    logger.debug(`Clothing Database Meta - Created in '${curItem?.dbCreatedVersion}', last loaded in '${curItem?.dbVersion}'. Updating version to '${toVersion}'...`);
 
     // Apply any necessary dbCreatedVersion -> toVersion migration
     if (!curItem?.dbVersion && toVersion === "0.3.0") { // 0.2.0 -> 0.3.0: ServerSettings record did not have an ID, conflicts with new DatabaseMetaItem
-        console.info("Migrating serverSettings.db to from v0.2.0 to v0.3.0...");
+        logger.info("Migrating serverSettings.db to from v0.2.0 to v0.3.0...");
         await serverSettingsDb.updateAsync({ id: { $exists: false } }, { $set: { id: defaultServerSettings.id, addedTimestamp: Date.now(), modifiedTimestamp: Date.now(), _lockVersion: 1 } });
     }
 

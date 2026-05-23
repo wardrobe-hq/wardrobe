@@ -5,7 +5,7 @@
  * Created Date: 2025-12-24 12:09:18
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-26 18:36:04
+ * Last Modified: 2026-05-23 13:13:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -97,7 +97,7 @@
                 // Calculate distance to left & right screen border. If value is negative, the dialog overflows
                 const leftOverflow  = buttonRect.left - dialogWidth;
                 const rightOverflow = window.innerWidth - (buttonRect.right + dialogWidth);
-                //console.debug("[DEBUG] Picker left & right screen border distances:", leftOverflow, rightOverflow)
+                //logger.debug("Picker left & right screen border distances:", leftOverflow, rightOverflow)
 
                 // Picker dialog overflows on both screen borders, center on screen and shrink content
                 if (leftOverflow < 0 && rightOverflow < 0) {

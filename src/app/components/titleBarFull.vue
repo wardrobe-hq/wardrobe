@@ -5,7 +5,7 @@
  * Created Date: 2025-09-17 17:25:36
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 18:59:13
+ * Last Modified: 2026-05-23 13:17:25
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -130,12 +130,12 @@
             // ...and we can simply remove it without filtering again
             selectedFilters.value = filtered;
 
-            console.debug("DEBUG - toggleFilter: Disabled " + thisFilter);
+            logger.debug("toggleFilter: Disabled " + thisFilter);
         } else {
             // ...otherwise we can simply add it
             selectedFilters.value.push(thisFilter);
 
-            console.debug("DEBUG - toggleFilter: Enabled " + thisFilter);
+            logger.debug("toggleFilter: Enabled " + thisFilter);
         }
 
     }

@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-20 23:24:41
+ * Last Modified: 2026-05-23 13:07:15
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -51,7 +51,7 @@ export async function getImage(filePath: string): Promise<Buffer<ArrayBufferLike
     const item = await imagesStorage.getItemRaw(filePath);
 
     if (!item) {
-        console.error(`Server getImage: No image found at '${filePath}'!`);
+        logger.error(`Server getImage: No image found at '${filePath}'!`);
         return null;
     }
 

@@ -5,7 +5,7 @@
  * Created Date: 2026-03-24 21:17:26
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-10 19:12:42
+ * Last Modified: 2026-05-23 13:13:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -83,7 +83,7 @@
         isVisible.value = state;
 
         if (state && cachedImage.value === null) {
-            console.debug(`[DEBUG] ImgLazy: Image '${props.imgPath}' became visible and is not fetched yet, loading...`);
+            logger.debug(`ImgLazy: Image '${props.imgPath}' became visible and is not fetched yet, loading...`);
             load(); // Trigger load
         }
     }

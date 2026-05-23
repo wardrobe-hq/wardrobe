@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-20 23:14:03
+ * Last Modified: 2026-05-23 13:13:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -35,7 +35,7 @@ export async function _migrateLabelsDb(toVersion: string) {
 
     // Get current record
     const curItem = await labelsDb.findOneAsync({ id: defaultDatabaseMetaItem.id }) as unknown as DatabaseMetaItem | null;
-    console.debug(`[DEBUG] Labels Database Meta - Created in '${curItem?.dbCreatedVersion}', last loaded in '${curItem?.dbVersion}'. Updating version to '${toVersion}'...`);
+    logger.debug(`Labels Database Meta - Created in '${curItem?.dbCreatedVersion}', last loaded in '${curItem?.dbVersion}'. Updating version to '${toVersion}'...`);
 
     // Apply any necessary dbCreatedVersion -> toVersion migration
     // ...
@@ -60,7 +60,7 @@ export async function _migrateLabelCategoriesDb(toVersion: string) {
 
     // Get current record
     const curItem = await labelCategoriesDb.findOneAsync({ id: defaultDatabaseMetaItem.id }) as unknown as DatabaseMetaItem | null;
-    console.debug(`[DEBUG] Label Categories Database Meta - Created in '${curItem?.dbCreatedVersion}', last loaded in '${curItem?.dbVersion}'. Updating version to '${toVersion}'...`);
+    logger.debug(`Label Categories Database Meta - Created in '${curItem?.dbCreatedVersion}', last loaded in '${curItem?.dbVersion}'. Updating version to '${toVersion}'...`);
 
     // Apply any necessary dbCreatedVersion -> toVersion migration
     // ...

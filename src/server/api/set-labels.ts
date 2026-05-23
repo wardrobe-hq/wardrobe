@@ -4,7 +4,7 @@
  * Created Date: 2025-12-08 17:43:05
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-18 20:44:30
+ * Last Modified: 2026-05-23 13:06:42
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -42,7 +42,7 @@ export default defineEventHandler(async (event): Promise<ApiResponse<SET_LABELS_
     const updatedLabels:     Label[]    = params.updatedLabels;
     const deletedLabels:     Label[]    = params.deletedLabels;
 
-    console.debug(getApiLogPrefix(event), "Received request for:", "\n updatedCategories:\n", updatedCategories, "\n deletedLabels:\n", deletedLabels, "\n updatedLabels:\n", updatedLabels, "\n deletedCategories:\n", deletedCategories);
+    logger.debug(getApiLogPrefix(event), "Received request for:", "\n updatedCategories:\n", updatedCategories, "\n deletedLabels:\n", deletedLabels, "\n updatedLabels:\n", updatedLabels, "\n deletedCategories:\n", deletedCategories);
 
     // Write to DB
     return await getApiResponse<SET_LABELS_API_RETURN>(async () => {

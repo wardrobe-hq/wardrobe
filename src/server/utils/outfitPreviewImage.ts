@@ -4,7 +4,7 @@
  * Created Date: 2025-12-28 21:38:23
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-20 23:17:24
+ * Last Modified: 2026-05-23 13:28:53
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -99,7 +99,7 @@ export async function generateOutfitPreviewImage(outfit: Outfit, originClientId?
 
 
     // Generate collage
-    console.log(`Generating new outfit preview image for '${outfit.title}' (${outfit.id}) with ${images.length} images...`);
+    logger.debug(`Generating new outfit preview image for '${outfit.title}' (${outfit.id}) with ${images.length} images...`);
 
     const collage = await generateImageCollage(images, 1024, 1024);
 
@@ -107,7 +107,7 @@ export async function generateOutfitPreviewImage(outfit: Outfit, originClientId?
     // Save image & return path
     const imgPath = await saveImage(imgCategory.outfit, collage, originClientId);
 
-    console.log("Finished generating outfit preview image " + imgPath);
+    logger.debug("Finished generating outfit preview image " + imgPath);
     return imgPath;
 
 }
@@ -123,7 +123,7 @@ export function updateImagesOfAffectedOutfits(clothingID: ItemID, originClientId
     // Get all outfits containing this piece of clothing
     getOutfitsContainingClothing(clothingID)
         .then((outfits) => {
-            console.log(`Re-generating ${outfits.length} preview images which contain clothing '${clothingID}'...`);
+            logger.debug(`Re-generating ${outfits.length} preview images which contain clothing '${clothingID}'...`);
 
             outfits.forEach(async (e) => upsertOutfit(e, originClientId)); // UpsertOutfit handles preview generation
         });

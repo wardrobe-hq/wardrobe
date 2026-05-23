@@ -5,7 +5,7 @@
  * Created Date: 2026-03-20 22:08:57
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-21 22:00:23
+ * Last Modified: 2026-05-23 13:13:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -104,7 +104,7 @@
         daysInThisMonth.value = getDaysPerMonth(selectedMonth);
 
         if (date.value!.getDate() > daysInThisMonth.value) {
-            console.debug(`[DEBUG] dayMonthInput: Reducing selected day to ${daysInThisMonth.value} because month ${selectedMonth + 1} does not have ${date.value!.getDate()} days!`);
+            logger.debug(`dayMonthInput: Reducing selected day to ${daysInThisMonth.value} because month ${selectedMonth + 1} does not have ${date.value!.getDate()} days!`);
             date.value!.setDate(daysInThisMonth.value);
         }
 

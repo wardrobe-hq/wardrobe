@@ -4,7 +4,7 @@
  * Created Date: 2026-05-20 18:34:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-20 22:51:38
+ * Last Modified: 2026-05-23 13:06:58
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -25,14 +25,14 @@ export async function run() {
 
     // Hello World
     const curVersion = packageJson.version;
-    console.log(`Wardrobe Server v${curVersion} starting up...`);
+    logger.info(`Wardrobe Server v${curVersion} starting up...`);
 
     // Sets terminal title (thanks: https://stackoverflow.com/a/30360821/12934162) and process name (readable in task manager etc.)
     process.stdout.write(`${String.fromCharCode(27)}]0;Wardrobe Server v${curVersion}`);
     process.title = "wardrobe-server";
 
     // Load databases and migrate if necessary
-    console.log("Loading databases...");
+    logger.info("Loading databases...");
 
     await Promise.all([
         _migrateClothingDb(curVersion),
@@ -47,6 +47,6 @@ export async function run() {
 
     // Done!
     setServerState(SERVER_STATE.SERVER_READY, true);
-    console.log("Startup complete!");
+    logger.info("Startup complete!");
 
 }

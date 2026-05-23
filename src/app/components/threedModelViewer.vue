@@ -5,7 +5,7 @@
  * Created Date: 2026-01-31 17:03:57
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-15 17:57:05
+ * Last Modified: 2026-05-23 13:07:15
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -94,7 +94,7 @@
             }
 
         } catch(err) {
-            console.error("Failed to set threeJs renderer size: " + err);
+            logger.error("Failed to set threeJs renderer size: " + err);
             throw err;
         }
     }
@@ -182,7 +182,7 @@
             scene.add(light);
 
         } catch(err) {
-            console.error("Failed to init threeJs renderer: " + err);
+            logger.error("Failed to init threeJs renderer: " + err);
             throw err;
         }
     }
@@ -208,7 +208,7 @@
             camera.position.y = boundingBox.max.y / 2;
 
         } catch(err) {
-            console.error("Failed to load threeJs model: " + err);
+            logger.error("Failed to load threeJs model: " + err);
             throw err;
         }
     }
@@ -320,7 +320,7 @@
             renderer.render(scene, camera);
             animate();
         } catch(err) {
-            console.error("Failed to setup preview viewer: " + err);
+            logger.error("Failed to setup preview viewer: " + err);
         }
     });
 

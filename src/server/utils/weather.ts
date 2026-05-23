@@ -4,7 +4,7 @@
  * Created Date: 2026-02-12 17:29:48
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-15 19:40:03
+ * Last Modified: 2026-05-23 13:22:45
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -74,7 +74,7 @@ export async function getWeather(lat: number, lon: number): Promise<WeatherData>
         if (e.dt > (Date.now() / 1000) - recent) {
             if (rounded(e.coord.lat) == rounded(lat) && rounded(e.coord.lon) == rounded(lon)) {
                 cachedRes = e;
-                console.debug(`[DEBUG] Found cached weather for '${lat}, ${lon}'...`);
+                logger.debug(`Weather: Found cached weather for '${lat}, ${lon}'...`);
             }
             return true;
         }
@@ -83,14 +83,14 @@ export async function getWeather(lat: number, lon: number): Promise<WeatherData>
 
     // Ask API if no cached element was found
     if (!cachedRes) {
-        console.debug(`[DEBUG] Requesting current weather for '${lat}, ${lon}' from API...`);
+        logger.debug(`Weather: Requesting current weather for '${lat}, ${lon}' from API...`);
 
         const apiRes = await getCurrentWeatherFromApi(lat, lon); // Let exception fall through
 
         // Add result to cache
         weatherCache.push(apiRes);
 
-        console.debug("[DEBUG] Success, added response to cache.");
+        logger.debug("Weather: Success, added response to cache.");
 
         return apiRes;
     }

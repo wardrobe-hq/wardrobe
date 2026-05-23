@@ -4,7 +4,7 @@
  * Created Date: 2026-03-26 18:49:20
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-20 22:46:25
+ * Last Modified: 2026-05-23 13:07:15
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -28,15 +28,15 @@ import { randomUUID } from "crypto";
 // This function is executed when this API route is called
 export default defineEventHandler(async (event) => {
 
-    console.debug(getApiLogPrefix(event), "Received request...");
+    logger.debug(getApiLogPrefix(event), "Received request...");
 
     // Generate a client identifier and set it as a cookie
     const clientUUID = randomUUID();
     try {
         setCookie(event, "wardrobe_clientId", clientUUID);
-        console.debug(getApiLogPrefix(event), "Set cookie 'wardrobe_clientId': " + clientUUID);
+        logger.debug(getApiLogPrefix(event), "Set cookie 'wardrobe_clientId': " + clientUUID);
     } catch(err) {
-        console.error(getApiLogPrefix(event), "Failed to set 'wardrobe_clientId' cookie!", err);
+        logger.error(getApiLogPrefix(event), "Failed to set 'wardrobe_clientId' cookie!", err);
     }
 
     // Make this a stream

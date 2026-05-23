@@ -4,7 +4,7 @@
  * Created Date: 2025-09-10 18:51:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-15 14:57:13
+ * Last Modified: 2026-05-23 13:06:42
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -35,7 +35,7 @@ export default defineEventHandler(async (event): Promise<ApiResponse<Outfit>> =>
         });
     }
 
-    console.debug(getApiLogPrefix(event), `Received request for id '${params.id}'...`);
+    logger.debug(getApiLogPrefix(event), `Received request for id '${params.id}'...`);
 
     // Ask db helper to retrieve item
     return await getApiResponse<Outfit>(async () => {

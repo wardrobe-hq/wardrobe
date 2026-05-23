@@ -4,7 +4,7 @@
  * Created Date: 2025-12-27 11:53:02
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-15 14:57:47
+ * Last Modified: 2026-05-23 13:06:42
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -35,7 +35,7 @@ export default defineEventHandler(async (event): Promise<ApiResponse<void>> => {
         });
     }
 
-    console.debug(getApiLogPrefix(event), "Received request for: ", params.id);
+    logger.debug(getApiLogPrefix(event), "Received request for: ", params.id);
 
     // Ask db helper to delete entry
     return await getApiResponse<void>(() => {

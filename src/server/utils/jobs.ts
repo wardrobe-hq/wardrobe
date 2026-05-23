@@ -4,7 +4,7 @@
  * Created Date: 2025-12-29 14:47:41
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-20 23:13:07
+ * Last Modified: 2026-05-23 13:06:58
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -45,7 +45,7 @@ export function registerJob(job: Job) {
         throw("A Job with that is already registered");
     }
 
-    console.log(`Jobs Plugin: Registering job '${job.info.name}' which executes ${job.info.runOnRegistration ? "now and then " : ""}${job.info.interval > 0 ? "every " + formatTime(job.info.interval) : "only manually"}`);
+    logger.info(`Jobs Plugin: Registering job '${job.info.name}' which executes ${job.info.runOnRegistration ? "now and then " : ""}${job.info.interval > 0 ? "every " + formatTime(job.info.interval) : "only manually"}`);
 
     // Check if job shall run on registration. Ignore if server is not fully started yet, it will be processed asap
     if (job.info.runOnRegistration && getServerState(SERVER_STATE.SERVER_READY)) {
@@ -79,7 +79,7 @@ export function unregisterJob(jobName: string) {
     }
 
     // Remove job
-    console.log(`Jobs Plugin: Unregistering job '${jobName}'...`);
+    logger.info(`Jobs Plugin: Unregistering job '${jobName}'...`);
     _registeredJobs.splice(index, 1);
 
     sendJobSubscriptionEvent();
@@ -99,7 +99,7 @@ function _runDueJobs() {
         if (job.info.interval !== 0
             && job.info._lastExecTimestamp! + job.info.interval < Date.now()
         ) {
-            console.log(`JobManager: Running due job '${job.info.name}'...`);
+            logger.info(`JobManager: Running due job '${job.info.name}'...`);
 
             job.run();
             job.info._lastExecTimestamp = Date.now();

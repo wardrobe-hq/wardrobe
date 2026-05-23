@@ -4,7 +4,7 @@
  * Created Date: 2026-02-12 17:29:11
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-15 14:57:35
+ * Last Modified: 2026-05-23 13:06:42
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -35,7 +35,7 @@ export default defineEventHandler(async (event): Promise<ApiResponse<WeatherData
         });
     }
 
-    console.debug(getApiLogPrefix(event), `Received request for '${params.lat}, ${params.lon}'`);
+    logger.debug(getApiLogPrefix(event), `Received request for '${params.lat}, ${params.lon}'`);
 
     // Get cached or fresh weather
     return await getApiResponse<WeatherData>(() => getWeather(params.lat, params.lon), event);

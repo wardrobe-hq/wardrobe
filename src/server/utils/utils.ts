@@ -4,7 +4,7 @@
  * Created Date: 2026-05-21 18:01:54
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-21 18:02:12
+ * Last Modified: 2026-05-23 13:07:15
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -30,7 +30,7 @@ export async function getDirSize(dir: string): Promise<number> {
     try {
         files = await readdir(dir);
     } catch (err) {
-        console.error(`getDirSize: Failed to access dir '${dir}': ${err}`);
+        logger.error(`getDirSize: Failed to access dir '${dir}': ${err}`);
         return 0;
     }
 

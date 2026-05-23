@@ -5,7 +5,7 @@
  * Created Date: 2026-03-01 15:17:09
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 16:43:33
+ * Last Modified: 2026-05-23 13:13:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -128,7 +128,7 @@
                     matchesDate = isNowBetweenDatesIgnoringYear(value.fromTimestamp!, value.toTimestamp!);
                 }
 
-                console.debug(`[DEBUG] getOutfitsToShowInPopout:`, e.name, (value.fromTemp != null && value.toTemp != null), (value.fromTimestamp != null && value.toTimestamp != null), matchesWeather, matchesDate);
+                logger.debug(`getOutfitsToShowInPopout:`, e.name, (value.fromTemp != null && value.toTemp != null), (value.fromTimestamp != null && value.toTimestamp != null), matchesWeather, matchesDate);
 
                 // Temperature AND Weather constraint set?
                 if (value.fromTemp != null && value.toTemp != null && value.fromTimestamp != null && value.toTimestamp != null) {

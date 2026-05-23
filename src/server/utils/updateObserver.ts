@@ -4,7 +4,7 @@
  * Created Date: 2026-03-26 18:53:29
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-20 23:12:48
+ * Last Modified: 2026-05-23 13:28:24
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -62,7 +62,7 @@ function UpdateObserver<UpdateData>() {
             const lastSub = this.subscribers[this.subscribers.length - 1] || { id: -1 };
             const length  = this.subscribers.push({ id: lastSub.id + 1, func: subscriberFunc, clientUUID: clientUUID });
 
-            console.debug(`[DEBUG] UpdateObserver: New subscription request, adding sub${clientUUID ? " " + clientUUID : ""} with id ${lastSub.id + 1}. There are/is now ${length} subscriber(s)`);
+            logger.debug(`UpdateObserver: New subscription request, adding sub${clientUUID ? " " + clientUUID : ""} with id ${lastSub.id + 1}. There are/is now ${length} subscriber(s)`);
 
             return lastSub.id + 1;
         }
@@ -73,7 +73,7 @@ function UpdateObserver<UpdateData>() {
          */
         deleteSubscriber(id: number) {
             this.subscribers = this.subscribers.filter((e) => e.id != id);
-            console.debug(`[DEBUG] UpdateObserver: Subscriber with id ${id} requested to be deleted, there are/is now ${this.subscribers.length} subscriber(s) left`);
+            logger.debug(`UpdateObserver: Subscriber with id ${id} requested to be deleted, there are/is now ${this.subscribers.length} subscriber(s) left`);
         }
 
         /**
@@ -89,7 +89,7 @@ function UpdateObserver<UpdateData>() {
          * @param exemptClientId Optional: clientUUID to exempt from the update
          */
         callSubscribers(data: UpdateData, exemptClientId?: string) {
-            console.log(`[DEBUG] UpdateObserver: Calling all ${this.subscribers.length} subscribers${exemptClientId ? " except '" + exemptClientId + "'" : ""}...`);
+            logger.debug(`UpdateObserver: Calling all ${this.subscribers.length} subscribers${exemptClientId ? " except '" + exemptClientId + "'" : ""}...`);
 
             this.subscribers.forEach((e) => {
                 if (exemptClientId && e.clientUUID === exemptClientId) return;
@@ -125,21 +125,21 @@ export class SubscriptionUpdateObserver extends UpdateObserver<SubscriptionEvent
                 const stringifiedData = JSON.stringify(newData);
                 responseStream.write(`data: ${stringifiedData}\n\n`);
 
-                console.debug("[DEBUG] SubscriptionUpdateObserver: Updated event stream with new data!");
+                logger.debug("SubscriptionUpdateObserver: Updated event stream with new data!");
             } catch (err) {
-                console.error("SubscriptionUpdateObserver: Failed to update event stream with new data! ", err);
+                logger.error("SubscriptionUpdateObserver: Failed to update event stream with new data! ", err);
             }
         };
 
         // Attempt to call new subscriber
-        console.debug("[DEBUG] SubscriptionUpdateObserver: Attempting to call new subscriber...");
+        logger.debug("SubscriptionUpdateObserver: Attempting to call new subscriber...");
         await updateClient({ type: SubscriptionEventType.SUBSCRIPTION, action: SubscriptionEventAction.ANY });
 
         const id = SubscriptionUpdateObserver.getInstance().addSubscriber(updateClient, clientUUID);
 
         // Listen for connection close and clean up
         request.on("close", () => {
-            console.debug(`[DEBUG] SubscriptionUpdateObserver: Subscriber ${id} has lost connection`);
+            logger.debug(`SubscriptionUpdateObserver: Subscriber ${id} has lost connection`);
 
             SubscriptionUpdateObserver.getInstance().deleteSubscriber(id);
         });

@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 18:05:20
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-15 14:56:56
+ * Last Modified: 2026-05-23 13:06:42
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -35,7 +35,7 @@ export default defineEventHandler(async (event): Promise<ApiResponse<CachedImage
         });
     }
 
-    console.debug(getApiLogPrefix(event), `Received request to retrieve image '${params.filePath}'${params.width ? " scaled to " + params.width + "px wide": ""}...`);
+    logger.debug(getApiLogPrefix(event), `Received request to retrieve image '${params.filePath}'${params.width ? " scaled to " + params.width + "px wide": ""}...`);
 
     // Request item // TODO: Image access restricions?
     return await getApiResponse<CachedImage>(async () => {

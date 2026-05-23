@@ -5,7 +5,7 @@
  * Created Date: 2025-09-10 17:37:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-21 22:52:56
+ * Last Modified: 2026-05-23 13:17:35
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -294,7 +294,7 @@
 
                 if(localOutfit.value && newOutfitData.id == outfitId) {
                     if (storageData.action == SubscriptionEventAction.DELETE) { // Outfit was deleted on server
-                        console.debug("DEBUG: Current outfit was deleted, redirecting to '/'...");
+                        logger.debug("Current outfit was deleted, redirecting to '/'...");
                         responseIndicatorSuccess();
                         useRouter().push("/outfits");
                         return;

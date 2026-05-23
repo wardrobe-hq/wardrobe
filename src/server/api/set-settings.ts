@@ -4,7 +4,7 @@
  * Created Date: 2025-09-08 17:06:47
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-20 22:51:30
+ * Last Modified: 2026-05-23 13:06:42
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -35,7 +35,7 @@ export default defineEventHandler(async (event): Promise<ApiResponse<ServerSetti
         });
     }
 
-    console.debug(getApiLogPrefix(event), "Received request for:", params);
+    logger.debug(getApiLogPrefix(event), "Received request for:", params);
 
     // Ask db helper to figure stuff out
     return await getApiResponse<ServerSettings>(() => {

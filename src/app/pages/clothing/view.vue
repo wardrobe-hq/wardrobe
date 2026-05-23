@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-21 22:49:26
+ * Last Modified: 2026-05-23 13:17:35
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -215,7 +215,7 @@
 
                 if(localClothing.value && newClothingData.id == clothingId) {
                     if (storageData.action == SubscriptionEventAction.DELETE) { // Clothing was deleted on server
-                        console.debug("DEBUG: Current clothing was deleted, redirecting to '/'...");
+                        logger.debug("Current clothing was deleted, redirecting to '/'...");
                         responseIndicatorSuccess();
                         useRouter().push("/");
                         return;
@@ -238,7 +238,7 @@
 
     // Adds/Removes a label
     async function toggleLabel(selectedLabel: Label) {
-        console.debug("DEBUG: Toggling label " + selectedLabel.id);
+        logger.debug("Toggling label " + selectedLabel.id);
 
         // Get all selected labels without this one
         const filtered = localClothing.value.document!.labelIDs.filter((e: ItemID) => e != selectedLabel.id);
@@ -288,7 +288,7 @@
         if (!fileName) throw("Error: Image was uploaded without file name?");
 
         localClothing.value.document!.imgPath = fileName;
-        console.debug("DEBUG - updateImage: Setting imgPath of clothing to " + localClothing.value.document!.imgPath);
+        logger.debug("updateImage: Setting imgPath of clothing to " + localClothing.value.document!.imgPath);
 
         currentImgPath.value = fileName;
     }

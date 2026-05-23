@@ -4,7 +4,7 @@
  * Created Date: 2026-04-08 17:59:41
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-16 17:51:42
+ * Last Modified: 2026-05-23 13:29:35
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -23,7 +23,7 @@ let serverSubscriptionEventStream: EventSource | undefined;
  * @param event
  */
 function handleServerSubscriptionConnected(event: unknown) { // eslint-disable-line @typescript-eslint/no-unused-vars
-    console.debug("[DEBUG] Server Subscription: Connected!");
+    logger.info("Server Subscription: Connected!");
 
     useState(State.SERVER_SUBSCRIPTION_CONNECTED).value = true;
 
@@ -43,7 +43,7 @@ function handleServerSubscriptionConnected(event: unknown) { // eslint-disable-l
 async function handleServerSubscriptionEvent(msg: MessageEvent<any>) { // eslint-disable-line @typescript-eslint/no-explicit-any
     try {
         const data = JSON.parse(msg.data) as SubscriptionEvent;
-        console.debug("[DEBUG] Incoming server subscription message:", data);
+        logger.info("Incoming server subscription message:", data);
 
         emitNotificationShowEvent({
             level: NotificationLevel.DEBUG,
@@ -59,7 +59,7 @@ async function handleServerSubscriptionEvent(msg: MessageEvent<any>) { // eslint
         // Re-emit event for frontend when data was re-fetched
         emitSubscriptionEvent(data);
     } catch(err) {
-        console.error("Failed to parse incoming message from server!", err);
+        logger.error("Failed to parse incoming message from server!", err);
     }
 }
 
@@ -70,7 +70,7 @@ async function handleServerSubscriptionEvent(msg: MessageEvent<any>) { // eslint
  */
 function handleServerSubscriptionError(err: unknown) {
     const i18n = useNuxtApp().$i18n;
-    console.error("Server Subscription Event Stream Error!", err);
+    logger.error("Server Subscription Event Stream Error!", err);
 
     useState(State.SERVER_SUBSCRIPTION_CONNECTED).value = false;
 
@@ -94,14 +94,14 @@ export function establishServerSubscriptionConnection() {
     useState(State.SERVER_SUBSCRIPTION_CONNECTED).value = false;
 
     if (getServerSettingsFromCache().value.document!.serverSubscriptionEnabled) {
-        console.debug("[DEBUG] establishServerSubscriptionConnection: Attempting to connect...");
+        logger.debug("establishServerSubscriptionConnection: Attempting to connect...");
 
         serverSubscriptionEventStream = new EventSource("/api/subscribe");
         serverSubscriptionEventStream.addEventListener("open",    handleServerSubscriptionConnected);
         serverSubscriptionEventStream.addEventListener("message", handleServerSubscriptionEvent);
         serverSubscriptionEventStream.addEventListener("error",   handleServerSubscriptionError);
     } else {
-        console.debug("[DEBUG] establishServerSubscriptionConnection: Server Subscription is disabled");
+        logger.debug("establishServerSubscriptionConnection: Server Subscription is disabled");
     }
 }
 
@@ -129,12 +129,12 @@ export function initServerSubscriptionHandler() {
     useNuxtApp().hook("app:user:settingsSaved", () => {
         if (getServerSettingsFromCache().value.document?.serverSubscriptionEnabled) {
             if (!serverSubscriptionEventStream) {
-                console.debug("[DEBUG] Received settingsSaved event, server subscription is now enabled");
+                logger.debug("Received settingsSaved event, server subscription is now enabled");
                 establishServerSubscriptionConnection();
             }
         } else {
             if (serverSubscriptionEventStream) {
-                console.debug("[DEBUG] Received settingsSaved event, server subscription is now disabled");
+                logger.debug("Received settingsSaved event, server subscription is now disabled");
                 closeServerSubscriptionConnection();
             }
         }

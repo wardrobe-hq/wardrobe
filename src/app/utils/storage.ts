@@ -4,7 +4,7 @@
  * Created Date: 2026-02-04 16:25:20
  * Author: 3urobeat
  *
- * Last Modified: 2026-03-16 19:02:44
+ * Last Modified: 2026-05-23 13:13:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -37,7 +37,7 @@ function parseLocalStorage(name: string, isObject?: boolean): string | object | 
 
     } catch (err) {
 
-        console.error(`Failed to read ${isObject ? "& parse " : ""}localStorage element '${name}'!`, err);
+        logger.error(`Failed to read ${isObject ? "& parse " : ""}localStorage element '${name}'!`, err);
         return null;
     }
 }
@@ -57,7 +57,7 @@ function setLocalStorage(name: string, value: string | object, isObject?: boolea
 
         localStorage.setItem(UXSettingsName, value as string);
     } catch (err) {
-        console.error(`Failed to ${isObject ? "parse & " : ""}save localStorage element '${name}'!`, err);
+        logger.error(`Failed to ${isObject ? "parse & " : ""}save localStorage element '${name}'!`, err);
     }
 }
 
@@ -70,7 +70,7 @@ export function getUXSettings(): UXSettings {
     const raw = parseLocalStorage(UXSettingsName, true);
 
     if (!raw) {
-        console.log("Using default UX settings...");
+        logger.info("Using default UX settings...");
         return defaultUXSettings;
     }
 
@@ -79,7 +79,7 @@ export function getUXSettings(): UXSettings {
     // Make sure all keys are initialized
     Object.keys(defaultUXSettings).forEach((key) => {
         if (curSet[key as keyof UXSettings] == undefined) {
-            console.warn(`Stored UX settings are missing key '${key}', filling it with value from default settings...`);
+            logger.warn(`Stored UX settings are missing key '${key}', filling it with value from default settings...`);
             (curSet[key as keyof UXSettings] as unknown as keyof UXSettings) = defaultUXSettings[key as keyof UXSettings] as unknown as keyof UXSettings; // lmao (see Deathraven Discord DM at 2026-03-16)
         }
     });
@@ -99,7 +99,7 @@ export function setUXSetting(key: keyof UXSettings, value: unknown) {
     // Get current object
     const element = getUXSettings();
 
-    console.debug("[DEBUG] Changing UX setting '%s' from '%s' to '%s'", key, element[key], value); // Some printf vibes
+    logger.debug("Changing UX setting '%s' from '%s' to '%s'", key, element[key], value); // Some printf vibes
 
     // Set new value
     (element[key] as unknown) = value;

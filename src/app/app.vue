@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:54:21
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-20 22:22:28
+ * Last Modified: 2026-05-23 12:41:13
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -66,7 +66,7 @@
     const isReady = await useFetch("/api/ping"); // Middleware will deny request if !ready
 
     onMounted(async () => { // Client side only
-        console.debug("Wardrobe mounted!");
+        logger.debug("Wardrobe mounted!");
 
         // If server was not ready during SSR, re-fetch API endpoint
         if (!isReady.data.value) {

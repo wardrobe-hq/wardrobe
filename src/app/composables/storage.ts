@@ -4,7 +4,7 @@
  * Created Date: 2026-03-23 21:34:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-19 18:57:36
+ * Last Modified: 2026-05-23 13:13:42
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -29,7 +29,7 @@ const imageCacheVersion: Ref<number> = ref(0); // Incremented on every IMAGES ca
  * Uses SSR(!) and must be called from app.vue
  */
 export async function initGlobalCache()  {
-    console.debug("[DEBUG] Initializing global cache...");
+    logger.debug("Initializing global cache...");
 
     cachedImages = useState(State.CACHED_IMAGES);
 
@@ -40,7 +40,7 @@ export async function initGlobalCache()  {
     ]);
     // TODO: Error handling
 
-    console.debug("[DEBUG] Finished initializing global cache!");
+    logger.debug("Finished initializing global cache!");
 }
 
 
@@ -115,30 +115,30 @@ export async function handleStorageUpdate(event: StorageUpdateEvent): Promise<vo
             newData = event.newData[0] as StorageKindDataMap<StorageKind.IMAGES>;
             cachedImages.value = cachedImages.value.filter((e) => e.id !== newData.id);
             imageCacheVersion.value++;
-            console.debug(`[DEBUG] handleStorageUpdate: Deleting image '${newData.id}' from cache (v${imageCacheVersion.value})...`);
+            logger.debug(`handleStorageUpdate: Deleting image '${newData.id}' from cache (v${imageCacheVersion.value})...`);
             break;
         case StorageKind.CLOTHES:
             newData = event.newData[0] as StorageKindDataMap<StorageKind.CLOTHES>;
-            console.debug(`[DEBUG] handleStorageUpdate: Refreshing data of API route '/api/get-all-clothes' & '/api/get-clothing/${newData.id}'...`);
+            logger.debug(`handleStorageUpdate: Refreshing data of API route '/api/get-all-clothes' & '/api/get-clothing/${newData.id}'...`);
             await Promise.all([ refreshNuxtData("/api/get-all-clothes"), refreshNuxtData("/api/get-clothing/" + newData.id) ]);
             break;
         case StorageKind.OUTFITS:
             newData = event.newData[0] as StorageKindDataMap<StorageKind.OUTFITS>;
-            console.debug(`[DEBUG] handleStorageUpdate: Refreshing data of API route '/api/get-all-outfits' & '/api/get-outfit/${newData.id}'...`);
+            logger.debug(`handleStorageUpdate: Refreshing data of API route '/api/get-all-outfits' & '/api/get-outfit/${newData.id}'...`);
             await Promise.all([ refreshNuxtData("/api/get-all-outfits"), refreshNuxtData("/api/get-outfit/" + newData.id) ]);
             break;
         case StorageKind.LABELS:
             await refreshNuxtData("/api/get-all-labels");
-            console.debug("[DEBUG] handleStorageUpdate: Refreshing data of API route '/api/get-all-labels'...");
+            logger.debug("handleStorageUpdate: Refreshing data of API route '/api/get-all-labels'...");
             break;
         case StorageKind.LABEL_CATEGORIES:
             await refreshNuxtData("/api/get-all-label-categories");
-            console.debug("[DEBUG] handleStorageUpdate: Refreshing data of API route '/api/get-all-label-categories'...");
+            logger.debug("handleStorageUpdate: Refreshing data of API route '/api/get-all-label-categories'...");
             break;
         case StorageKind.SERVER_SETTINGS:
             await refreshNuxtData("/api/get-settings");
             emitSettingsSavedEvent();
-            console.debug("[DEBUG] handleStorageUpdate: Refreshing data of API route '/api/get-settings'...");
+            logger.debug("handleStorageUpdate: Refreshing data of API route '/api/get-settings'...");
             return;
         default:
             throw("handleStorageUpdate: Unsupported storage kind " + event.storage);
@@ -299,7 +299,7 @@ export async function getImageFromServer(imgPath: string, scaleToWidth: number |
     const cachedImg = cachedImages.value.find((e) => e.id == imgPath && e.imgWidth == scaleToWidth);
 
     if (cachedImg) {
-        console.debug(`[DEBUG] getImageFromServer: Found image '${imgPath}' in cache!`);
+        logger.debug(`getImageFromServer: Found image '${imgPath}' in cache!`);
         return cachedImg;
     }
 
@@ -311,7 +311,7 @@ export async function getImageFromServer(imgPath: string, scaleToWidth: number |
 
     // Add to cache
     cachedImages.value.push(resBody.document!);
-    console.debug(`[DEBUG] getImageFromServer: Fetched image '${imgPath}' from server. Image cache has ${cachedImages.value.length} entries now.`);
+    logger.debug(`getImageFromServer: Fetched image '${imgPath}' from server. Image cache has ${cachedImages.value.length} entries now.`);
 
     return cachedImages.value[cachedImages.value.length - 1]!;
 }
@@ -338,7 +338,7 @@ export function useImage(imgPath: Ref<string>, scaleToWidth?: number): { cachedI
             cachedImage.value = await getImageFromServer(path, scaleToWidth) ?? undefined;
             hasLoaded = true;
         } catch (err) {
-            console.warn(`[WARN] useImage: Failed to load image '${path}': ${err}`);
+            logger.warn(`useImage: Failed to load image '${path}': ${err}`);
             if (!hasLoaded) {
                 cachedImage.value = undefined;
             }
