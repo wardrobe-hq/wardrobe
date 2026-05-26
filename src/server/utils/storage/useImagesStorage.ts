@@ -4,7 +4,7 @@
  * Created Date: 2025-12-06 17:28:44
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-23 13:07:15
+ * Last Modified: 2026-05-26 18:34:19
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -16,7 +16,6 @@
 
 
 import crypto from "node:crypto";
-import sharp from "sharp";
 
 
 // Use images storage - storage bucket is defined in nuxt.config.ts
@@ -56,21 +55,6 @@ export async function getImage(filePath: string): Promise<Buffer<ArrayBufferLike
     }
 
     return item;
-}
-
-
-/**
- * Scales an image
- * @param img Image buffer to scale
- * @param width Width to scale to. Height is determined automatically to keep aspect ratio
- * @param onlyDownscale Optional: Set to true to leave img unmodified if its width is already < width parameter
- * @returns Returns scaled image buffer
- */
-export async function scaleImage(img: Buffer<ArrayBufferLike>, width: number, onlyDownscale?: boolean): Promise<Buffer<ArrayBufferLike>> {
-    // Scales and keeps aspect ratio
-    return (await sharp(img)
-        .resize(width, null, { withoutEnlargement: onlyDownscale })
-        .toBuffer());
 }
 
 
