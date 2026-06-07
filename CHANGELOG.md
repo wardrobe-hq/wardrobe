@@ -5,6 +5,7 @@
 - [0.2.0](#0.2.0)
 - [0.3.0](#0.3.0)
 - [0.3.1](#0.3.1)
+- [0.3.2](#0.3.2)
   
 &nbsp;
 
@@ -213,6 +214,27 @@ Commit: [af9b9ca](https://github.com/wardrobe-hq/wardrobe/commit/af9b9ca)
 - Don't show debug notifications in prod mode
 - Updated contributing guidelines and added pull request template
 - Minor other changes
+
+Commit: [](https://github.com/wardrobe-hq/wardrobe/commit/)
+
+&nbsp;
+
+<a id="0.3.2"></a>
+
+## 2026-06-07, Version 0.3.2
+**Reworks:**
+- refactor: Added image utils directory
+
+&nbsp;
+
+**Fixes:**
+- Experimental fix for JS disabled banner not hiding by moving rule outside layer base [#5](https://github.com/wardrobe-hq/wardrobe/issues/5)
+
+&nbsp;
+
+**Changes:**
+- Simplified footer fade-up styling
+- docs: Updated src tree structure doc
 
 Commit: [](https://github.com/wardrobe-hq/wardrobe/commit/)
 
