@@ -5,7 +5,7 @@
  * Created Date: 2026-05-19 20:40:45
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-23 13:13:22
+ * Last Modified: 2026-06-06 09:49:40
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -98,7 +98,7 @@
             </a>
 
             <!-- Becomes visible on group hover -->
-            <div class="h-0 opacity-0 group-hover:h-10 group-hover:opacity-100 duration-500 transition-all">
+            <div class="w-0 group-hover:w-60 h-0 group-hover:h-10 overflow-clip duration-500 transition-all">
                 <p>{{ $t("navbarLicensedUnder") }} <a class="underline hover:text-gray-500" href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank">AGPLv3</a></p>
                 <p>Copyright (c) 2026 <a class="underline hover:text-gray-500" href="https://github.com/3urobeat" target="_blank">3urobeat</a></p>
             </div>
