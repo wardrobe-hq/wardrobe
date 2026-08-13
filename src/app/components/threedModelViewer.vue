@@ -5,7 +5,7 @@
  * Created Date: 2026-01-31 17:03:57
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-23 13:07:15
+ * Last Modified: 2026-07-02 20:29:32
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -19,28 +19,30 @@
 
 <template>
 
-    <div ref="parentContainer" class="h-full w-full">
+    <div ref="parentContainer" class="relative h-full w-full">
+        <!-- WebGL disabled warning -->
+        <div v-if="!WebGL.isWebGL2Available()" class="absolute inset-0 z-10 flex items-center justify-center">
+            <div class="flex items-center gap-3 text-sm rounded-xl shadow-md custom-glass-pill px-4 py-3 text-orange-500 border-orange-500/50!">
+                <PhWarning class="size-5 shrink-0" />
+                <span>WebGL is disabled or not supported :(</span>
+            </div>
+        </div>
+
         <!-- Renderer Canvas Container -->
         <div
             ref="canvasContainer"
             id="3d-model-viewer-container"
-            class="absolute cursor-grab left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
+            class="cursor-grab"
             @mousedown="rendererOnMouseDown"
-            @mouseup="rendererOnMouseUp"
-            @mousemove="rendererOnMouseMove"
-            @mouseleave="rendererOnMouseUp"
             @touchstart="rendererOnTouchDown"
-            @touchend="rendererOnMouseUp"
-            @touchmove="rendererOnTouchMove"
-            @touchcancel="rendererOnMouseUp"
-        >
+        >                   <!-- absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 -->
         </div>
 
         <!-- Auto Spin toggle -->
         <button class="absolute right-0 top-0 m-4 custom-button-icon-only" :class="autoRotationEnabled ? 'bg-green-500/50!' : ''"
             :title="$t('threedModelViewerToggleAutoRotation')" @click="autoRotationEnabled = !autoRotationEnabled"
         >
-            <PhArrowCounterClockwise class="ml-0.25 size-5"></PhArrowCounterClockwise>
+            <PhArrowCounterClockwise class="ml-0.25 size-5" />
         </button>
 
         <!-- Indicator that canvas is rotatable -->
@@ -54,9 +56,10 @@
 
 
 <script setup lang="ts">
-    import { PhArrowCounterClockwise, PhCaretLeft, PhCaretRight } from "@phosphor-icons/vue";
+    import { PhArrowCounterClockwise, PhCaretLeft, PhCaretRight, PhWarning } from "@phosphor-icons/vue";
     import * as threeJs from "three";
     import { GLTFLoader, type GLTF } from "three-stdlib";
+    import WebGL from "three/addons/capabilities/WebGL.js";
 
 
     // Refs
@@ -174,12 +177,18 @@
             // Apply renderer to container div
             canvasContainer.value!.appendChild(renderer.domElement);
 
-            // Create some light so the model is viewable
-            const light = new threeJs.HemisphereLight(0xffffff, 1);
-            light.position.y = 5;
-            light.position.z = 5;
-            light.position.x = 5;
-            scene.add(light);
+            // Spotlight from top right
+            const spotLight = new threeJs.SpotLight(0xffffff, 10);
+            spotLight.position.set(8, 10, 6);
+            spotLight.angle = Math.PI / 5;
+            spotLight.penumbra = 0.3;
+            spotLight.decay = 1;
+            scene.add(spotLight);
+            scene.add(spotLight.target);
+
+            // Dim ambient fill so shadow side is still visible
+            const ambientLight = new threeJs.AmbientLight(0xffffff, 1);
+            scene.add(ambientLight);
 
         } catch(err) {
             logger.error("Failed to init threeJs renderer: " + err);
@@ -211,6 +220,142 @@
             logger.error("Failed to load threeJs model: " + err);
             throw err;
         }
+    }
+
+
+    // Exposed function for querying whether a model is loaded
+    function isModelLoaded() {
+        return (model != undefined);
+    }
+
+
+    // UV helpers for planar projection (counteracts texture folding on 3D face features)
+
+    const UV_STORAGE_KEY = "__originalUVs";
+
+    /** Stores a copy of the mesh's original UVs so they can be restored later. */
+    function storeOriginalUVs(mesh: threeJs.Mesh) {
+        if (mesh.userData[UV_STORAGE_KEY]) return;
+        const uv = mesh.geometry.attributes.uv;
+        if (uv) {
+            mesh.userData[UV_STORAGE_KEY] = uv.array.slice();
+        }
+    }
+
+    /** Restores a mesh's original UVs that were saved by storeOriginalUVs(). */
+    function restoreOriginalUVs(mesh: threeJs.Mesh) {
+        const original = mesh.userData[UV_STORAGE_KEY] as Float32Array | undefined;
+        if (!original) return;
+        mesh.geometry.attributes.uv.array.set(original);
+        mesh.geometry.attributes.uv.needsUpdate = true;
+    }
+
+    /** Exposed: restore UVs on every mesh that had them saved. */
+    function restoreAllOriginalUVs() {
+        model.scene.traverse((child) => {
+            if (child instanceof threeJs.Mesh && child.userData[UV_STORAGE_KEY]) {
+                restoreOriginalUVs(child);
+            }
+        });
+        renderer.render(scene, camera);
+    }
+
+    /**
+     * Replaces a mesh's UVs with a planar front-projection (orthographic onto XY).
+     * This eliminates the "folding" effect that occurs when a flat texture is mapped
+     * onto a 3D face using the model's original UVs (which wrap around features like the nose).
+     * Instead, each vertex gets UV coordinates based purely on its X/Y position,
+     * making the texture behave like a photograph pasted onto the front of the face.
+     */
+    function applyPlanarProjection(mesh: threeJs.Mesh) {
+        const geometry = mesh.geometry;
+        const position = geometry.attributes.position;
+        const uvArray = new Float32Array(position.count * 2);
+
+        let minX = Infinity, maxX = -Infinity;
+        let minY = Infinity, maxY = -Infinity;
+
+        for (let i = 0; i < position.count; i++) {
+            const x = position.getX(i);
+            const y = position.getY(i);
+            if (x < minX) minX = x;
+            if (x > maxX) maxX = x;
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+        }
+
+        const rangeX = maxX - minX || 1;
+        const rangeY = maxY - minY || 1;
+
+        for (let i = 0; i < position.count; i++) {
+            uvArray[i * 2]     = (position.getX(i) - minX) / rangeX;
+            uvArray[i * 2 + 1] = (position.getY(i) - minY) / rangeY;
+        }
+
+        geometry.setAttribute("uv", new threeJs.BufferAttribute(uvArray, 2));
+        geometry.attributes.uv.needsUpdate = true;
+    }
+
+
+    // Applies texture to the model, optionally to only a specific mesh (match by name, ignoring case)
+    // When applying a flat texture to a 3D human face, the UV map typically doesn't use the full 0-1 square,
+    // causing stretching. Pass scale to correct for this: e.g. scale=(0.7, 1) if the face UV region is narrower in U.
+    // Pass projection="planar-front" to recalculate UVs via XY orthographic projection, eliminating folding
+    // around 3D features (nose, cheeks, etc.) by mapping the texture like a flat photograph.
+    function applyTexture(textureUrl: string, flipY: boolean = false, offset?: threeJs.Vector2, targetName?: string, scale?: threeJs.Vector2, rotation?: number, projection?: "planar-front") {
+        const textureLoader = new threeJs.TextureLoader();
+
+        // Load texture
+        const texture = textureLoader.load(textureUrl, () => {
+            texture.colorSpace = threeJs.SRGBColorSpace;
+            texture.flipY      = flipY; // Texture seems to be flipped by default
+
+            // Allow texture wrapping for tiling/partial mapping
+            texture.wrapS = threeJs.RepeatWrapping;
+            texture.wrapT = threeJs.RepeatWrapping;
+
+            // Set repeat (scale). Values < 1 zoom in (texture appears larger on the model),
+            // values > 1 repeat/tile. Independent U/V scaling corrects face UV aspect ratio distortion.
+            const sx = scale?.x ?? 1;
+            const sy = scale?.y ?? 1;
+            texture.repeat.set(sx, sy);
+
+            // When scaling < 1, automatically adjust offset to keep texture centered
+            // (otherwise scaling pulls content toward the UV origin (0,0))
+            const cx = (1 - sx) / 2;
+            const cy = (1 - sy) / 2;
+            texture.offset.set((offset?.x ?? 0) + cx, (offset?.y ?? 0) + cy);
+
+            // Apply rotation (in radians) around the center of the texture
+            if (rotation != null) {
+                texture.rotation = rotation;
+                texture.center.set(0.5, 0.5);
+            }
+
+            // Loop through all meshes/parts of the model
+            model.scene.traverse((child) => {
+                if (child instanceof threeJs.Mesh) {
+
+                    // If targetName was specified, only apply texture to mesh with matching name, ignoring case
+                    if (targetName && child.name.toLowerCase() != targetName.toLowerCase()) return;
+
+                    // Optionally recalculate UVs via planar projection to eliminate folding
+                    if (projection === "planar-front") {
+                        storeOriginalUVs(child);
+                        applyPlanarProjection(child);
+                    }
+
+                    const mat = (child.material as threeJs.MeshStandardMaterial).clone();
+                    child.material  = mat;
+                    mat.map         = texture;
+                    mat.color.setHex(0xffffff); // Needs brightness, texture is otherwise dark
+                    mat.needsUpdate = true;
+
+                }
+            });
+
+            renderer.render(scene, camera);
+        });
     }
 
 
@@ -256,6 +401,9 @@
         // Set starting position to calculate delta on mouseMove
         rendererMouseX = evt.clientX;
         rendererMouseY = evt.clientY;
+
+        document.addEventListener('mousemove', rendererOnMouseMove); // Use document.addEventListener instead of Vue's @mousemove to fix drag stopping when cursor leaves div
+        document.addEventListener('mouseup', rendererOnMouseUp);
     }
 
     function rendererOnTouchDown(evt: TouchEvent) {
@@ -267,11 +415,21 @@
             rendererMouseX = evt.touches[0].clientX;
             rendererMouseY = evt.touches[0].clientY;
         }
+
+        document.addEventListener('touchmove', rendererOnTouchMove); // Use document.addEventListener instead of Vue's @touchmove to fix drag stopping when cursor leaves div
+        document.addEventListener('touchend', rendererOnMouseUp);
+        document.addEventListener('touchcancel', rendererOnMouseUp);
     }
 
     function rendererOnMouseUp(evt: MouseEvent | TouchEvent) {
         evt.preventDefault();
         rendererIsMouseDown = false;
+
+        document.removeEventListener('mousemove', rendererOnMouseMove); // Use document.addEventListener instead of Vue's @mousemove to fix drag stopping when cursor leaves div
+        document.removeEventListener('mouseup', rendererOnMouseUp);
+        document.removeEventListener('touchmove', rendererOnTouchMove);
+        document.removeEventListener('touchend', rendererOnMouseUp);
+        document.removeEventListener('touchcancel', rendererOnMouseUp);
     }
 
 
@@ -355,6 +513,9 @@
 
     // Define stuff that can be accessed by the page
     defineExpose({
+        isModelLoaded,
+        applyTexture,
+        restoreAllOriginalUVs,
     });
 
 </script>
