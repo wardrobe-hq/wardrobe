@@ -44,17 +44,13 @@ Wardrobe features:
 # 🛠️ Installation
 System Requirements: Next to none.
 
-## Docker (recommended):
+## Docker Compose (recommended):
 ```bash
-# Create a volume for wardrobe to store your data in:
-docker volume create wardrobe-data
-
-# Run the container - Replace <host_port> with the port you want to access wardrobe at
-docker run -p <host_port>:3000 -v wardrobe-data:/usr/src/wardrobe/data 3urobeat/wardrobe:latest
+# Inside this directory, run:
+docker compose up
 ```
 
-> [!NOTE]
-> If you are using Portainer, make sure to set the working directory at the bottom to `/usr/src/wardrobe`
+If you're using Portainer, create a new stack and paste the contents of the [docker-compose.yml](./docker-compose.yml) instead.
 
 <br>
 
