@@ -4,7 +4,7 @@
  * Created Date: 2026-01-20 23:12:01
  * Author: 3urobeat
  *
- * Last Modified: 2026-01-20 23:12:01
+ * Last Modified: 2026-08-15 21:59:51
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -52,4 +52,23 @@ export function formatTime(time: number) {
     }
 
     return `${Math.round(until)} ${untilUnit}`;
+}
+
+
+/**
+ * Redneck engineering type helper function to turn base64 blob into a File that rembg understands
+ * @param base64 Blob to convert
+ * @param filename Filename to set
+ * @param type Filetype to set
+ * @returns Returns File on success
+ */
+export function base64ToFile(base64: string, filename: string, type: string): File {
+    const byteString = atob(base64);
+    const bytes = new Uint8Array(byteString.length);
+
+    for (let i = 0; i < byteString.length; i++) {
+        bytes[i] = byteString.charCodeAt(i);
+    }
+
+    return new File([bytes], filename, { type });
 }

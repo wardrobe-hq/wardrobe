@@ -14,6 +14,7 @@
 
 
 services:
+  # Wardrobe itself
   wardrobe:
     image: 3urobeat/wardrobe:latest
     container_name: wardrobe
@@ -29,6 +30,19 @@ services:
       NUXT_HOST: 0.0.0.0
       NUXT_PORT: 3000
       WARDROBE_HOST_ENV: docker
+      REMBG_URL: http://rembg:7000
+
+  # Rembg background removal service
+  rembg:
+    image: danielgatis/rembg:latest
+    container_name: wardrobe-rembg
+    restart: unless-stopped
+
+    ports:
+      - "${RMBG_DEBUG_PORT:-}:7000"
+
+    # Start HTTP server, --no-ui disables the Gradio UI to reduce idle CPU usage
+    command: ["s", "--no-ui"]
 
 volumes:
   wardrobe-data:

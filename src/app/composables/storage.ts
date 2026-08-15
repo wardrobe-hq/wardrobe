@@ -4,7 +4,7 @@
  * Created Date: 2026-03-23 21:34:56
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-23 13:13:42
+ * Last Modified: 2026-08-16 17:07:55
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -385,6 +385,15 @@ export async function sendImageToServer(file: File): Promise<ApiResponse<{ fileP
 
     return resBody;
 
+}
+
+/**
+ * Sends an image to the remove-bg API route which processes it through the rembg background removal service
+ * @param filePath Path of image in server's storage to process
+ * @returns Promise resolving with parsed API response containing the result image as base64
+ */
+export async function sendImageBackgroundRemovalRequestToServer(filePath: string): Promise<ApiResponse<CachedImage>> {
+    return await sendApiRequest("rm-clothing-image-bg", { filePath: filePath }) as ApiResponse<CachedImage>;
 }
 
 

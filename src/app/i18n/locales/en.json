@@ -107,6 +107,7 @@
     "_dummy4": "-------------- Specific Pages Text --------------",
     "clothingPageEmpty": "It's empty here. Would you like to add a piece of clothing?",
     "clothingQuickAddLabelNamePrompt": "Quick Add Label: Enter a name",
+    "clothingImageRemoveBackground": "Remove Background",
 
     "labelsDeleteLabelConfirmationPrompt": "Are you sure you want to mark '{name}' for deletion?\nThis action cannot be undone once you press save!",
     "labelsDeleteCategoryConfirmationPrompt": "Are you sure you want to mark '{name}' and ALL OF ITS LABELS(!) for deletion?\nThis action cannot be undone once you press save!",

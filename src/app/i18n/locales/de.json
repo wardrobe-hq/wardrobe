@@ -107,6 +107,7 @@
     "_dummy4": "-------------- Specific Pages Text --------------",
     "clothingPageEmpty": "Es ist leer hier. Möchtest du ein Kleidungsstück hinzufügen?",
     "clothingQuickAddLabelNamePrompt": "Label Schnellerstellung: Gib einen Namen ein",
+    "clothingImageRemoveBackground": "Hintergrund entfernen",
 
     "labelsDeleteLabelConfirmationPrompt": "Bist du sicher, dass du '{name}' zur Löschung vormerken möchtest?\nDas kann nicht rückgängig gemacht werden sobald du speicherst!",
     "labelsDeleteCategoryConfirmationPrompt": "Bist du sicher, dass du '{name}' und ALL DESSEN LABELS(!) zur Löschung vormerken möchtest?\nDas kann nicht rückgängig gemacht werden sobald du speicherst!",

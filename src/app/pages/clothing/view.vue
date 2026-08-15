@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-23 13:17:35
+ * Last Modified: 2026-08-16 17:25:11
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -77,6 +77,17 @@
 
                 <!-- Full size dummy component that handles file uploading. Position it absolute to parent by setting parent to relative -->
                 <FileUpload v-if="editModeEnabled" class="absolute w-full h-full" ref="fileUpload" @uploadSuccess="updateImage" />
+
+                <!-- Remove background button, processes the currently shown image through rembg -->
+                <button
+                    v-if="editModeEnabled"
+                    class="custom-button-icon-only absolute bottom-2 right-2 z-10"
+                    :disabled="!cachedImage?.imgBlob || isRemovingBackground"
+                    :title="$t('clothingImageRemoveBackground')"
+                    @click="removeBackground"
+                >
+                    <PhMagicWand class="size-6" />
+                </button>
             </div>
 
             <div class="flex flex-col w-full gap-4 h-2/3">
@@ -153,7 +164,7 @@
 
 
 <script setup lang="ts">
-    import { PhCheck, PhImageBroken, PhPencil, PhPlus, PhTrash, PhUploadSimple } from "@phosphor-icons/vue";
+    import { PhCheck, PhImageBroken, PhMagicWand, PhPencil, PhPlus, PhTrash, PhUploadSimple } from "@phosphor-icons/vue";
 
 
     const i18n = useI18n();
@@ -168,6 +179,8 @@
 
     const currentImgPath = ref("");
     const { cachedImage, load } = useImage(currentImgPath, 512);
+
+    const isRemovingBackground = ref(false);
 
 
     // Check if edit mode is enabled based on if name of this route is outfits-view or outfits-edit
@@ -288,9 +301,34 @@
         if (!fileName) throw("Error: Image was uploaded without file name?");
 
         localClothing.value.document!.imgPath = fileName;
-        logger.debug("updateImage: Setting imgPath of clothing to " + localClothing.value.document!.imgPath);
-
         currentImgPath.value = fileName;
+        logger.debug("updateImage: Setting imgPath of clothing to " + localClothing.value.document!.imgPath);
+    }
+
+
+    // Posts the currently shown image to the remove-bg API route and updates it with the result
+    async function removeBackground() {
+        if (!currentImgPath.value) return;
+
+        isRemovingBackground.value = true;
+
+        // Send currently shown image to remove-bg API
+        const resBody = await sendImageBackgroundRemovalRequestToServer(currentImgPath.value);
+
+        // Indicate success/failure and update image file path
+        if (resBody.success) {
+            responseIndicatorSuccess();
+            emitChangesMadeEvent(false);
+
+            localClothing.value.document!.imgPath = resBody.document!.id;
+            currentImgPath.value = resBody.document!.id;
+            cachedImage.value = resBody.document;
+            logger.debug("removeBackground: Setting imgPath of clothing to " + localClothing.value.document!.imgPath);
+        } else {
+            responseIndicatorFailure();
+        }
+
+        isRemovingBackground.value = false;
     }
 
 
