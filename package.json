@@ -10,7 +10,7 @@
     "clean": "rm -rf .output/ .nuxt/",
     "lint": "tsc -p . ; eslint .",
     "build": "nuxt build",
-    "dev": "nuxt dev --host 0.0.0.0",
+    "dev": "RMBG_DEBUG_PORT=7000 docker compose up -d rembg && nuxt dev --host 0.0.0.0 ; docker compose rm -fs rembg",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
