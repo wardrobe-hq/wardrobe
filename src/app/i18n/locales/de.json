@@ -62,6 +62,9 @@
     "weatherGeolocationDisabledNoLatLonSet": "Geolokalisierung ist deaktiviert, aber es ist keine Latitude / Longitude in den Einstellungen konfiguriert!",
     "weatherNoApiKeySet": "Kein API Schlüssel konfiguriert! Bitte setze einen in den Einstellungen.",
     "weatherLoadAPIError": "Konnte keine Wetterdaten von der API holen:",
+    "weatherHumidity": "Luftfeuchtigkeit",
+    "weatherWind": "Wind",
+    "weatherClouds": "Bewölkung",
 
     "threedModelViewerToggleAutoRotation": "Auto-Rotation ein/ausschalten",
 

@@ -5,7 +5,7 @@
  * Created Date: 2026-05-18 18:22:12
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-23 13:13:22
+ * Last Modified: 2026-08-16 17:49:50
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -24,21 +24,13 @@
         hideSearch
     >
         <template v-slot:toggle>
-            <div class="flex items-center gap-2 px-2 py-1 select-none rounded-xl shadow-md bg-bg-field-light dark:bg-bg-field-dark">
+            <div class="flex items-center gap-2 px-2 py-1 select-none rounded-xl shadow-md bg-bg-field-light dark:bg-bg-field-dark"> <!-- Color Gradient?: text-white bg-linear-to-br from-wardrobe-blue to-blue-900 -->
                 <!-- Icon -->
                 <div>
                     <PhSpinnerGap v-if="weatherLoading" class="size-5 text-orange-500 animate-spin"></PhSpinnerGap>
                     <PhWarning v-else-if="currentWeather == null" class="size-5 text-orange-500"></PhWarning>
 
-                    <div v-else>
-                        <PhCloudLightning v-if="weatherIdToCondition(currentWeather.weather[0]!.id) == WeatherConditionGroupID.Thunderstorm" />
-                        <PhCloudRain v-else-if="[WeatherConditionGroupID.Drizzle, WeatherConditionGroupID.Rain].includes(weatherIdToCondition(currentWeather.weather[0]!.id))" />
-                        <PhSnowflake v-else-if="weatherIdToCondition(currentWeather.weather[0]!.id) == WeatherConditionGroupID.Snow" />
-                        <PhCloudFog  v-else-if="weatherIdToCondition(currentWeather.weather[0]!.id) == WeatherConditionGroupID.Fog" />
-                        <PhSun       v-else-if="weatherIdToCondition(currentWeather.weather[0]!.id) == WeatherConditionGroupID.Clear" />
-                        <!-- TODO: PhMoonStars when it's dark? -->
-                        <PhCloud     v-else-if="weatherIdToCondition(currentWeather.weather[0]!.id) == WeatherConditionGroupID.Clouds" />
-                    </div> <!-- TODO: Ugh, what a block -->
+                    <component v-else :is="weatherIcon" class="size-5" /> <!-- weight="duotone" -->
                 </div>
 
                 <!-- Temperature -->
@@ -47,16 +39,70 @@
         </template>
 
         <template v-slot:items>
-            <div v-if="currentWeather" class="w-120 break-normal gap-x-2 ml-1">
-                <label class="custom-label-secondary py-0! px-2! w-fit">{{ $t("weatherForLocation", { location: currentWeather.name }) }}</label> <br>
-                <br>
-                {{ currentWeather.weather[0]?.main }} ({{ currentWeather.weather[0]?.description }}) <br>
-                {{ formatTemp(currentWeather.main.temp) }} ({{ $t("weatherTempFeelsLike") }} {{ formatTemp(currentWeather.main.feels_like) }}) <br>
-                <br>
-                <label class="custom-label-secondary py-0! px-2! w-fit">{{ $t("lastRefresh") }}</label> {{ $t("timeAgo", { time: formatTimestamp(currentWeather.dt * 1000) }) }} <br>
-                <label class="custom-label-secondary py-0! px-2! w-fit">{{ $t("poweredBy") }}</label> openweathermap.org
+            <div v-if="currentWeather" class="w-80 overflow-hidden rounded-xl shadow-md bg-bg-field-light dark:bg-bg-field-dark">
+                <!-- Hero -->
+                <div class="bg-linear-to-br from-wardrobe-blue to-blue-900 px-4 pb-4 pt-3 text-white text-center">
+                    <!-- Location -->
+                    <div class="flex items-center justify-center gap-1 text-lg font-semibold leading-tight">
+                        <PhMapPin class="size-5 shrink-0" weight="fill" />
+                        {{ currentWeather.name }}
+                    </div>
+
+                    <!-- Big icon & temperature -->
+                    <div class="mt-3 flex items-center justify-center gap-2">
+                        <component :is="weatherIcon" class="size-12 shrink-0" weight="duotone" />
+                        <div class="text-5xl font-light leading-none">{{ formatTemp(currentWeather.main.temp) }}</div>
+                    </div>
+
+                    <!-- Condition -->
+                    <div class="mt-2">
+                        <div class="text-lg font-semibold leading-tight">{{ currentWeather.weather[0]?.main }}</div>
+                        <div class="text-xs leading-tight text-white/80 capitalize">{{ currentWeather.weather[0]?.description }}</div>
+                    </div>
+
+                    <!-- Min / Max / Feels like -->
+                    <div class="mt-3 flex items-center justify-center gap-x-4 text-sm">
+                        <span class="flex items-center gap-1">
+                            <PhArrowDown class="size-3.5" weight="bold" />
+                            {{ formatTemp(currentWeather.main.temp_min) }}
+                        </span>
+                        <span class="flex items-center gap-1">
+                            <PhArrowUp class="size-3.5" weight="bold" />
+                            {{ formatTemp(currentWeather.main.temp_max) }}
+                        </span>
+                        <span class="flex items-center gap-1 text-white/80">
+                            <PhThermometer class="size-3.5" weight="bold" />
+                            {{ $t("weatherTempFeelsLike") }} {{ formatTemp(currentWeather.main.feels_like) }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Details strip -->
+                <div class="grid grid-cols-3 divide-x divide-bg-embed-light dark:divide-bg-embed-dark bg-bg-input-light dark:bg-bg-input-dark px-2 py-2 text-center">
+                    <div class="flex flex-col items-center gap-0.5 px-1">
+                        <PhDrop class="size-4 text-wardrobe-blue" weight="fill" />
+                        <span class="text-sm font-medium text-text-light dark:text-text-dark">{{ currentWeather.main.humidity }}%</span>
+                        <span class="text-[0.6rem] leading-tight text-text-secondary-light dark:text-text-secondary-dark">{{ $t("weatherHumidity") }}</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-0.5 px-1">
+                        <PhWind class="size-4 text-wardrobe-blue" weight="fill" />
+                        <span class="text-sm font-medium text-text-light dark:text-text-dark">{{ round(currentWeather.wind.speed, 2) }} m/s</span>
+                        <span class="text-[0.6rem] leading-tight text-text-secondary-light dark:text-text-secondary-dark">{{ $t("weatherWind") }}</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-0.5 px-1">
+                        <PhCloud class="size-4 text-wardrobe-blue" weight="fill" />
+                        <span class="text-sm font-medium text-text-light dark:text-text-dark">{{ currentWeather.clouds.all }}%</span>
+                        <span class="text-[0.6rem] leading-tight text-text-secondary-light dark:text-text-secondary-dark">{{ $t("weatherClouds") }}</span>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5 px-3 py-1.5 text-[0.65rem] text-text-secondary-light dark:text-text-secondary-dark">
+                    <span>{{ $t("lastRefresh") }} {{ $t("timeAgo", { time: formatTimestamp(currentWeather.dt * 1000) }) }}</span>
+                    <span>{{ $t("poweredBy") }} openweathermap.org</span>
+                </div>
             </div>
-            <div v-else class="w-120 break-normal">
+            <div v-else class="w-80 break-normal">
                 {{ $t('weatherLoadAPIError') }} {{ weatherAPIErrorMessage }}
             </div>
         </template>
@@ -66,7 +112,7 @@
 
 
 <script setup lang="ts">
-    import { PhSun, PhSpinnerGap, PhCloudLightning, PhCloudRain, PhSnowflake, PhCloudFog, PhCloud, PhWarning } from "@phosphor-icons/vue";
+    import { PhSun, PhSpinnerGap, PhCloudLightning, PhCloudRain, PhSnowflake, PhCloudFog, PhCloud, PhWarning, PhMapPin, PhDrop, PhWind, PhArrowUp, PhArrowDown, PhThermometer } from "@phosphor-icons/vue";
 
     const i18n = useI18n();
 
@@ -74,6 +120,22 @@
     const currentWeather: Ref<WeatherData|null> = ref(null);
     const weatherLoading: Ref<boolean>          = ref(false);
     let   weatherAPIErrorMessage                = null;
+
+
+    // Returns icon component matching the current weather condition
+    const weatherIcon = computed(() => {
+        if (!currentWeather.value) return null;
+
+        switch (weatherIdToCondition(currentWeather.value.weather[0]!.id)) {
+            case WeatherConditionGroupID.Thunderstorm: return PhCloudLightning;
+            case WeatherConditionGroupID.Drizzle:
+            case WeatherConditionGroupID.Rain:          return PhCloudRain;
+            case WeatherConditionGroupID.Snow:          return PhSnowflake;
+            case WeatherConditionGroupID.Fog:           return PhCloudFog;
+            case WeatherConditionGroupID.Clear:         return PhSun;
+            case WeatherConditionGroupID.Clouds:        return PhCloud;
+        }
+    });
 
 
     // Load weather

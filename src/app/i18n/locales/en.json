@@ -62,6 +62,9 @@
     "weatherGeolocationDisabledNoLatLonSet": "Geolocation is disabled but no latitude / longitude is set in settings!",
     "weatherNoApiKeySet": "No API key set! Please configure one in settings.",
     "weatherLoadAPIError": "Couldn't get weather data from API:",
+    "weatherHumidity": "Humidity",
+    "weatherWind": "Wind",
+    "weatherClouds": "Cloudiness",
 
     "threedModelViewerToggleAutoRotation": "Toggle auto rotation",
 

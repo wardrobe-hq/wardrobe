@@ -4,7 +4,7 @@
  * Created Date: 2026-03-04 10:39:01
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-08 16:44:48
+ * Last Modified: 2026-08-16 17:44:56
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -98,4 +98,13 @@ export function formatTimestamp(timestamp: number, alwaysShowTimestamp?: "always
 
         return ((new Date(timestamp - timezoneOffset)).toISOString().replace(/T/, " ").replace(/\..+/, ""));
     }
+
+    // Or use a browser native function?
+    /* new Date(timestamp).toLocaleString(i18n.locale.value, {
+        weekday: "short",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    }); */
 }
