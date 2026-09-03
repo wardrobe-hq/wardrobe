@@ -76,6 +76,12 @@ If you're using Portainer, create a new stack and paste the contents of the [doc
 
   # Replace <host_port> with the port you want to access wardrobe at.
   # If you omit 'PORT=', port 3000 will be used.
+
+  # To use the image background removal feature, you must start rembg as well.
+  # Either by using docker:
+  RMBG_DEBUG_PORT=7000 docker compose up -d rembg
+  # ...or by following the official guide: https://github.com/danielgatis/rembg#usage-as-a-cli
+  rembg s --no-ui
   ```
 
 </details>
