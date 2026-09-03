@@ -5,7 +5,7 @@
  * Created Date: 2026-05-18 18:22:12
  * Author: 3urobeat
  *
- * Last Modified: 2026-08-16 17:49:50
+ * Last Modified: 2026-09-03 21:27:36
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -97,7 +97,7 @@
                 </div>
 
                 <!-- Footer -->
-                <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5 px-3 py-1.5 text-[0.65rem] text-text-secondary-light dark:text-text-secondary-dark">
+                <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5 px-3 py-1.5 custom-text-small-secondary">
                     <span>{{ $t("lastRefresh") }} {{ $t("timeAgo", { time: formatTimestamp(currentWeather.dt * 1000) }) }}</span>
                     <span>{{ $t("poweredBy") }} openweathermap.org</span>
                 </div>
