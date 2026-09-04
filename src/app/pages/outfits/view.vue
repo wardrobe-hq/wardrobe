@@ -5,7 +5,7 @@
  * Created Date: 2025-09-10 17:37:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-05-23 13:17:35
+ * Last Modified: 2026-09-04 22:44:29
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -25,24 +25,24 @@
 
 <template>
 
-    <!-- Title Bar for view -->
-    <TitleBarBasic backRedirectTo="/outfits" v-if="!editModeEnabled">
-        <NuxtLink :to="'/outfits/edit?id=' + (storedOutfit ? localOutfit.document!.id : 'new')" class="custom-button-primary">
+    <!-- Title bar. Redirect back to overview in view mode and back to item view page in edit mode -->
+    <TitleBarBasic :backRedirectTo="!editModeEnabled ? '/outfits' : (outfitId == 'new' ? '/outfits' : '/outfits/view?id=' + (storedOutfit ? localOutfit.document!.id : 'new'))">
+        <template v-slot:secondary v-if="outfitId != 'new'">
+            <DropdownMenu>
+                <button @click="deleteOutfit">
+                    <PhTrash class="mr-2 size-5 text-red-600"></PhTrash> {{ $t('delete') }}
+                </button>
+                <!-- <template v-slot:text>
+
+                </template> -->
+            </DropdownMenu>
+        </template>
+
+        <NuxtLink v-if="!editModeEnabled" :to="'/outfits/edit?id=' + (storedOutfit ? localOutfit.document!.id : 'new')" class="custom-button-primary">
             <PhPencil class="mr-2 size-5"></PhPencil>
             {{ $t('edit') }}
         </NuxtLink>
-    </TitleBarBasic>
-
-    <!-- Title bar for edit -->
-    <TitleBarBasic :backRedirectTo="outfitId == 'new' ? '/outfits' : '/outfits/view?id=' + (storedOutfit ? localOutfit.document!.id : 'new')" v-if="editModeEnabled">
-        <template v-slot:secondary v-if="outfitId != 'new'">
-            <button class="custom-button-primary" @click="deleteOutfit">
-                <PhTrash class="mr-2 size-5 text-red-600"></PhTrash>
-                {{ $t('delete') }}
-            </button>
-        </template>
-
-        <button class="custom-button-primary" @click="saveChanges">
+        <button v-else class="custom-button-primary" @click="saveChanges">
             <PhCheck class="mr-2 size-5 text-green-600"></PhCheck>
             {{ $t('save') }}
         </button>

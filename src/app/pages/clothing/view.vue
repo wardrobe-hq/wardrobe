@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-08-16 17:25:11
+ * Last Modified: 2026-09-04 22:44:32
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -25,24 +25,24 @@
 
 <template>
 
-    <!-- Title bar for edit -->
-    <TitleBarBasic backRedirectTo="/" v-if="!editModeEnabled">
-        <NuxtLink :to="'/clothing/edit?id=' + clothingId" class="custom-button-primary">
+    <!-- Title bar. Redirect back to overview in view mode and back to item view page in edit mode -->
+    <TitleBarBasic :backRedirectTo="!editModeEnabled ? '/' : (clothingId == 'new' ? '/' : '/clothing/view?id=' + clothingId)">
+        <template v-slot:secondary v-if="clothingId != 'new'">
+            <DropdownMenu>
+                <button @click="deleteClothing">
+                    <PhTrash class="mr-2 size-5 text-red-600"></PhTrash> {{ $t("delete") }}
+                </button>
+                <!-- <template v-slot:text>
+
+                </template> -->
+            </DropdownMenu>
+        </template>
+
+        <NuxtLink v-if="!editModeEnabled" :to="'/clothing/edit?id=' + clothingId" class="custom-button-primary">
             <PhPencil class="mr-2 size-5"></PhPencil>
             {{ $t("edit") }}
         </NuxtLink>
-    </TitleBarBasic>
-
-    <!-- Title bar for edit -->
-    <TitleBarBasic :backRedirectTo="clothingId == 'new' ? '/clothing' : '/clothing/view?id=' + clothingId" v-if="editModeEnabled">
-        <template v-slot:secondary v-if="clothingId != 'new'">
-            <button class="custom-button-primary" @click="deleteClothing">
-                <PhTrash class="mr-2 size-5 text-red-600"></PhTrash>
-                {{ $t("delete") }}
-            </button>
-        </template>
-
-        <button class="custom-button-primary" @click="saveChanges">
+        <button v-else class="custom-button-primary" @click="saveChanges">
             <PhCheck class="mr-2 size-5 text-green-600"></PhCheck>
             {{ $t("save") }}
         </button>
