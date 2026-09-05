@@ -5,7 +5,7 @@
  * Created Date: 2025-09-10 17:37:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-09-05 22:44:14
+ * Last Modified: 2026-09-05 22:56:13
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -64,7 +64,7 @@
         <div class="flex gap-4 mb-4 md:mb-8 justify-between">
             <!-- Outfit title -->
             <div class="w-1/3 shrink-0">
-                <p     v-if="!editModeEnabled" class="custom-label-primary text-nowrap w-full">{{ localOutfit.document!.title }}</p>
+                <p     v-if="!editModeEnabled" class="custom-label-primary text-nowrap w-full h-7.5">{{ localOutfit.document!.title }}</p>
                 <input v-if="editModeEnabled"  class="custom-input-secondary w-full" :placeholder="$t('name')" v-model.trim="localOutfit.document!.title" />
             </div>
 

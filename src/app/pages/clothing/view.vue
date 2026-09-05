@@ -5,7 +5,7 @@
  * Created Date: 2025-09-08 15:39:55
  * Author: 3urobeat
  *
- * Last Modified: 2026-09-05 22:45:04
+ * Last Modified: 2026-09-05 22:55:00
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -99,7 +99,7 @@
             <div class="flex flex-col w-full gap-4 h-2/3">
                 <!-- Name label/input -->
                 <p
-                    class="custom-label-primary w-full sm:w-1/2 self-center sm:self-start"
+                    class="custom-label-primary w-full sm:w-1/2 h-12 self-center sm:self-start"
                     v-if="!editModeEnabled"
                 >
                     {{ localClothing.document!.title }}
