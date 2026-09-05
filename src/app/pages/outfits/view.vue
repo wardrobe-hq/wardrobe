@@ -5,7 +5,7 @@
  * Created Date: 2025-09-10 17:37:07
  * Author: 3urobeat
  *
- * Last Modified: 2026-09-04 22:44:29
+ * Last Modified: 2026-09-05 22:44:14
  * Modified By: 3urobeat
  *
  * Copyright (c) 2025 - 2026 3urobeat <https://github.com/3urobeat>
@@ -29,12 +29,19 @@
     <TitleBarBasic :backRedirectTo="!editModeEnabled ? '/outfits' : (outfitId == 'new' ? '/outfits' : '/outfits/view?id=' + (storedOutfit ? localOutfit.document!.id : 'new'))">
         <template v-slot:secondary v-if="outfitId != 'new'">
             <DropdownMenu>
-                <button @click="deleteOutfit">
+                <button class="w-full" @click="deleteOutfit">
                     <PhTrash class="mr-2 size-5 text-red-600"></PhTrash> {{ $t('delete') }}
                 </button>
-                <!-- <template v-slot:text>
 
-                </template> -->
+                <template v-slot:text v-if="localOutfit.document?.addedTimestamp && localOutfit.document?.modifiedTimestamp">
+                    <div class="grid grid-cols-[auto_auto] gap-x-2 gap-y-0.5 shrink-0">
+                        <label>{{ $t("added") }}</label>
+                        <span>{{ formatTimestamp(localOutfit.document?.addedTimestamp) }}</span>
+
+                        <label>{{ $t("lastEdited") }}</label>
+                        <span>{{ formatTimestamp(localOutfit.document?.modifiedTimestamp) }}</span>
+                    </div>
+                </template>
             </DropdownMenu>
         </template>
 

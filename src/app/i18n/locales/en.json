@@ -56,6 +56,8 @@
     "weatherLoadFail": "Couldn't load weather!",
     "weatherForLocation": "Weather for {location}:",
     "weatherTempFeelsLike": "feels like",
+    "added": "Added:",
+    "lastEdited": "Last edited:",
     "lastRefresh": "Last refresh:",
     "poweredBy": "Powered by:",
     "weatherGeolocationFail": "Geolocation failed: {errorText} - You may set a fixed latitude / longitude value in settings.",
