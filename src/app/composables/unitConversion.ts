@@ -4,7 +4,7 @@
  * Created Date: 2026-03-04 10:39:01
  * Author: 3urobeat
  *
- * Last Modified: 2026-08-16 17:44:56
+ * Last Modified: 2026-09-05 22:51:11
  * Modified By: 3urobeat
  *
  * Copyright (c) 2026 3urobeat <https://github.com/3urobeat>
@@ -77,9 +77,10 @@ export function formatTimeLocalized(time: number) {
  * Formats time to x hours ago if <24 hours, otherwise formats to ISO8601
  * @param timestamp The timestamp to convert
  * @param alwaysShowTimestamp Optional: Controls whether to always/never show the ISO8601 timestamp, even if <24h ago
- * @returns Formatted time, either in "x hours" or ISO8601 format
+ * @param doNotIncludeAgo Optional: When true, response will never include "timeAgo" lang text
+ * @returns Formatted time, either in "x hours ago" or ISO8601 format
  */
-export function formatTimestamp(timestamp: number, alwaysShowTimestamp?: "always" | "never") {
+export function formatTimestamp(timestamp: number, alwaysShowTimestamp?: "always" | "never", doNotIncludeAgo?: false) {
     let until = Math.abs((Date.now() - timestamp) / 1000);
     let untilUnit = useI18n().t("seconds");
 
@@ -92,7 +93,11 @@ export function formatTimestamp(timestamp: number, alwaysShowTimestamp?: "always
             }
         }
 
-        return `${Math.round(until)} ${untilUnit}`;
+        if (doNotIncludeAgo) {
+            return `${Math.round(until)} ${untilUnit}`;
+        } else {
+            return useI18n().t("timeAgo", { time: `${Math.round(until)} ${untilUnit}` });
+        }
     } else {
         const timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000;
 
